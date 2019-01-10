@@ -1,15 +1,13 @@
+package frc.robot;
+
 import edu.wpi.first.wpilibj.Encoder;
 
-public class Encoder1038 {
+public class Encoder1038 extends Encoder {
     public Encoder1038(int channelA, int channelB, boolean isInverted, int countsPerRevolution, double wheelDiameter) {
-		super(channelA, channelB, isInverted);
-		setDistancePerPulse(findDistancePerPulse(countsPerRevolution, wheelDiameter));
+		    super(channelA, channelB, isInverted);
+		    setDistancePerPulse(findDistancePerPulse(countsPerRevolution, wheelDiameter));
     }
-    
-    public int getCount() {
-        return count();
-    }
-
+  
     public static double findDistancePerPulse(double countsPerRevolution, double wheelDiameter) {		
 		return (1 / countsPerRevolution ) * (wheelDiameter * Math.PI);
 	}

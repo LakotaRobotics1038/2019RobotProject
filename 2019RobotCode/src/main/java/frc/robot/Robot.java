@@ -18,6 +18,12 @@ import edu.wpi.first.wpilibj.TimedRobot;
  */
 public class Robot extends TimedRobot {
 
+  // Drive
+  public static DriveTrain robotDrive = DriveTrain.getInstance();
+  
+  // Joystick
+  private Joystick1038 driverJoystick = new Joystick1038(0);
+
   /**
    * This function is run when the robot is first started up and should be
    * used for any initialization code.
@@ -68,6 +74,23 @@ public class Robot extends TimedRobot {
    */
   @Override
   public void teleopPeriodic() {
+    driver();
+  }
+
+  // Handle driver input
+  public void driver() {
+	
+		switch (robotDrive.currentDriveMode) {
+		case tankDrive:
+			robotDrive.tankDrive(driverJoystick.getLeftJoystickVertical(), driverJoystick.getRightJoystickVertical());			
+			break;
+		case dualArcadeDrive:
+			robotDrive.dualArcadeDrive(driverJoystick.getLeftJoystickVertical(), driverJoystick.getRightJoystickHorizontal());
+			break;
+		case singleArcadeDrive:
+			robotDrive.singleAracadeDrive(driverJoystick.getLeftJoystickVertical(), driverJoystick.getLeftJoystickHorizontal());
+			break;
+		}	
   }
 
   /**
