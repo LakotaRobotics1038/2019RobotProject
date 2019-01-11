@@ -8,6 +8,8 @@
 package frc.robot;
 
 import edu.wpi.first.wpilibj.TimedRobot;
+import edu.wpi.cscore.UsbCamera;
+import edu.wpi.first.cameraserver.CameraServer;
 
 /**
  * The VM is configured to automatically run this class, and to call the
@@ -17,6 +19,14 @@ import edu.wpi.first.wpilibj.TimedRobot;
  * project.
  */
 public class Robot extends TimedRobot {
+  
+
+  // Drive
+  public static DriveTrain robotDrive = DriveTrain.getInstance();
+  
+  // Joystick
+  private Joystick1038 driverJoystick = new Joystick1038(0);
+  public boolean previousStartButtonState = driverJoystick.getStartButton();
 
   /**
    * This function is run when the robot is first started up and should be
@@ -24,7 +34,10 @@ public class Robot extends TimedRobot {
    */
   @Override
   public void robotInit() {
-    
+    UsbCamera camera = CameraServer.getInstance().startAutomaticCapture();
+    camera.setExposureManual(50);
+    camera.setFPS(30);
+    camera.setResolution(300, 200);
   }
 
   /**
@@ -68,6 +81,29 @@ public class Robot extends TimedRobot {
    */
   @Override
   public void teleopPeriodic() {
+    driver();
+    if (driverJoystick.getStartButton() != previousStartButtonState && previousStartButtonState == false) {
+      robotDrive.driveModeToggler();
+    }
+    previousStartButtonState = driverJoystick.getStartButton();
+    System.out.println(driverJoystick.getStartButton());
+    System.out.println(robotDrive.currentDriveMode);
+  }
+
+  // Handle driver input
+  public void driver() {
+    
+		switch (robotDrive.currentDriveMode) {
+		case tankDrive:
+			robotDrive.tankDrive(driverJoystick.getLeftJoystickVertical(), driverJoystick.getRightJoystickVertical());			
+			break;
+		case dualArcadeDrive:
+			robotDrive.dualArcadeDrive(driverJoystick.getLeftJoystickVertical(), driverJoystick.getRightJoystickHorizontal());
+			break;
+		case singleArcadeDrive:
+			robotDrive.singleAracadeDrive(driverJoystick.getLeftJoystickVertical(), driverJoystick.getLeftJoystickHorizontal());
+			break;
+		}	
   }
 
   /**
