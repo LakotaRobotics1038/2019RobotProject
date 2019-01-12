@@ -7,9 +7,13 @@
 
 package frc.robot;
 
-import edu.wpi.first.wpilibj.TimedRobot;
+import java.io.File;
+
 import edu.wpi.cscore.UsbCamera;
 import edu.wpi.first.cameraserver.CameraServer;
+import edu.wpi.first.wpilibj.TimedRobot;
+import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
 /**
  * The VM is configured to automatically run this class, and to call the
@@ -19,6 +23,10 @@ import edu.wpi.first.cameraserver.CameraServer;
  * project.
  */
 public class Robot extends TimedRobot {
+
+  
+  SendableChooser<String> autonList;
+  Object[][] autonInstructions;
   
 
   // Drive
@@ -38,6 +46,15 @@ public class Robot extends TimedRobot {
     camera.setExposureManual(50);
     camera.setFPS(30);
     camera.setResolution(300, 200);
+    autonList = new SendableChooser();
+    autonList.addDefault("Pick a code", null);
+    for (File file : new File("/home/lvuser/autoncode").listFiles()) {
+    if (!file.isDirectory()) {
+      autonList.addObject(file.getName(), file.getAbsolutePath());
+      System.out.println(file.getAbsolutePath());
+    }
+    }
+    SmartDashboard.putData("Auton Code", autonList);
   }
 
   /**
@@ -50,6 +67,7 @@ public class Robot extends TimedRobot {
    */
   @Override
   public void robotPeriodic() {
+
   }
 
   /**
@@ -65,7 +83,10 @@ public class Robot extends TimedRobot {
    */
   @Override
   public void autonomousInit() {
-    
+    File autonCode = new File(autonList.getSelected());
+    System.out.println("Current Code: " + autonCode.getAbsolutePath());
+    autonInstructions = CSV.csv2table(autonCode);
+    // TODO: run autonomous from autonInstructions;
   }
 
   /**
