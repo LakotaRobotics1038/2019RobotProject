@@ -6,70 +6,51 @@
 /*----------------------------------------------------------------------------*/
 
 package frc.robot;
-
 import org.opencv.core.Mat;
-import org.opencv.core.Point;
-import org.opencv.core.Scalar;
 import org.opencv.imgproc.Imgproc;
-
-import edu.wpi.cscore.CvSink;
-import edu.wpi.cscore.CvSource;
 import edu.wpi.cscore.UsbCamera;
 import edu.wpi.first.cameraserver.CameraServer;
 import edu.wpi.first.wpilibj.TimedRobot;
+import edu.wpi.cscore.CvSink;
+import edu.wpi.cscore.CvSource;
 
 /**
- * This is a demo program showing the use of OpenCV to do vision processing. The
- * image is acquired from the USB camera, then a rectangle is put on the image
- * and sent to the dashboard. OpenCV has many methods for different types of
- * processing.
+ * Uses the CameraServer class to automatically capture video from a USB webcam
+ * and send it to the FRC dashboard without doing any vision processing. This
+ * is the easiest way to get camera images to the dashboard. Just add this to
+ * the robotInit() method in your program.
  */
 public class Robot extends TimedRobot {
-  Thread m_visionThread;
-  private int switchCamera;
-  
-
-  @Override
+  //Rename cameras to more fun names
+  UsbCamera VisionCam;
+  UsbCamera PythonCam;
+  boolean prevTrigger = false;
+  CameraServer VisionCamServer;
+  CameraServer PythonCamServer;
+  operatorJoystick Joystick1038 = new operatorJoystick(1);
   public void robotInit() {
-    m_visionThread = new Thread(() -> {
-      // Get the UsbCamera from CameraServer, this puts it on the dashboard
-      UsbCamera camera = CameraServer.getInstance().startAutomaticCapture();
-      // Set the resolution
-      camera.setResolution(640, 480);
+    //ports might have to be changed
+    VisionCam = CameraServer.getInstance().startAutomaticCapture(0);
+    PythonCam = CameraServer.getInstance().startAutomaticCapture(1);
+  
+  }
+  void TeleopPeriodic() {
+    //Switching the different cameras
+    
+    
+  }
+  public void operator() {
+    public boolean getRightTrigger() {
+      return getRawButton(RIGHT_TRIGGER);
+    }
 
-      // Get a CvSink. This will capture Mats from the camera
-      CvSink cvSink = CameraServer.getInstance().getVideo();
-      // Setup a CvSource. This will send images back to the Dashboard
-      CvSource outputStream
-          = CameraServer.getInstance().putVideo("Rectangle", 640, 480);
-
-      // Mats are very memory expensive. Lets reuse this Mat.
-      Mat mat = new Mat();
-
-      // This cannot be 'true'. The program will never exit if it is. This
-      // lets the robot stop this thread when restarting robot code or
-      // deploying.
-      while (!Thread.interrupted()) {
-        // Tell the CvSink to grab a frame from the camera and put it
-        // in the source mat.  If there is an error notify the output.
-        if (cvSink.grabFrame(mat) == 0) {
-          // Send the output the error.
-          outputStream.notifyError(cvSink.getError());
-          // skip the rest of the current iteration
-          continue;
-        }
-        // Put a rectangle on the image
-        Imgproc.rectangle(mat, new Point(100, 100), new Point(400, 400),
-            new Scalar(255, 255, 255), 5);
-        // Give the output stream a new image to display
-        outputStream.putFrame(mat);
-      }
-    });
-
-    m_visionThread((){
-      //put Python camera stuff here, I think
-    });
-    m_visionThread.setDaemon(true);
-    m_visionThread.start();
+    if (Joystick1038.GetTrigger() && !prevTrigger) {
+      System.out.println("Setting PythonCam\n");
+      VisionCamServer.startAutomaticCapture(PythonCam);
+    } else if (!Joystick1038.GetTrigger() && prevTrigger) {
+      System.out.println("Setting VisionCam\n");
+      PythonCamServer.startAutomaticCapture(VisionCam);
+    }
+    prevTrigger = Joystick1038.GetTrigger();
   }
 }
