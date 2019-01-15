@@ -8,9 +8,14 @@
 package frc.robot;
 
 import java.io.File;
+import java.text.SimpleDateFormat;
+import java.util.Arrays;
+import java.util.Date;
 
 import edu.wpi.cscore.UsbCamera;
 import edu.wpi.first.cameraserver.CameraServer;
+import edu.wpi.first.wpilibj.Joystick;
+import edu.wpi.first.wpilibj.Spark;
 import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
@@ -25,8 +30,15 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 public class Robot extends TimedRobot {
 
   
-  SendableChooser<String> autonList;
-  Object[][] autonInstructions;
+  private SendableChooser<String> autonList;
+  private Object[][] autonInstructions;
+  private String fileNow;
+  private long startTime;
+  private File autonFile;
+  private String oldLine;
+  private Joystick joystick;
+  private Spark spark0;
+  private Spark spark1;
   
 
   // Drive
@@ -49,12 +61,17 @@ public class Robot extends TimedRobot {
     autonList = new SendableChooser();
     autonList.addDefault("Pick a code", null);
     for (File file : new File("/home/lvuser/autoncode").listFiles()) {
-    if (!file.isDirectory()) {
-      autonList.addObject(file.getName(), file.getAbsolutePath());
-      System.out.println(file.getAbsolutePath());
-    }
+      if (!file.isDirectory()) {
+        autonList.addObject(file.getName(), file.getAbsolutePath());
+        System.out.println(file.getAbsolutePath());
+      }
     }
     SmartDashboard.putData("Auton Code", autonList);
+
+    joystick = new Joystick(0);
+
+    //spark0 = new Spark1038(0);
+    //  spark1 = new Spark1038(1);
   }
 
   /**
@@ -97,11 +114,45 @@ public class Robot extends TimedRobot {
     
   }
 
+
+  /**
+   * This function wasn't here before.
+   */
+  @Override
+  public void teleopInit() {
+    fileNow = "/home/lvuser/autoncode/" + new SimpleDateFormat("yyyy.MM.dd.HHmmsszzz").format(new Date()) + ".csv";
+    startTime = System.currentTimeMillis();
+    autonFile = new File(fileNow);
+    oldLine = "";
+    
+  }
+
   /**
    * This function is called periodically during operator control.
    */
   @Override
   public void teleopPeriodic() {
+    
+    double joystickPos1, joystickPos2;
+    joystickPos1 = joystick.getY();
+    joystickPos2 = joystick.getTwist();
+    
+    //spark0.setSpeed(joystickPos1 * .5);
+    //spark1.setSpeed(joystickPos2 * .5);
+    
+    Object[] newLineArr = {System.currentTimeMillis() - startTime, joystickPos1 * .5, joystickPos2 * .5};
+    //Object[] newLineArr = {System.currentTimeMillis() - startTime, spark0.getSpeed(), spark1.getSpeed()};
+    System.out.println(Arrays.toString(newLineArr));
+  
+    String newLine = combine(Arrays.copyOfRange(newLineArr, 1, newLineArr.length));
+    if (0 == newLine.compareTo(oldLine)) {
+      System.out.println("Upadting file!");
+      oldLine = newLine;
+      CSV.writeLine2csv(newLineArr, autonFile);
+    }
+    
+    
+    /*
     driver();
     if (driverJoystick.getStartButton() != previousStartButtonState && previousStartButtonState == false) {
       robotDrive.driveModeToggler();
@@ -109,6 +160,7 @@ public class Robot extends TimedRobot {
     previousStartButtonState = driverJoystick.getStartButton();
     System.out.println(driverJoystick.getStartButton());
     System.out.println(robotDrive.currentDriveMode);
+    */ // what is all this 
   }
 
   // Handle driver input
@@ -132,5 +184,17 @@ public class Robot extends TimedRobot {
    */
   @Override
   public void testPeriodic() {
+    System.out.println("Get out of Test");
   }
+
+
+public static String combine(Object[] arr) {
+  String ret = "";
+  for (int i=0; i<arr.length; i++) {
+    ret += arr[i].toString();
+    if (i != arr.length - 1)
+      ret += ",";
+  }
+  return ret;
+}
 }
