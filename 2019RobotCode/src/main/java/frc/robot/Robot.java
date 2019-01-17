@@ -6,74 +6,52 @@
 /*----------------------------------------------------------------------------*/
 
 package frc.robot;
+import javax.lang.model.element.VariableElement;
 
+import org.opencv.core.Mat;
+import org.opencv.imgproc.Imgproc;
+import edu.wpi.cscore.UsbCamera;
+import edu.wpi.first.cameraserver.CameraServer;
 import edu.wpi.first.wpilibj.TimedRobot;
+import edu.wpi.cscore.CvSink;
+import edu.wpi.cscore.CvSource;
 
 /**
- * The VM is configured to automatically run this class, and to call the
- * functions corresponding to each mode, as described in the IterativeRobot
- * documentation. If you change the name of this class or the package after
- * creating this project, you must also update the build.gradle file in the
- * project.
+ * Uses the CameraServer class to automatically capture video from a USB webcam
+ * and send it to the FRC dashboard without doing any vision processing. This
+ * is the easiest way to get camera images to the dashboard. Just add this to
+ * the robotInit() method in your program.
  */
 public class Robot extends TimedRobot {
-
-  /**
-   * This function is run when the robot is first started up and should be
-   * used for any initialization code.
-   */
-  @Override
+  //Rename cameras to more fun names
+  UsbCamera VisionCam;
+  UsbCamera PythonCam;
+  boolean prevTrigger = false;
+  CameraServer VisionCamServer;
+  CameraServer PythonCamServer;
+  operatorJoystick Joystick1038 = new operatorJoystick(1);
   public void robotInit() {
+    //ports might have to be changed
+    VisionCam = CameraServer.getInstance().startAutomaticCapture(0);
+    PythonCam = CameraServer.getInstance().startAutomaticCapture(1);
+  
+  }
+  void TeleopPeriodic() {
+    //Switching the different cameras
+    if (Joystick1038.getRightTrigger() && !prevTrigger) {
+      System.out.println("Setting PythonCam\n");
+      VisionCamServer.startAutomaticCapture(PythonCam);
+    } else if (!Joystick1038.getRightTrigger() && prevTrigger) {
+      System.out.println("Setting VisionCam\n");
+      PythonCamServer.startAutomaticCapture(VisionCam);
+    }
+    prevTrigger = Joystick1038.getRightTrigger();
+  }
     
-  }
+  
+  public void operator() {
+  
 
-  /**
-   * This function is called every robot packet, no matter the mode. Use
-   * this for items like diagnostics that you want ran during disabled,
-   * autonomous, teleoperated and test.
-   *
-   * <p>This runs after the mode specific periodic functions, but before
-   * LiveWindow and SmartDashboard integrated updating.
-   */
-  @Override
-  public void robotPeriodic() {
-  }
-
-  /**
-   * This autonomous (along with the chooser code above) shows how to select
-   * between different autonomous modes using the dashboard. The sendable
-   * chooser code works with the Java SmartDashboard. If you prefer the
-   * LabVIEW Dashboard, remove all of the chooser code and uncomment the
-   * getString line to get the auto name from the text box below the Gyro
-   *
-   * <p>You can add additional auto modes by adding additional comparisons to
-   * the switch structure below with additional strings. If using the
-   * SendableChooser make sure to add them to the chooser code above as well.
-   */
-  @Override
-  public void autonomousInit() {
-    
-  }
-
-  /**
-   * This function is called periodically during autonomous.
-   */
-  @Override
-  public void autonomousPeriodic() {
-    
-  }
-
-  /**
-   * This function is called periodically during operator control.
-   */
-  @Override
-  public void teleopPeriodic() {
-  }
-
-  /**
-   * This function is called periodically during test mode.
-   */
-  @Override
-  public void testPeriodic() {
-  }
+   
+}
 }
