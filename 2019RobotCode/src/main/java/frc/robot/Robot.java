@@ -35,6 +35,7 @@ public class Robot extends TimedRobot {
   // Joystick
   private Joystick1038 driverJoystick = new Joystick1038(0);
   public boolean previousStartButtonState = driverJoystick.getStartButton();
+  CANSpark1038 testSparkMax = new CANSpark1038(0);
 
   /**
    * This function is run when the robot is first started up and should be
@@ -49,10 +50,10 @@ public class Robot extends TimedRobot {
     autonList = new SendableChooser();
     autonList.addDefault("Pick a code", null);
     for (File file : new File("/home/lvuser/autoncode").listFiles()) {
-    if (!file.isDirectory()) {
+      if (!file.isDirectory()) {
       autonList.addObject(file.getName(), file.getAbsolutePath());
       System.out.println(file.getAbsolutePath());
-    }
+      }
     }
     SmartDashboard.putData("Auton Code", autonList);
   }
@@ -67,7 +68,7 @@ public class Robot extends TimedRobot {
    */
   @Override
   public void robotPeriodic() {
-
+    
   }
 
   /**
@@ -109,6 +110,7 @@ public class Robot extends TimedRobot {
     previousStartButtonState = driverJoystick.getStartButton();
     System.out.println(driverJoystick.getStartButton());
     System.out.println(robotDrive.currentDriveMode);
+    //testSparkMax.set(0.2 * driverJoystick.getLeftJoystickVertical());
   }
 
   // Handle driver input
