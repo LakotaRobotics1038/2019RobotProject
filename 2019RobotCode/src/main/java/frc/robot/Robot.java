@@ -11,6 +11,7 @@ import javax.lang.model.element.VariableElement;
 import org.opencv.core.Mat;
 import org.opencv.imgproc.Imgproc;
 import edu.wpi.cscore.UsbCamera;
+import edu.wpi.cscore.VideoSink;
 import edu.wpi.first.cameraserver.CameraServer;
 import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.cscore.CvSink;
@@ -29,14 +30,16 @@ public class Robot extends TimedRobot {
   boolean prevTrigger = false;
   CameraServer VisionCamServer;
   CameraServer PythonCamServer;
+  VideoSink server;
   operatorJoystick Joystick1038 = new operatorJoystick(1);
   public void robotInit() {
     //ports might have to be changed
     VisionCam = CameraServer.getInstance().startAutomaticCapture(0);
     PythonCam = CameraServer.getInstance().startAutomaticCapture(1);
+    server = CameraServer.getInstance().getServer();
   
   }
-  void TeleopPeriodic() {
+  void TeleopPeriodic(){
     //Switching the different cameras
     if (Joystick1038.getRightTrigger() && !prevTrigger) {
       System.out.println("Setting PythonCam\n");
