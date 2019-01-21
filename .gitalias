@@ -1,2 +1,3 @@
 [alias]
     nickCommit = commit --author=\"Nick Ott <nickott13@yahoo.com>\" -m
+    courtneyCommit = commit --author=\"Courtney Lyden <lydencourtney@gmail.com>\" -m
