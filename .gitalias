@@ -1,0 +1,2 @@
+[alias]
+    nickCommit = commit --author "Nick Ott <nickott13@yahoo.com>" -m
