@@ -1,6 +1,6 @@
 ---
 name: Bug/Feature
-about: 
+about: ''
 title: ''
 labels: ''
 assignees: ''
