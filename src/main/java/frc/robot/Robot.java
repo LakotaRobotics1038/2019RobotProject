@@ -8,6 +8,7 @@
 package frc.robot;
 
 import java.io.File;
+import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.Arrays;
 import java.util.Date;
@@ -39,6 +40,8 @@ public class Robot extends TimedRobot {
   private Joystick joystick;
   private Spark spark0;
   private Spark spark1;
+  private DriveTrain driveTrain;
+
   
 
   // Drive
@@ -55,6 +58,7 @@ public class Robot extends TimedRobot {
   @Override
   public void robotInit() {
     UsbCamera camera = CameraServer.getInstance().startAutomaticCapture();
+    driveTrain = DriveTrain.getInstance();
     camera.setExposureManual(50);
     camera.setFPS(30);
     camera.setResolution(300, 200);
@@ -84,7 +88,7 @@ public class Robot extends TimedRobot {
    */
   @Override
   public void robotPeriodic() {
-
+    
   }
 
   /**
@@ -124,8 +128,17 @@ public class Robot extends TimedRobot {
     startTime = System.currentTimeMillis();
     autonFile = new File(fileNow);
     oldLine = "";
-    
-  }
+    try {
+      System.out.println("Created file " + autonFile.getAbsolutePath());
+    autonFile.createNewFile();
+    } catch (IOException e) {
+      System.out.println("IOException.");
+      System.out.println(e + e.getMessage());
+      e.printStackTrace();
+      System.out.println(fileNow);
+    }
+  }  // TODO: make methods that run in less than 20 milliseconds to fix the screaming differential drive
+
 
   /**
    * This function is called periodically during operator control.
@@ -139,10 +152,11 @@ public class Robot extends TimedRobot {
     
     //spark0.setSpeed(joystickPos1 * .5);
     //spark1.setSpeed(joystickPos2 * .5);
+    driveTrain.dualArcadeDrive(joystickPos1, joystickPos2);
     
-    Object[] newLineArr = {System.currentTimeMillis() - startTime, joystickPos1 * .5, joystickPos2 * .5};
+    Object[] newLineArr = {System.currentTimeMillis() - startTime, joystickPos1, joystickPos2};
     //Object[] newLineArr = {System.currentTimeMillis() - startTime, spark0.getSpeed(), spark1.getSpeed()};
-    System.out.println(Arrays.toString(newLineArr));
+    // uncomment later //System.out.println(Arrays.toString(newLineArr));
   
     String newLine = combine(Arrays.copyOfRange(newLineArr, 1, newLineArr.length));
     if (0 == newLine.compareTo(oldLine)) {
