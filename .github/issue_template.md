@@ -1,12 +1,3 @@
----
-name: Default
-about: 'New Issue Template'
-title: ''
-labels: ''
-assignees: ''
-
----
-
 <!-- Fill out the appropriate section and delete the other. (BUG or Feature)-->
 
 ### BUG
