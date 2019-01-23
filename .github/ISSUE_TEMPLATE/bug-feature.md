@@ -1,6 +1,6 @@
 ---
-name: Bug/Feature
-about: ''
+name: Default
+about: 'New Issue Template'
 title: ''
 labels: ''
 assignees: ''
