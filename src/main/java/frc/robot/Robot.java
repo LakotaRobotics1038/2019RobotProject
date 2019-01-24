@@ -48,8 +48,8 @@ public class Robot extends TimedRobot {
   public static DriveTrain robotDrive = DriveTrain.getInstance();
   
   // Joystick
-  private Joystick1038 driverJoystick = new Joystick1038(0);
-  public boolean previousStartButtonState = driverJoystick.getStartButton();
+  private XboxJoystick1038 driverJoystick = new XboxJoystick1038(0);
+  public boolean previousStartButtonState = driverJoystick.getLineButton();
 
   /**
    * This function is run when the robot is first started up and should be
@@ -88,7 +88,11 @@ public class Robot extends TimedRobot {
    */
   @Override
   public void robotPeriodic() {
-    
+    if(driverJoystick.getXButton())
+    {
+      System.out.println("X button");
+    }
+
   }
 
   /**
