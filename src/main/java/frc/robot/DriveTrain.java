@@ -1,8 +1,9 @@
 package frc.robot;
 
+import edu.wpi.first.wpilibj.command.Subsystem;
 import edu.wpi.first.wpilibj.drive.DifferentialDrive;
 
-public class DriveTrain {
+public class DriveTrain extends Subsystem{
     public enum driveModes { tankDrive, singleArcadeDrive, dualArcadeDrive };
 	public driveModes currentDriveMode = driveModes.tankDrive;
     
@@ -47,7 +48,7 @@ public class DriveTrain {
     }
 
     // Reset drive encoders
-    public void resetEncoder() {
+    public void resetEncoders() {
         leftDriveEncoder.reset();
         rightDriveEncoder.reset();
         System.out.println("Encoders reset");
@@ -85,5 +86,10 @@ public class DriveTrain {
     // Drive robot using 2 sticks (input ranges -1 to 1)
     public void dualArcadeDrive(double yaxis, double xaxis) {
 			differentialDrive.arcadeDrive(yaxis, xaxis, true);
+    }
+
+    @Override
+    protected void initDefaultCommand() {
+
     }
 }
