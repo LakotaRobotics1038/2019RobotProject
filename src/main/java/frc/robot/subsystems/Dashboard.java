@@ -5,10 +5,10 @@
 /* the project.                                                               */
 /*----------------------------------------------------------------------------*/
 
-package frc.robot;
+package frc.robot.subsystems;
 
 /**
  * Add your docs here.
  */
-public class Acquisition {
+public class Dashboard {
 }

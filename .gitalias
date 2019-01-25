@@ -2,3 +2,8 @@
     wesCommit = commit --author=\"Wes Reed <reed.wesley.s@gmail.com>\" -m
     nickCommit = commit --author=\"Nick Ott <nickott13@yahoo.com>\" -m
     courtneyCommit = commit --author=\"Courtney Lyden <lydencourtney@gmail.com>\" -m
+    benCommit = commit --author=\"Ben Holm-Bertelsen <bholmbertelsen@cincinnatips.org>\" -m
+    kevinCommit = commit --author=\"Kevin Roth <roth.m.kevin@gmail.com>\" -m
+    samCommit = commit --author=\"Sam Burkhard <samryanburk@gmail.com>\" -m
+    zachCommit = commit --author=\"Zach Simmons <zachary.j.simmons@gmail.com>\" -m
+    aaronCommit = commit --author=\"Aaron Ziegler <aaronziegler21@gmail.com>\" -m
