@@ -1,8 +1,8 @@
-package frc.robot;
+package frc.robot.robot;
 
 import edu.wpi.first.wpilibj.Joystick;
 
-public class operatorJoystick extends Joystick {
+public class Joystick1038 extends Joystick {
 	
 	//Button Locations
 	private final int X_BUTTON = 1;
@@ -12,7 +12,7 @@ public class operatorJoystick extends Joystick {
 	private final int LEFT_BUTTON = 5;
 	private final int RIGHT_BUTTON = 6;
 	private final int LEFT_TRIGGER = 7;
-	private final int RIGHT_TRIGGER = 8;
+	private final int RIGHT_TRIGER = 8;
 	private final int BACK_BUTTON = 9;
 	private final int START_BUTTON = 10;
 	private final int LEFT_JOYSTICK_CLICK = 11;
@@ -24,7 +24,7 @@ public class operatorJoystick extends Joystick {
 	private final int RIGHT_STICK_HORIZONTAL = 2;
 	private final int RIGHT_STICK_VERTICAL = 3;
 	
-	public operatorJoystick(int port) {
+	public Joystick1038(int port) {
 		super(port);
 	}
 	
@@ -89,7 +89,7 @@ public class operatorJoystick extends Joystick {
 	 * @return is the right trigger pressed
 	 */
 	public boolean getRightTrigger() {
-		return getRawButton(RIGHT_TRIGGER);
+		return getRawButton(RIGHT_TRIGER);
 	}
 	
 	/**

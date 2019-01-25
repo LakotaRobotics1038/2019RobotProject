@@ -5,7 +5,7 @@
 /* the project.                                                               */
 /*----------------------------------------------------------------------------*/
 
-package frc.robot;
+package frc.robot.robot;
 import javax.lang.model.element.VariableElement;
 
 import org.opencv.core.Mat;
@@ -31,7 +31,7 @@ public class Robot extends TimedRobot {
   CameraServer VisionCamServer;
   CameraServer PythonCamServer;
   VideoSink server;
-  operatorJoystick Joystick1038 = new operatorJoystick(1);
+  Joystick1038 Joystick1 = new Joystick1038(1);
   public void robotInit() {
     //ports might have to be changed
     VisionCam = CameraServer.getInstance().startAutomaticCapture(0);
@@ -43,14 +43,14 @@ public class Robot extends TimedRobot {
   }
   void TeleopPeriodic(){
     //Switching the different cameras
-    if (Joystick1038.getRightTrigger() && !prevTrigger) {
+    if (Joystick1.getRightTrigger() && !prevTrigger) {
       System.out.println("Setting PythonCam\n");
       VisionCamServer.startAutomaticCapture(PythonCam);
-    } else if (!Joystick1038.getRightTrigger() && prevTrigger) {
+    } else if (!Joystick1.getRightTrigger() && prevTrigger) {
       System.out.println("Setting VisionCam\n");
       PythonCamServer.startAutomaticCapture(VisionCam);
     }
-    prevTrigger = Joystick1038.getRightTrigger();
+    prevTrigger = Joystick1.getRightTrigger();
   }
     
   
