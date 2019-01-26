@@ -43,19 +43,19 @@ public class Robot extends TimedRobot {
    */
   @Override
   public void robotInit() {
-    UsbCamera camera = CameraServer.getInstance().startAutomaticCapture();
-    camera.setExposureManual(50);
-    camera.setFPS(30);
-    camera.setResolution(300, 200);
-    autonList = new SendableChooser();
-    autonList.addDefault("Pick a code", null);
-    for (File file : new File("/home/lvuser/autoncode").listFiles()) {
-      if (!file.isDirectory()) {
-      autonList.addObject(file.getName(), file.getAbsolutePath());
-      System.out.println(file.getAbsolutePath());
-      }
-    }
-    SmartDashboard.putData("Auton Code", autonList);
+    // UsbCamera camera = CameraServer.getInstance().startAutomaticCapture();
+    // camera.setExposureManual(50);
+    // camera.setFPS(30);
+    // camera.setResolution(300, 200);
+    // autonList = new SendableChooser();
+    // autonList.addDefault("Pick a code", null);
+    // for (File file : new File("/home/lvuser/autoncode").listFiles()) {
+    //   if (!file.isDirectory()) {
+    //   autonList.addObject(file.getName(), file.getAbsolutePath());
+    //   System.out.println(file.getAbsolutePath());
+    //   }
+    // }
+    // SmartDashboard.putData("Auton Code", autonList);
   }
 
   /**
@@ -103,14 +103,9 @@ public class Robot extends TimedRobot {
    */
   @Override
   public void teleopPeriodic() {
-    driver();
-    if (driverJoystick.getStartButton() != previousStartButtonState && previousStartButtonState == false) {
-      robotDrive.driveModeToggler();
-    }
-    previousStartButtonState = driverJoystick.getStartButton();
-    System.out.println(driverJoystick.getStartButton());
-    System.out.println(robotDrive.currentDriveMode);
-    //testSparkMax.set(0.2 * driverJoystick.getLeftJoystickVertical());
+    //driver();
+    testSparkMax.set(0.1 * driverJoystick.getLeftJoystickVertical());
+    System.out.println(testSparkMax.getEncoder().getPosition());
   }
 
   // Handle driver input
@@ -126,7 +121,13 @@ public class Robot extends TimedRobot {
 		case singleArcadeDrive:
 			robotDrive.singleAracadeDrive(driverJoystick.getLeftJoystickVertical(), driverJoystick.getLeftJoystickHorizontal());
 			break;
-		}	
+    }	
+    
+    if (driverJoystick.getStartButton() != previousStartButtonState && previousStartButtonState == false) {
+      robotDrive.driveModeToggler();
+    }
+
+    previousStartButtonState = driverJoystick.getStartButton();
   }
 
   /**

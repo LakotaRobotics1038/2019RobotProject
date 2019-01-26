@@ -7,8 +7,8 @@ public class DriveStraightCommand extends PIDCommand {
 
     private static final double dP = 0.000;
     private static final double dI = 0.000;
-    private static final double dD = 0.000;
-    private static final double MAX_OUTPUT_RANGE = 1.00;
+    private static final double dD = 0.000; 
+    private static final double MAX_OUTPUT = 1.00;
     private static final double TOLERANCE = 0;
     private DriveTrain drive = DriveTrain.getInstance();
     private PIDController rightDrivePID = getPIDController();
@@ -19,10 +19,10 @@ public class DriveStraightCommand extends PIDCommand {
         requires(drive);
         setSetpoint(setpoint);
         rightDrivePID.setAbsoluteTolerance(TOLERANCE);
-        rightDrivePID.setOutputRange(-MAX_OUTPUT_RANGE, MAX_OUTPUT_RANGE);
+        rightDrivePID.setOutputRange(-MAX_OUTPUT, MAX_OUTPUT);
         rightDrivePID.setContinuous(false);
         leftDrivePID.setAbsoluteTolerance(TOLERANCE);
-        leftDrivePID.setOutputRange(-MAX_OUTPUT_RANGE, MAX_OUTPUT_RANGE);
+        leftDrivePID.setOutputRange(-MAX_OUTPUT, MAX_OUTPUT);
         leftDrivePID.setContinuous(false);
     }
 
