@@ -1,5 +1,6 @@
 package frc.robot;
 
+import edu.wpi.first.wpilibj.GenericHID;
 import edu.wpi.first.wpilibj.Joystick;
 
 public class XboxJoystick1038 extends Joystick {
@@ -19,10 +20,10 @@ public class XboxJoystick1038 extends Joystick {
 	//Joystick locations
 	private final int LEFT_STICK_HORIZONTAL = 0;
 	private final int LEFT_STICK_VERTICAL = 1;
-	private final int RIGHT_STICK_HORIZONTAL = 2;
-    private final int RIGHT_STICK_VERTICAL = 3;
-	private final int LEFT_TRIGGER = 7;
-	private final int RIGHT_TRIGGER = 8;
+	private final int RIGHT_STICK_HORIZONTAL = 4;
+    private final int RIGHT_STICK_VERTICAL = 5;
+	private final int LEFT_TRIGGER = 2;
+	private final int RIGHT_TRIGGER = 3;
 	
 	public XboxJoystick1038(int port) {
 		super(port);
@@ -74,22 +75,6 @@ public class XboxJoystick1038 extends Joystick {
 	 */
 	public boolean getRightButton() {
 		return getRawButton(RIGHT_BUTTON);
-	}
-	
-	/**
-	 * Returns the state of the left trigger on the controller
-	 * @return is the left trigger pressed
-	 */
-	public boolean getLeftTrigger() {
-		return getRawButton(LEFT_TRIGGER);
-	}
-	
-	/**
-	 * Returns the state of the right trigger on the controller
-	 * @return is the right trigger pressed
-	 */
-	public boolean getRightTrigger() {
-		return getRawButton(RIGHT_TRIGGER);
 	}
 	
 	/**
@@ -155,4 +140,43 @@ public class XboxJoystick1038 extends Joystick {
 	public double getRightJoystickHorizontal() {
 		return getRawAxis(RIGHT_STICK_HORIZONTAL);
 	}
+
+		
+	/**
+	 * Returns the state of the left trigger on its axis
+	 * @return value of the left trigger axis
+	 */
+	public double getLeftTrigger() {
+		return getRawAxis(LEFT_TRIGGER);
+	}
+	
+	/**
+	 * Returns the state of the right trigger on its axis
+	 * @return value of the right trigger axis
+	 */
+	public double getRightTrigger() {
+		return getRawAxis(RIGHT_TRIGGER);
+	}
+
+	/**
+	 * Sets the left rumble speed 
+	 * @param speed the rumble speed between 0.0 and 1.0
+	 * @return the new speed
+	 */
+	public double setLeftRumble(double speed) {
+		setRumble(GenericHID.RumbleType.kLeftRumble, speed);
+		return speed;
+	}
+
+	/**
+	 * Sets the right rumble speed 
+	 * @param speed the rumble speed between 0.0 and 1.0
+	 * @return the new speed
+	 */
+	public double setRightRumble(double speed) {
+		setRumble(GenericHID.RumbleType.kRightRumble, speed);
+		return speed;
+	}
+
+	
 }
