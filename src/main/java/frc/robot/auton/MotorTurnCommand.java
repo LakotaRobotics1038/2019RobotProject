@@ -1,7 +1,9 @@
-package frc.robot;
+package frc.robot.auton;
 
 import edu.wpi.first.wpilibj.PIDController;
 import edu.wpi.first.wpilibj.command.PIDCommand;
+import frc.robot.robot.Encoder1038;
+import frc.robot.subsystems.DriveTrain;
 
 public class MotorTurnCommand extends PIDCommand {
 

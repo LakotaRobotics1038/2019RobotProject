@@ -1,7 +1,8 @@
-package frc.robot;
+package frc.robot.auton;
 
 import edu.wpi.first.wpilibj.PIDController;
 import edu.wpi.first.wpilibj.command.PIDCommand;
+import frc.robot.subsystems.DriveTrain;
 
 public class DriveStraightCommand extends PIDCommand {
 

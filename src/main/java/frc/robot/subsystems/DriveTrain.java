@@ -1,7 +1,9 @@
-package frc.robot;
+package frc.robot.subsystems;
 
 import edu.wpi.first.wpilibj.command.Subsystem;
 import edu.wpi.first.wpilibj.drive.DifferentialDrive;
+import frc.robot.robot.Encoder1038;
+import frc.robot.robot.Spark1038;
 
 public class DriveTrain extends Subsystem{
     public enum driveModes { tankDrive, singleArcadeDrive, dualArcadeDrive };
