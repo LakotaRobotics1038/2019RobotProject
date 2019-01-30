@@ -32,6 +32,7 @@ public class Robot extends TimedRobot {
   CameraServer PythonCamServer;
   VideoSink server;
   Joystick1038 Joystick1 = new Joystick1038(1);
+  
   public void robotInit() {
     //ports might have to be changed
     VisionCam = CameraServer.getInstance().startAutomaticCapture(0);
@@ -41,6 +42,7 @@ public class Robot extends TimedRobot {
     Mat image = new Mat();
   
   }
+
   void TeleopPeriodic(){
     //Switching the different cameras
     if (Joystick1.getRightTrigger() && !prevTrigger) {
@@ -52,11 +54,8 @@ public class Robot extends TimedRobot {
     }
     prevTrigger = Joystick1.getRightTrigger();
   }
-    
   
   public void operator() {
-  
 
-   
-}
+  }
 }
