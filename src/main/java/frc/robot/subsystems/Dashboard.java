@@ -7,8 +7,26 @@
 
 package frc.robot.subsystems;
 
+import org.junit.Ignore;
+
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+
 /**
  * Add your docs here.
  */
-public class Dashboard {
+public class Dashboard extends SmartDashboard {
+
+    private static Dashboard dashboard;
+
+    public static Dashboard getInstance() {
+		if (dashboard == null) {
+			System.out.println("Creating a new Dashboard");
+			dashboard = new Dashboard();
+		}
+		return dashboard;
+    }
+    
+    private Dashboard() {
+
+    }
 }
