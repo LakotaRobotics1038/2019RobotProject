@@ -7,8 +7,15 @@
 
 package frc.robot.subsystems;
 
+import edu.wpi.first.wpilibj.command.Subsystem;
+
 /**
  * Add your docs here.
  */
-public class Acquisition {
+public class Acquisition extends Subsystem {
+
+    @Override
+    protected void initDefaultCommand() {
+
+    }
 }
