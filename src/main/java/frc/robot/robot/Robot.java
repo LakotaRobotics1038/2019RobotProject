@@ -7,6 +7,8 @@
 
 package frc.robot.robot;
 
+import java.util.Map;
+
 import javax.lang.model.element.VariableElement;
 
 import org.opencv.core.Mat;
@@ -14,7 +16,10 @@ import org.opencv.imgproc.Imgproc;
 import edu.wpi.cscore.UsbCamera;
 import edu.wpi.cscore.VideoSink;
 import edu.wpi.first.cameraserver.CameraServer;
+import edu.wpi.first.networktables.NetworkTableEntry;
 import edu.wpi.first.wpilibj.TimedRobot;
+import edu.wpi.first.wpilibj.shuffleboard.BuiltInWidgets;
+import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.cscore.CvSink;
 import edu.wpi.cscore.CvSource;
 
@@ -33,26 +38,23 @@ public class Robot extends TimedRobot {
   CameraServer PythonCamServer;
   VideoSink server;
   Joystick1038 Joystick1 = new Joystick1038(1);
+  NetworkTableEntry example = Shuffleboard.getTab("My Tab").add("My Number", 0).withWidget(BuiltInWidgets.kNumberSlider).withProperties(Map.of("Min", -1, "Max", 2, "Block increment", 0.5)).getEntry();
+  NetworkTableEntry example2 = Shuffleboard.getTab("My Tab").add("My Dial", 10).withWidget(BuiltInWidgets.kDial).withProperties(Map.of("Min", 10, "Max", 110, "Show value", true)).getEntry();
 
   public void robotInit() {
-    // ports might have to be changed
-    VisionCam = CameraServer.getInstance().startAutomaticCapture(0);
-    PythonCam = CameraServer.getInstance().startAutomaticCapture(1);
-    server = CameraServer.getInstance().getServer();
-
-    Mat image = new Mat();
+    
   }
 
-  void TeleopPeriodic() {
-    // Switching the different cameras
-    if (Joystick1.getRightTrigger() && !prevTrigger) {
-      System.out.println("Setting PythonCam\n");
-      VisionCamServer.startAutomaticCapture(PythonCam);
-    } else if (!Joystick1.getRightTrigger() && prevTrigger) {
-      System.out.println("Setting VisionCam\n");
-      PythonCamServer.startAutomaticCapture(VisionCam);
-    }
-    prevTrigger = Joystick1.getRightTrigger();
+  public void teleopInit(){
+  }
+
+  public void teleopPeriodic() {
+    example.setNumber(2);
+    example2.setNumber(100);
+  }
+
+  public void driver(){
+
   }
 
   public void operator() {

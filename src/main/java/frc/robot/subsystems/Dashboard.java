@@ -7,15 +7,13 @@
 
 package frc.robot.subsystems;
 
-import org.junit.Ignore;
-
 import edu.wpi.first.wpilibj.command.Subsystem;
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;;
 
 /**
  * Add your docs here.
  */
-public class Dashboard extends Subsystem {
+public class Dashboard {
 
   private static Dashboard dashboard;
 
@@ -29,10 +27,5 @@ public class Dashboard extends Subsystem {
 
   private Dashboard() {
     //SmartDashboard.Method(something);
-  }
-
-  @Override
-  protected void initDefaultCommand() {
-
   }
 }

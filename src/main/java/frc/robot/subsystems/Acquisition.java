@@ -21,6 +21,7 @@ public class Acquisition extends PIDSubsystem{
     private final int HATCH_DROP = 0; //Placeholder
     private final int BALL_INTAKE_MOTOR_PORT = 5; //Placeholder
     private final int ACQUISITION_MOTOR_PORT = 6; //Placeholder
+    private boolean hasHatch = false;
     private Spark1038 ballIntake = new Spark1038(BALL_INTAKE_MOTOR_PORT);
     private Spark1038 acquisitionMotor = new Spark1038(ACQUISITION_MOTOR_PORT);
     private DoubleSolenoid hatchAcq = new DoubleSolenoid(HATCH_ACQ, HATCH_DROP); //Placeholder
@@ -56,11 +57,16 @@ public class Acquisition extends PIDSubsystem{
 
     @Override
     protected double returnPIDInput() {
-        return 0;
+        return acquisitionTilt.get();
     }
 
     @Override
     protected void usePIDOutput(double output) {
 
+    }
+
+    public void disable(){
+        super.disable();
+        acquisitionMotor.set(0);
     }
 }
