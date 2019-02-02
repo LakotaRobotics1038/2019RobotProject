@@ -6,3 +6,4 @@
     kevinCommit = commit --author=\"Kevin Roth <roth.m.kevin@gmail.com>\" -m
     samCommit = commit --author=\"Sam Burkhard <samryanburk@gmail.com>\" -m
     zachCommit = commit --author=\"Zach Simmons <zachary.j.simmons@gmail.com>\" -m
+    aaronCommit = commit --author=\"Aaron Ziegler <aaronziegler21@gmail.com>\" -m

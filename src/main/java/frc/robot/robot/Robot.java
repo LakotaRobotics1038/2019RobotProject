@@ -5,7 +5,7 @@
 /* the project.                                                               */
 /*----------------------------------------------------------------------------*/
 
-package frc.robot;
+package frc.robot.robot;
 
 import java.io.File;
 import java.io.IOException;
@@ -18,6 +18,7 @@ import edu.wpi.first.wpilibj.Relay;
 import edu.wpi.first.wpilibj.Spark;
 import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
+import frc.robot.subsystems.DriveTrain;
 import edu.wpi.first.wpilibj.Encoder;
 
 /**
@@ -120,7 +121,7 @@ public class Robot extends TimedRobot {
     //File autonCode = new File("/home/lvuser/autoncode/2019.02.02.093416EST.csv");
     
     System.out.println("Current Code: " + autonFile.getAbsolutePath()); // change autonFile to autonCode when uncommenting the above lines
-    autonInstructions = CSV.csv2table(autonFile);
+    autonInstructions = frc.robot.auton.CSV.csv2table(autonFile);
     startTime = System.currentTimeMillis();
     index = 0;
 
@@ -242,7 +243,7 @@ public class Robot extends TimedRobot {
       if (0 != newLine.compareTo(oldLine)) {
         System.out.println("Upadting file!");
         oldLine = newLine;
-        CSV.writeLine2csv(newLineArr, autonFile);
+        frc.robot.auton.CSV.writeLine2csv(newLineArr, autonFile);
 
       }
       printEncoders();  
@@ -263,9 +264,9 @@ public class Robot extends TimedRobot {
       relay.set(Relay.Value.kReverse);
       System.out.println("Updating file one last time!");
       String[] finalLine = { "" + (System.currentTimeMillis() - startTime), "" + 0, "" + 0 };
-      CSV.writeLine2csv(finalLine, autonFile);
+      frc.robot.auton.CSV.writeLine2csv(finalLine, autonFile);
       finalLine[0] = "" + Long.MAX_VALUE;
-      CSV.writeLine2csv(finalLine, autonFile);
+      frc.robot.auton.CSV.writeLine2csv(finalLine, autonFile);
     }
   }
   // Handle driver input

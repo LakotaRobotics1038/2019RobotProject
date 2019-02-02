@@ -1,31 +1,30 @@
-package frc.robot;
+package frc.robot.robot;
 
-import edu.wpi.first.wpilibj.GenericHID;
 import edu.wpi.first.wpilibj.Joystick;
 
-public class XboxJoystick1038 extends Joystick {
+public class Joystick1038 extends Joystick {
 
 	// Button Locations
-	private final int X_BUTTON = 3;
-	private final int A_BUTTON = 1;
-	private final int B_BUTTON = 2;
+	private final int X_BUTTON = 1;
+	private final int A_BUTTON = 2;
+	private final int B_BUTTON = 3;
 	private final int Y_BUTTON = 4;
 	private final int LEFT_BUTTON = 5;
 	private final int RIGHT_BUTTON = 6;
-	private final int SQUARE_BUTTON = 7;
-	private final int LINE_BUTTON = 8;
-	private final int LEFT_JOYSTICK_CLICK = 9;
-	private final int RIGHT_JOYSTICK_CLICK = 10;
+	private final int LEFT_TRIGGER = 7;
+	private final int RIGHT_TRIGER = 8;
+	private final int BACK_BUTTON = 9;
+	private final int START_BUTTON = 10;
+	private final int LEFT_JOYSTICK_CLICK = 11;
+	private final int RIGHT_JOYSTICK_CLICK = 12;
 
 	// Joystick locations
 	private final int LEFT_STICK_HORIZONTAL = 0;
 	private final int LEFT_STICK_VERTICAL = 1;
-	private final int RIGHT_STICK_HORIZONTAL = 4;
-	private final int RIGHT_STICK_VERTICAL = 5;
-	private final int LEFT_TRIGGER = 2;
-	private final int RIGHT_TRIGGER = 3;
+	private final int RIGHT_STICK_HORIZONTAL = 2;
+	private final int RIGHT_STICK_VERTICAL = 3;
 
-	public XboxJoystick1038(int port) {
+	public Joystick1038(int port) {
 		super(port);
 	}
 
@@ -84,12 +83,30 @@ public class XboxJoystick1038 extends Joystick {
 	}
 
 	/**
+	 * Returns the state of the left trigger on the controller
+	 * 
+	 * @return is the left trigger pressed
+	 */
+	public boolean getLeftTrigger() {
+		return getRawButton(LEFT_TRIGGER);
+	}
+
+	/**
+	 * Returns the state of the right trigger on the controller
+	 * 
+	 * @return is the right trigger pressed
+	 */
+	public boolean getRightTrigger() {
+		return getRawButton(RIGHT_TRIGER);
+	}
+
+	/**
 	 * Returns the state of the back button on the controller
 	 * 
 	 * @return is the back button pressed
 	 */
-	public boolean getSquareButton() {
-		return getRawButton(SQUARE_BUTTON);
+	public boolean getBackButton() {
+		return getRawButton(BACK_BUTTON);
 	}
 
 	/**
@@ -97,8 +114,8 @@ public class XboxJoystick1038 extends Joystick {
 	 * 
 	 * @return is the start button pressed
 	 */
-	public boolean getLineButton() {
-		return getRawButton(LINE_BUTTON);
+	public boolean getStartButton() {
+		return getRawButton(START_BUTTON);
 	}
 
 	/**
@@ -156,45 +173,4 @@ public class XboxJoystick1038 extends Joystick {
 	public double getRightJoystickHorizontal() {
 		return getRawAxis(RIGHT_STICK_HORIZONTAL);
 	}
-
-	/**
-	 * Returns the state of the left trigger on its axis
-	 * 
-	 * @return value of the left trigger axis
-	 */
-	public double getLeftTrigger() {
-		return getRawAxis(LEFT_TRIGGER);
-	}
-
-	/**
-	 * Returns the state of the right trigger on its axis
-	 * 
-	 * @return value of the right trigger axis
-	 */
-	public double getRightTrigger() {
-		return getRawAxis(RIGHT_TRIGGER);
-	}
-
-	/**
-	 * Sets the left rumble speed
-	 * 
-	 * @param speed the rumble speed between 0.0 and 1.0
-	 * @return the new speed
-	 */
-	public double setLeftRumble(double speed) {
-		setRumble(GenericHID.RumbleType.kLeftRumble, speed);
-		return speed;
-	}
-
-	/**
-	 * Sets the right rumble speed
-	 * 
-	 * @param speed the rumble speed between 0.0 and 1.0
-	 * @return the new speed
-	 */
-	public double setRightRumble(double speed) {
-		setRumble(GenericHID.RumbleType.kRightRumble, speed);
-		return speed;
-	}
-
 }
