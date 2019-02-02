@@ -43,6 +43,7 @@ public class Robot extends TimedRobot {
   CameraServer PythonCamServer;
   VideoSink server;
   Joystick1038 Joystick1 = new Joystick1038(1);
+  Spark1038 testMotor = new Spark1038(0);
   NetworkTableEntry example = Shuffleboard.getTab("My Tab").add("My Number", 0).withWidget(BuiltInWidgets.kNumberSlider).withProperties(Map.of("Min", -1, "Max", 2, "Block increment", 0.5)).getEntry();
   NetworkTableEntry example2 = Shuffleboard.getTab("My Tab").add("My Dial", 10).withWidget(BuiltInWidgets.kDial).withProperties(Map.of("Min", 10, "Max", 110, "Show value", true)).getEntry();
 
@@ -56,6 +57,19 @@ public class Robot extends TimedRobot {
   public void teleopPeriodic() {
     example.setNumber(2);
     example2.setNumber(100);
+    testMotor.set(0.5);
+  }
+
+  public void autonomousInit(){
+
+  }
+
+  public void autonomousPeriodic(){
+
+  }
+
+  public void disabledInit(){
+
   }
 
   public void driver(){
