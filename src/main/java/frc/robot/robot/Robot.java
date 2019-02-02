@@ -7,19 +7,11 @@
 
 package frc.robot.robot;
 
-import java.io.File;
-import java.io.IOException;
-import java.text.SimpleDateFormat;
-import java.util.Arrays;
-import java.util.Date;
-
-import edu.wpi.first.wpilibj.GenericHID;
-import edu.wpi.first.wpilibj.Relay;
-import edu.wpi.first.wpilibj.Spark;
+import edu.wpi.first.wpilibj.Compressor;
+import edu.wpi.first.wpilibj.DoubleSolenoid;
 import edu.wpi.first.wpilibj.TimedRobot;
-import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
+import frc.robot.auton.Auton;
 import frc.robot.subsystems.DriveTrain;
-import edu.wpi.first.wpilibj.Encoder;
 
 /**
  * The VM is configured to automatically run this class, and to call the
@@ -33,19 +25,14 @@ public class Robot extends TimedRobot {
   public static final String JOY_TEST = "joytest";
   public static final String RECORD = "record";
 
-  private SendableChooser<String> autonList;
-  private Object[][] autonInstructions;
-  private String fileNow;
-  private long startTime;
-  private File autonFile;
-  private String oldLine;
   private XboxJoystick1038 stick;
   private DriveTrain driveTrain;
   private String autonSelected;
-  private int index;
-  private double joystickPos1, joystickPos2;
-  private Relay relay;
-  private int mode;
+  private Auton auton;
+
+  public Compressor c;
+  public DoubleSolenoid a;
+  public DoubleSolenoid b;
   
 
   // Drive
@@ -66,22 +53,11 @@ public class Robot extends TimedRobot {
     // camera.setExposureManual(50);
     // camera.setFPS(30);
     // camera.setResolution(300, 200);
-    // autonList = new SendableChooser();
-    // autonList.addDefault("Pick a code", null);
-    // for (File file : new File("/home/lvuser/autoncode").listFiles()) {
-    //   if (!file.isDirectory()) {
-    //     autonList.addObject(file.getName(), file.getAbsolutePath());
-    //     System.out.println(file.getAbsolutePath());
-    //   }
-    // }
-    // SmartDashboard.putData("Auton Code", autonList);
 
     stick = new XboxJoystick1038(0);
-
-    // spark0 = new Spark1038(0);
-    // spark1 = new Spark1038(1);
-    relay = new Relay(1);
+    auton = new Auton(driveTrain, stick);
     autonSelected = RECORD;
+
   }
 
   /**
@@ -114,18 +90,8 @@ public class Robot extends TimedRobot {
    */
   @Override
   public void autonomousInit() {
-    mode = 1;
-    relay.set(Relay.Value.kForward);
     driveTrain.resetEncoder();
-    //File autonCode = new File(autonList.getSelected());
-    //File autonCode = new File("/home/lvuser/autoncode/2019.02.02.093416EST.csv");
-    
-    System.out.println("Current Code: " + autonFile.getAbsolutePath()); // change autonFile to autonCode when uncommenting the above lines
-    autonInstructions = frc.robot.auton.CSV.csv2table(autonFile);
-    startTime = System.currentTimeMillis();
-    index = 0;
-
-    // TODO: run autonomous from autonInstructions;
+    auton.playbackInit();
   }
 
   /**
@@ -134,55 +100,22 @@ public class Robot extends TimedRobot {
   @Override
   public void autonomousPeriodic() {
     switch (autonSelected) {
-      case RECORD:
-      long currentTime = System.currentTimeMillis() - startTime;
-      while (currentTime >= Long.parseLong((String)autonInstructions[index+1][0])) {
-        index++;
-      }
-      driveTrain.dualArcadeDrive(Double.parseDouble((String)autonInstructions[index][1]), Double.parseDouble((String)autonInstructions[index][2]));
-
-      printEncoders();
-      System.out.println(index);
-      System.out.println(autonInstructions.length);
-      if (index == autonInstructions.length - 2 ) {
-        relay.set(Relay.Value.kReverse);
-      }
+    case RECORD:
+      auton.playbackPeriodic();
       break;
     }
-    
+
   }
 
-  public void printEncoders() {
-    System.out.println(""+driveTrain.leftDriveEncoder.get()+","+driveTrain.rightDriveEncoder.get());
-  }
   /**
    * This function wasn't here before.
    */
   @Override
   public void teleopInit() {
-    mode = 2;
-    relay.set(Relay.Value.kForward);
-
-    
-    
     driveTrain.resetEncoder();
     switch (autonSelected) {
-
     case RECORD:
-      fileNow = "/home/lvuser/autoncode/" + new SimpleDateFormat("yyyy.MM.dd.HHmmsszzz").format(new Date()) + ".csv";
-      startTime = System.currentTimeMillis();
-      autonFile = new File(fileNow);
-      oldLine = "";
-      try {
-        System.out.println("Created file " + autonFile.getAbsolutePath());
-        autonFile.createNewFile();
-      } catch (IOException e) {
-        System.out.println("IOException.");
-        System.out.println(e + e.getMessage());
-        e.printStackTrace();
-        System.out.println(fileNow);
-      }
-      
+      auton.recordInit();
       break;
     }
   } // TODO: make methods that run in less than 20 milliseconds to fix the screaming
@@ -195,59 +128,9 @@ public class Robot extends TimedRobot {
   public void teleopPeriodic() {
     switch (autonSelected) {
     case JOY_TEST:
-      System.out.println("\n\n\n\n\n\n\n");
-      String s = "Buttons: ";
-      if (stick.getAButton())
-        s += "A";
-      if (stick.getBButton())
-        s += "B";
-      if (stick.getYButton())
-        s += "Y";
-      if (stick.getXButton())
-        s += "X";
-      if (stick.getLeftButton())
-        s += "Lb";
-      if (stick.getRightButton())
-        s += "Rb";
-      if (stick.getSquareButton())
-        s += "Sqr";
-      if (stick.getLineButton())
-        s += "Ln";
-      if (stick.getLeftJoystickClick())
-        s += "Lclk";
-      if (stick.getRightJoystickClick())
-        s += "Rclk";
-      System.out.println(s);
-      System.out.println("LeftJoystickVertical: " + stick.getLeftJoystickVertical() + "RightJoystickVertical: "
-          + stick.getRightJoystickVertical() + "LeftJoystickHorizontal: " + stick.getLeftJoystickHorizontal()
-          + "RightJoystickHorizontal: " + stick.getRightJoystickHorizontal() + "LeftTrigger: "
-          + stick.getLeftTrigger() + "RightTrigger: " + stick.getRightTrigger());
-          System.out.println(stick.getPOV());
-
       break;
     case RECORD:
-      joystickPos1 = stick.getLeftJoystickVertical();
-      joystickPos2 = stick.getRightJoystickHorizontal();
-
-      // spark0.setSpeed(joystickPos1 * .5);
-      // spark1.setSpeed(joystickPos2 * .5);
-      driveTrain.dualArcadeDrive(joystickPos1, joystickPos2);
-
-      Object[] newLineArr = { System.currentTimeMillis() - startTime, joystickPos1, joystickPos2 };
-      // Object[] newLineArr = {System.currentTimeMillis() - startTime,
-      // spark0.getSpeed(), spark1.getSpeed()};
-      System.out.println(Arrays.toString(newLineArr));
-
-      String newLine = combine(Arrays.copyOfRange(newLineArr, 1, newLineArr.length));
-      
-      if (0 != newLine.compareTo(oldLine)) {
-        System.out.println("Upadting file!");
-        oldLine = newLine;
-        frc.robot.auton.CSV.writeLine2csv(newLineArr, autonFile);
-
-      }
-      printEncoders();  
-
+      auton.recordPeriodic();
       break;
     /*
      * driver(); if (driverJoystick.getStartButton() != previousStartButtonState &&
@@ -260,15 +143,9 @@ public class Robot extends TimedRobot {
   }
 
   public void disabledInit() {
-    if (mode == 2) {
-      relay.set(Relay.Value.kReverse);
-      System.out.println("Updating file one last time!");
-      String[] finalLine = { "" + (System.currentTimeMillis() - startTime), "" + 0, "" + 0 };
-      frc.robot.auton.CSV.writeLine2csv(finalLine, autonFile);
-      finalLine[0] = "" + Long.MAX_VALUE;
-      frc.robot.auton.CSV.writeLine2csv(finalLine, autonFile);
-    }
+    auton.disabledInit();
   }
+
   // Handle driver input
   public void driver() {
 
@@ -294,13 +171,4 @@ public class Robot extends TimedRobot {
     System.out.println("Get out of Test");
   }
 
-  public static String combine(Object[] arr) {
-    String ret = "";
-    for (int i = 0; i < arr.length; i++) {
-      ret += arr[i].toString();
-      if (i != arr.length - 1)
-        ret += ",";
-    }
-    return ret;
-  }
 }
