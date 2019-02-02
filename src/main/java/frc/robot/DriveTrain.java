@@ -7,9 +7,9 @@ public class DriveTrain {
 	public driveModes currentDriveMode = driveModes.tankDrive;
     
 	private final int LEFT_ENCODER_CHANNEL_A = 0;
-	private final int RIGHT_ENCODER_CHANNEL_A = 1;
-	private final int LEFT_ENCODER_CHANNEL_B = 3;
-	private final int RIGHT_ENCODER_CHANNEL_B = 2;
+	private final int RIGHT_ENCODER_CHANNEL_A = 2;
+	private final int LEFT_ENCODER_CHANNEL_B = 1;
+	private final int RIGHT_ENCODER_CHANNEL_B = 3;
 	public final int ENCODER_COUNTS_PER_REV = 205;
     public final double WHEEL_DIAMETER = 6;
 
@@ -18,8 +18,8 @@ public class DriveTrain {
 	public Spark1038 leftDrive1 = new Spark1038(LEFT_DRIVE_PORT);
 	public Spark1038 rightDrive1 = new Spark1038(RIGHT_DRIVE_PORT);
 	
-	private Encoder1038 leftDriveEncoder = new Encoder1038(LEFT_ENCODER_CHANNEL_A, LEFT_ENCODER_CHANNEL_B, false, ENCODER_COUNTS_PER_REV, WHEEL_DIAMETER);
-	private Encoder1038 rightDriveEncoder = new Encoder1038(RIGHT_ENCODER_CHANNEL_A, RIGHT_ENCODER_CHANNEL_B, false, ENCODER_COUNTS_PER_REV, WHEEL_DIAMETER);
+	public Encoder1038 leftDriveEncoder = new Encoder1038(LEFT_ENCODER_CHANNEL_A, LEFT_ENCODER_CHANNEL_B, false, ENCODER_COUNTS_PER_REV, WHEEL_DIAMETER);
+	public Encoder1038 rightDriveEncoder = new Encoder1038(RIGHT_ENCODER_CHANNEL_A, RIGHT_ENCODER_CHANNEL_B, false, ENCODER_COUNTS_PER_REV, WHEEL_DIAMETER);
 
 	private DifferentialDrive differentialDrive;
     private static DriveTrain driveTrain;

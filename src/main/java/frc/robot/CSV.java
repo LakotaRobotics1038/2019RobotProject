@@ -70,19 +70,20 @@ public class CSV {
 		}
     }
 
+
     public static void writeLine2csv(Object[] line, File f) {
         try {
 			FileWriter fWrite = new FileWriter(f, true);
 			BufferedWriter fWriteBuff = new BufferedWriter(fWrite);
 			
 				for (int j=0; j<line.length; j++) {
-					fWriteBuff.write((String)line[j]);
+					fWriteBuff.write(""+line[j]);
 					if (j!=line.length-1) {
 						fWriteBuff.write(",");
 					}
 				}
 				
-			
+			fWriteBuff.newLine();
 			fWriteBuff.close();
 			fWrite.close();
 		} catch (IOException e) {
