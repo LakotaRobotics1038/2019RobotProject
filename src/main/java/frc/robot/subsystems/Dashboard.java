@@ -7,14 +7,12 @@
 
 package frc.robot.subsystems;
 
-import org.junit.Ignore;
-
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
 /**
  * Add your docs here.
  */
-public class Dashboard extends SmartDashboard {
+public class Dashboard {
 
     private static Dashboard dashboard;
 
@@ -27,6 +25,6 @@ public class Dashboard extends SmartDashboard {
     }
     
     private Dashboard() {
-
+      //SmartDashboard.Method(something);
     }
 }
