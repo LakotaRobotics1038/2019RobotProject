@@ -82,6 +82,10 @@ public class Scoring extends PIDSubsystem {
         return fourBarEncoder.get();
     }
 
+    public double getScoringSpeed(){
+        return fourBarEncoder.getRate();
+    }
+
     public void scoringPeriodic(){
         if(scoringPID.isEnabled()){
             double PIDVal = scoringPID.get();
@@ -93,6 +97,16 @@ public class Scoring extends PIDSubsystem {
         if(sledPID.isEnabled()){
             double PIDVal = sledPID.get();
             usePIDOutput(PIDVal);
+        }
+    }
+
+    public boolean isGoingDown(int newSetpoint){
+        if(getSetpoint() > newSetpoint){
+            System.out.println("Going down");
+            return true;
+        } else{
+            System.out.println("Going up");
+            return false;
         }
     }
 
@@ -115,6 +129,18 @@ public class Scoring extends PIDSubsystem {
     public void resetEncoder(){
         fourBarEncoder.reset();
     }
+    
+    public void move(double joystickValue){
+        if(getSetpoint() <= SCORING_LVL3 && joystickValue > 0.09){
+            scoringPID.setPID(P_UP, I_UP, D_UP);
+            enable();
+            setSetpoint(getSetpoint() + 2);
+        } else if(getSetpoint() > 0 && joystickValue < -0.09){
+            scoringPID.setPID(P_DOWN, I_DOWN, D_DOWN); //Check if should be up or down
+            enable();
+            setSetpoint(getSetpoint() - 2);
+        }
+    }
 
     @Override
     protected void initDefaultCommand() {
@@ -129,5 +155,11 @@ public class Scoring extends PIDSubsystem {
     @Override
     protected void usePIDOutput(double output) {
 
+    }
+
+    @Override
+    public void disable(){
+        super.disable();
+        fourBarMotor.set(0);
     }
 }
