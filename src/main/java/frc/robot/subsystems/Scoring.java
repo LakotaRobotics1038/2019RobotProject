@@ -48,7 +48,7 @@ public class Scoring extends PIDSubsystem {
     private final int fourBarChannelB = 1; // Placeholder
     private final int fourBarCountsPerRev = 220; // Placeholder
     private Spark1038 fourBarMotor = new Spark1038(0); // Placeholder
-    private Encoder1038 fourBarEncoder = new Encoder1038(fourBarChannelA, fourBarChannelB, false, fourBarCountsPerRev, 6);
+    private Encoder1038 fourBarEncoder = new Encoder1038(fourBarChannelA, fourBarChannelB, false, fourBarCountsPerRev, 6); //Placeholder
     private Spark1038 sledMotor = new Spark1038(1); // Placeholder
     private Prox bottomProx = new Prox(PROX_PORT); // Placeholder
     private PIDController scoringPID = getPIDController();
@@ -74,69 +74,69 @@ public class Scoring extends PIDSubsystem {
         sledMotor.setInverted(false); // Placeholder
     }
 
-    public boolean getBottomProx(){
+    public boolean getBottomProx() {
         return bottomProx.get();
     }
 
-    public int getEncoderCount(){
+    public int getEncoderCount() {
         return fourBarEncoder.get();
     }
 
-    public double getScoringSpeed(){
+    public double getScoringSpeed() {
         return fourBarEncoder.getRate();
     }
 
-    public void scoringPeriodic(){
-        if(scoringPID.isEnabled()){
+    public void scoringPeriodic() {
+        if (scoringPID.isEnabled()) {
             double PIDVal = scoringPID.get();
             usePIDOutput(PIDVal);
         }
     }
 
-    public void sledPeriodic(){
-        if(sledPID.isEnabled()){
+    public void sledPeriodic() {
+        if (sledPID.isEnabled()) {
             double PIDVal = sledPID.get();
             usePIDOutput(PIDVal);
         }
     }
 
-    public boolean isGoingDown(int newSetpoint){
-        if(getSetpoint() > newSetpoint){
+    public boolean isGoingDown(int newSetpoint) {
+        if (getSetpoint() > newSetpoint) {
             System.out.println("Going down");
             return true;
-        } else{
+        } else {
             System.out.println("Going up");
             return false;
         }
     }
 
-    public void moveToLvl3(){
+    public void moveToLvl3() {
 
     }
 
-    public void moveToLvl2(){
-        
+    public void moveToLvl2() {
+
     }
 
-    public void moveToLvl1(){
-        
+    public void moveToLvl1() {
+
     }
 
-    public void moveToFloor(){
-        
+    public void moveToFloor() {
+
     }
 
-    public void resetEncoder(){
+    public void resetEncoder() {
         fourBarEncoder.reset();
     }
-    
-    public void move(double joystickValue){
-        if(getSetpoint() <= SCORING_LVL3 && joystickValue > 0.09){
+
+    public void move(double joystickValue) {
+        if (getSetpoint() <= SCORING_LVL3 && joystickValue > 0.09) {
             scoringPID.setPID(P_UP, I_UP, D_UP);
             enable();
             setSetpoint(getSetpoint() + 2);
-        } else if(getSetpoint() > 0 && joystickValue < -0.09){
-            scoringPID.setPID(P_DOWN, I_DOWN, D_DOWN); //Check if should be up or down
+        } else if (getSetpoint() > 0 && joystickValue < -0.09) {
+            scoringPID.setPID(P_DOWN, I_DOWN, D_DOWN); // Check if should be up or down
             enable();
             setSetpoint(getSetpoint() - 2);
         }
@@ -158,7 +158,7 @@ public class Scoring extends PIDSubsystem {
     }
 
     @Override
-    public void disable(){
+    public void disable() {
         super.disable();
         fourBarMotor.set(0);
     }
