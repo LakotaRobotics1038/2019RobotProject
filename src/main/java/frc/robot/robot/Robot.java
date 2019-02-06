@@ -7,11 +7,26 @@
 
 package frc.robot.robot;
 
-import edu.wpi.first.wpilibj.Compressor;
-import edu.wpi.first.wpilibj.DoubleSolenoid;
+import java.util.Map;
+
+import javax.lang.model.element.VariableElement;
+
+import org.opencv.core.Mat;
+import org.opencv.imgproc.Imgproc;
+import edu.wpi.cscore.UsbCamera;
+import edu.wpi.cscore.VideoSink;
+import edu.wpi.first.cameraserver.CameraServer;
+import edu.wpi.first.networktables.NetworkTableEntry;
+import edu.wpi.first.wpilibj.Sendable;
 import edu.wpi.first.wpilibj.TimedRobot;
-import frc.robot.auton.Auton;
+import edu.wpi.first.wpilibj.shuffleboard.BuiltInWidgets;
+import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+import frc.robot.subsystems.Acquisition;
 import frc.robot.subsystems.DriveTrain;
+import frc.robot.subsystems.Scoring;
+import edu.wpi.cscore.CvSink;
+import edu.wpi.cscore.CvSource;
 
 /**
  * The VM is configured to automatically run this class, and to call the
@@ -21,6 +36,14 @@ import frc.robot.subsystems.DriveTrain;
  * project.
  */
 public class Robot extends TimedRobot {
+
+  // Rename cameras to more fun names
+  UsbCamera VisionCam;
+  boolean prevTrigger = false;
+  CameraServer VisionCamServer;
+  VideoSink server;
+  Joystick1038 Joystick1 = new Joystick1038(1);
+  Spark1038 testMotor = new Spark1038(0);
 
   public static final String JOY_TEST = "joytest";
   public static final String RECORD = "record";
@@ -48,62 +71,29 @@ public class Robot extends TimedRobot {
    */
   @Override
   public void robotInit() {
-    // UsbCamera camera = CameraServer.getInstance().startAutomaticCapture();
-    driveTrain = DriveTrain.getInstance();
-    // camera.setExposureManual(50);
-    // camera.setFPS(30);
-    // camera.setResolution(300, 200);
+    
+  }
 
-    stick = new XboxJoystick1038(0);
-    auton = new Auton(driveTrain, stick);
-    autonSelected = RECORD;
+  public void teleopInit(){
+  }
+
+  public void teleopPeriodic() {
+    
+  }
+
+  public void autonomousInit(){
 
   }
 
-  /**
-   * This function is called every robot packet, no matter the mode. Use this for
-   * items like diagnostics that you want ran during disabled, autonomous,
-   * teleoperated and test.
-   *
-   * <p>
-   * This runs after the mode specific periodic functions, but before LiveWindow
-   * and SmartDashboard integrated updating.
-   */
-  @Override
-  public void robotPeriodic() {
-    // if (driverJoystick.getXButton()) {
-    // System.out.println("X button");
-    // }
+  public void autonomousPeriodic(){
+
   }
 
-  /**
-   * This autonomous (along with the chooser code above) shows how to select
-   * between different autonomous modes using the dashboard. The sendable chooser
-   * code works with the Java SmartDashboard. If you prefer the LabVIEW Dashboard,
-   * remove all of the chooser code and uncomment the getString line to get the
-   * auto name from the text box below the Gyro
-   *
-   * <p>
-   * You can add additional auto modes by adding additional comparisons to the
-   * switch structure below with additional strings. If using the SendableChooser
-   * make sure to add them to the chooser code above as well.
-   */
-  @Override
-  public void autonomousInit() {
-    driveTrain.resetEncoder();
-    auton.playbackInit();
+  public void disabledInit(){
+
   }
 
-  /**
-   * This function is called periodically during autonomous.
-   */
-  @Override
-  public void autonomousPeriodic() {
-    switch (autonSelected) {
-    case RECORD:
-      auton.playbackPeriodic();
-      break;
-    }
+  public void driver(){
 
   }
 

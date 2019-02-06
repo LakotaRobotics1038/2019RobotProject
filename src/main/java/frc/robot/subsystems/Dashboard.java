@@ -7,24 +7,25 @@
 
 package frc.robot.subsystems;
 
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+import edu.wpi.first.wpilibj.command.Subsystem;
+import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 
 /**
  * Add your docs here.
  */
 public class Dashboard {
 
-    private static Dashboard dashboard;
+  private static Dashboard dashboard;
 
-    public static Dashboard getInstance() {
-		if (dashboard == null) {
-			System.out.println("Creating a new Dashboard");
-			dashboard = new Dashboard();
-		}
-		return dashboard;
+  public static Dashboard getInstance() {
+    if (dashboard == null) {
+      System.out.println("Creating a new Dashboard");
+      dashboard = new Dashboard();
     }
-    
-    private Dashboard() {
-      //SmartDashboard.Method(something);
-    }
+    return dashboard;
+  }
+
+  private Dashboard() {
+    //SmartDashboard.Method(something);
+  }
 }
