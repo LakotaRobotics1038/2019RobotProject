@@ -28,6 +28,7 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import frc.robot.auton.Auton;
 import frc.robot.auton.TurnMotorPID;
 import frc.robot.subsystems.Acquisition;
+import frc.robot.subsystems.Dashboard;
 import frc.robot.subsystems.DriveTrain;
 import frc.robot.subsystems.Scoring;
 import edu.wpi.cscore.CvSink;
@@ -68,7 +69,15 @@ public class Robot extends TimedRobot {
   // Joystick
   private XboxJoystick1038 driverJoystick = new XboxJoystick1038(0);
   public boolean previousStartButtonState = driverJoystick.getLineButton();
+
+  //Dashboard
   Scheduler schedule = Scheduler.getInstance();
+  Dashboard dashboard = Dashboard.getInstance();
+  private double P;
+  private double I;
+  private double D;
+  private double setpoint;
+
 
   /**
    * This function is run when the robot is first started up and should be used
@@ -80,7 +89,6 @@ public class Robot extends TimedRobot {
   }
 
   public void teleopInit() {
-    schedule.add(new TurnMotorPID(setpoint, P, I, D))
   }
 
   public void teleopPeriodic() {
@@ -89,11 +97,16 @@ public class Robot extends TimedRobot {
   }
 
   public void autonomousInit() {
+    P = SmartDashboard.getNumber("PVal", -1);
+    I = SmartDashboard.getNumber("IVal", -1);
+    D = SmartDashboard.getNumber("DVal", -1);
+    setpoint = SmartDashboard.getNumber("Setpoint", -1);
+    schedule.add(new TurnMotorPID(setpoint, P, I, D));
 
   }
 
   public void autonomousPeriodic() {
-
+    schedule.run();
   }
 
   public void disabledInit() {
