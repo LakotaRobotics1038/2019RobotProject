@@ -7,8 +7,11 @@
 
 package frc.robot.subsystems;
 
+import javax.swing.text.StyleContext.SmallAttributeSet;
+
 import edu.wpi.first.wpilibj.command.Subsystem;
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
 /**
  * Add your docs here.
@@ -27,5 +30,6 @@ public class Dashboard {
 
   private Dashboard() {
     //SmartDashboard.Method(something);
+    
   }
 }

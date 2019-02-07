@@ -17,11 +17,16 @@ import edu.wpi.cscore.UsbCamera;
 import edu.wpi.cscore.VideoSink;
 import edu.wpi.first.cameraserver.CameraServer;
 import edu.wpi.first.networktables.NetworkTableEntry;
+import edu.wpi.first.wpilibj.Compressor;
+import edu.wpi.first.wpilibj.DoubleSolenoid;
 import edu.wpi.first.wpilibj.Sendable;
 import edu.wpi.first.wpilibj.TimedRobot;
+import edu.wpi.first.wpilibj.command.Scheduler;
 import edu.wpi.first.wpilibj.shuffleboard.BuiltInWidgets;
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+import frc.robot.auton.Auton;
+import frc.robot.auton.TurnMotorPID;
 import frc.robot.subsystems.Acquisition;
 import frc.robot.subsystems.DriveTrain;
 import frc.robot.subsystems.Scoring;
@@ -43,7 +48,7 @@ public class Robot extends TimedRobot {
   CameraServer VisionCamServer;
   VideoSink server;
   Joystick1038 Joystick1 = new Joystick1038(1);
-  Spark1038 testMotor = new Spark1038(0);
+  //Encoder1038 testEncoder = new Encoder1038(0, 1, false, 497, 2);
 
   public static final String JOY_TEST = "joytest";
   public static final String RECORD = "record";
@@ -56,7 +61,6 @@ public class Robot extends TimedRobot {
   public Compressor c;
   public DoubleSolenoid a;
   public DoubleSolenoid b;
-  
 
   // Drive
   public static DriveTrain robotDrive = DriveTrain.getInstance();
@@ -64,6 +68,7 @@ public class Robot extends TimedRobot {
   // Joystick
   private XboxJoystick1038 driverJoystick = new XboxJoystick1038(0);
   public boolean previousStartButtonState = driverJoystick.getLineButton();
+  Scheduler schedule = Scheduler.getInstance();
 
   /**
    * This function is run when the robot is first started up and should be used
@@ -71,69 +76,28 @@ public class Robot extends TimedRobot {
    */
   @Override
   public void robotInit() {
-    
-  }
-
-  public void teleopInit(){
-  }
-
-  public void teleopPeriodic() {
-    
-  }
-
-  public void autonomousInit(){
 
   }
 
-  public void autonomousPeriodic(){
-
-  }
-
-  public void disabledInit(){
-
-  }
-
-  public void driver(){
-
-  }
-
-  /**
-   * This function wasn't here before.
-   */
-  @Override
   public void teleopInit() {
-    driveTrain.resetEncoder();
-    switch (autonSelected) {
-    case RECORD:
-      auton.recordInit();
-      break;
-    }
-  } // TODO: make methods that run in less than 20 milliseconds to fix the screaming
-    // differential drive
+    schedule.add(new TurnMotorPID(setpoint, P, I, D))
+  }
 
-  /**
-   * This function is called periodically during operator control.
-   */
-  @Override
   public void teleopPeriodic() {
-    switch (autonSelected) {
-    case JOY_TEST:
-      break;
-    case RECORD:
-      auton.recordPeriodic();
-      break;
-    /*
-     * driver(); if (driverJoystick.getStartButton() != previousStartButtonState &&
-     * previousStartButtonState == false) { robotDrive.driveModeToggler(); }
-     * previousStartButtonState = driverJoystick.getStartButton();
-     * System.out.println(driverJoystick.getStartButton());
-     * System.out.println(robotDrive.currentDriveMode);
-     */ // what is all this
-    }
+    //robotDrive.tankDrive(0, 0.7);
+    //System.out.println(robotDrive.leftDriveEncoder.get());
+  }
+
+  public void autonomousInit() {
+
+  }
+
+  public void autonomousPeriodic() {
+
   }
 
   public void disabledInit() {
-    auton.disabledInit();
+
   }
 
   // Handle driver input
