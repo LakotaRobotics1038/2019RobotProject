@@ -72,12 +72,19 @@ public class Robot extends TimedRobot {
 
   //Dashboard
   Scheduler schedule = Scheduler.getInstance();
-  Dashboard dashboard = Dashboard.getInstance();
-  private double P;
-  private double I;
-  private double D;
-  private double setpoint;
-
+  Dashboard dashboard;
+  private static double P;
+  private static double PPast;
+  public static double PCurrent;
+  private static double I;
+  private static double IPast;
+  public static double ICurrent;
+  private static double D;
+  private static double DPast;
+  public static double DCurrent;
+  private static double setpoint;
+  private static double setpointPast;
+  public static double setpointCurrent;
 
   /**
    * This function is run when the robot is first started up and should be used
@@ -97,6 +104,7 @@ public class Robot extends TimedRobot {
   }
 
   public void autonomousInit() {
+    dashboard = Dashboard.getInstance();
     P = SmartDashboard.getNumber("PVal", -1);
     I = SmartDashboard.getNumber("IVal", -1);
     D = SmartDashboard.getNumber("DVal", -1);
@@ -106,7 +114,24 @@ public class Robot extends TimedRobot {
   }
 
   public void autonomousPeriodic() {
+    PCurrent = SmartDashboard.getNumber("PVal", -1);
+    ICurrent = SmartDashboard.getNumber("IVal", -1);
+    DCurrent = SmartDashboard.getNumber("DVal", -1);
+    setpointCurrent = SmartDashboard.getNumber("Setpoint", -1);
+    dashboard.update();
+
+    System.out.println(PCurrent + ", " + ICurrent + ", " + DCurrent + ", " + setpointCurrent);
+
     schedule.run();
+    if(PCurrent != PPast ||ICurrent != IPast || DCurrent != DPast || setpointCurrent != setpointPast){
+      schedule.removeAll();
+      schedule.add(new TurnMotorPID(setpointCurrent, PCurrent, ICurrent, DCurrent));
+    }
+
+    PPast = PCurrent;
+    IPast = ICurrent;
+    DPast = DCurrent;
+    setpointPast = setpointCurrent;
   }
 
   public void disabledInit() {

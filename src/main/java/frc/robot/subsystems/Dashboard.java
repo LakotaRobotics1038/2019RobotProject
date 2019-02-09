@@ -13,6 +13,7 @@ import edu.wpi.first.wpilibj.command.Subsystem;
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+import frc.robot.robot.Robot;
 
 /**
  * Add your docs here.
@@ -32,12 +33,23 @@ public class Dashboard{
   private Dashboard() {
     //SmartDashboard.Method(something);
     SmartDashboard.putNumber("PVal", 0);
+    System.out.println("Put PVal");
     SmartDashboard.putNumber("IVal", 0);
+    System.out.println("Put IVal");
     SmartDashboard.putNumber("DVal", 0);
-    SmartDashboard.putNumber("Setpoint", 0);
+    System.out.println("Put DVal");
+    SmartDashboard.putNumber("Setpoint", 100);
+    System.out.println("Put Setpoint");
   }
 
   public void update(){
-
+    SmartDashboard.putNumber("PVal", Robot.PCurrent);
+    System.out.println("Put PVal");
+    SmartDashboard.putNumber("IVal", Robot.ICurrent);
+    System.out.println("Put IVal");
+    SmartDashboard.putNumber("DVal", Robot.DCurrent);
+    System.out.println("Put DVal");
+    SmartDashboard.putNumber("Setpoint", Robot.setpointCurrent);
+    System.out.println("Put Setpoint");
   }
 }

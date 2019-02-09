@@ -25,13 +25,21 @@ public class TurnMotorPID extends PIDCommand {
     }
 
     @Override
+    protected void initialize() {
+        System.out.println("Created new TurnMotorPID");
+    }
+
+    @Override
     protected void execute() {
         turnPID.enable();
+        System.out.println(turnPID.get());
+        this.usePIDOutput(turnPID.get());
     }
     
     @Override
     protected void end(){
         turnPID.reset();
+        System.out.println("Destroyed TurnMotorPID" + " Ended at: " + robotDrive.leftDriveEncoder.get());
     }
 
     @Override
