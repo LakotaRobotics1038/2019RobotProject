@@ -43,13 +43,13 @@ public class Dashboard{
   }
 
   public void update(){
-    SmartDashboard.putNumber("PVal", Robot.PCurrent);
+    SmartDashboard.putNumber("PVal", SmartDashboard.getNumber("PVal", -1));
     System.out.println("Put PVal");
-    SmartDashboard.putNumber("IVal", Robot.ICurrent);
+    SmartDashboard.putNumber("IVal", SmartDashboard.getNumber("IVal", -1));
     System.out.println("Put IVal");
-    SmartDashboard.putNumber("DVal", Robot.DCurrent);
+    SmartDashboard.putNumber("DVal", SmartDashboard.getNumber("DVal", -1));
     System.out.println("Put DVal");
-    SmartDashboard.putNumber("Setpoint", Robot.setpointCurrent);
+    SmartDashboard.putNumber("Setpoint", SmartDashboard.getNumber("Setpoint", -1));
     System.out.println("Put Setpoint");
   }
 }
