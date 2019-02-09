@@ -7,13 +7,12 @@
 
 package frc.robot.subsystems;
 
-import edu.wpi.first.wpilibj.command.Subsystem;
-import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
 /**
  * Add your docs here.
  */
-public class Dashboard {
+public class Dashboard{
 
   private static Dashboard dashboard;
 
@@ -27,5 +26,16 @@ public class Dashboard {
 
   private Dashboard() {
     //SmartDashboard.Method(something);
+    SmartDashboard.putNumber("PVal", 0);
+    SmartDashboard.putNumber("IVal", 0);
+    SmartDashboard.putNumber("DVal", 0);
+    SmartDashboard.putNumber("Setpoint", 100);
+  }
+
+  public void update(){
+    SmartDashboard.putNumber("PVal", SmartDashboard.getNumber("PVal", -1));
+    SmartDashboard.putNumber("IVal", SmartDashboard.getNumber("IVal", -1));
+    SmartDashboard.putNumber("DVal", SmartDashboard.getNumber("DVal", -1));
+    SmartDashboard.putNumber("Setpoint", SmartDashboard.getNumber("Setpoint", -1));
   }
 }
