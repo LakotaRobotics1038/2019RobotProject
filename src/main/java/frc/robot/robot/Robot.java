@@ -50,27 +50,6 @@ public class Robot extends TimedRobot {
   CameraServer VisionCamServer;
   VideoSink server;
   Joystick1038 Joystick1 = new Joystick1038(1);
-<<<<<<< HEAD
-  
-  public void robotInit() {
-    //ports might have to be changed
-    VisionCam = CameraServer.getInstance().startAutomaticCapture(0);
-    PythonCam = CameraServer.getInstance().startAutomaticCapture(1);
-    server = CameraServer.getInstance().getServer();
-
-    Mat image = new Mat();
-  
-  }
-
-  void TeleopPeriodic(){
-    //Switching the different cameras
-    if (Joystick1.getRightTrigger() && !prevTrigger) {
-      System.out.println("Setting PythonCam\n");
-      VisionCamServer.startAutomaticCapture(PythonCam);
-    } else if (!Joystick1.getRightTrigger() && prevTrigger) {
-      System.out.println("Setting VisionCam\n");
-      PythonCamServer.startAutomaticCapture(VisionCam);
-=======
   //Encoder1038 testEncoder = new Encoder1038(0, 1, false, 497, 2);
 
   public static final String JOY_TEST = "joytest";
@@ -135,16 +114,12 @@ public class Robot extends TimedRobot {
       robotDrive.singleAracadeDrive(driverJoystick.getLeftJoystickVertical(),
           driverJoystick.getLeftJoystickHorizontal());
       break;
->>>>>>> 0833cd895db0b3c826be6d30432b42472a98cddd
     }
   }
-<<<<<<< HEAD
   
   public void operator() {
 
   }
-}
-=======
 
   /**
    * This function is called periodically during test mode.
@@ -154,4 +129,3 @@ public class Robot extends TimedRobot {
   }
 
 }
->>>>>>> 0833cd895db0b3c826be6d30432b42472a98cddd
