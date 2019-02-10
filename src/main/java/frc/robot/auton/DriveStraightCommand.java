@@ -17,7 +17,6 @@ public class DriveStraightCommand extends PIDCommand {
 
     public DriveStraightCommand(double setpoint){
         super(dP, dI, dD);
-        requires(drive);
         setSetpoint(setpoint);
         rightDrivePID.setAbsoluteTolerance(TOLERANCE);
         rightDrivePID.setOutputRange(-MAX_OUTPUT, MAX_OUTPUT);
@@ -25,6 +24,7 @@ public class DriveStraightCommand extends PIDCommand {
         leftDrivePID.setAbsoluteTolerance(TOLERANCE);
         leftDrivePID.setOutputRange(-MAX_OUTPUT, MAX_OUTPUT);
         leftDrivePID.setContinuous(false);
+        requires(drive);
     }
 
     public void initialize(){

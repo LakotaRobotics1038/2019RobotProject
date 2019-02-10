@@ -7,6 +7,4 @@ public class CANSpark1038 extends CANSparkMax {
     public CANSpark1038(int id) {
         super(id, CANSparkMaxLowLevel.MotorType.kBrushless);
     }
-
-    
 }
