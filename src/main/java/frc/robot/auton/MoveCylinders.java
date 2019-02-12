@@ -14,8 +14,8 @@ public class MoveCylinders extends Command {
     private int frontElevation; //set to laser value
     private int backElevation; //set to laser value
     private int setpoint;
-    private int upSetpoint = 20; // Placeholder
-    private int downSetpoint = 5; // Placeholder
+    private int upSetpoint = 5; // Placeholder
+    private int downSetpoint = 20; // Placeholder
     public Value setPosition;
     private Endgame endgame = Endgame.getInstance();
     private boolean moveFront;
@@ -72,9 +72,9 @@ public class MoveCylinders extends Command {
             }
         case down:
             if (moveFront) {
-                return frontElevation < downSetpoint;
+                return frontElevation > downSetpoint;
             } else {
-                return backElevation < downSetpoint;
+                return backElevation > downSetpoint;
             }
         }
         return false;
