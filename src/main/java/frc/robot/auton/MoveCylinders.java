@@ -46,16 +46,16 @@ public class MoveCylinders extends Command {
         switch (setPosition) {
         case up:
             if (moveFront && frontElevation < downSetpoint) {
-                endgame.raiseFront();
+                endgame.retractFront();
             } else if (!moveFront && backElevation < downSetpoint) {
-                endgame.raiseBack();
+                endgame.retractRear();
             }
             break;
         case down:
             if (moveFront) {
-                endgame.lowerFront();
+                endgame.deployFront();
             } else {
-                endgame.lowerBack();
+                endgame.deployRear();
             }
             break;
         }

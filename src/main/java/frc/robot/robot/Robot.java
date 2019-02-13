@@ -27,6 +27,7 @@ import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import frc.robot.auton.Auton;
 import frc.robot.auton.DynamicDashboard;
+import frc.robot.auton.EndgameCylindersDeploy;
 import frc.robot.auton.TurnMotorPID;
 import frc.robot.subsystems.Acquisition;
 import frc.robot.subsystems.Dashboard;
@@ -74,6 +75,9 @@ public class Robot extends TimedRobot {
   //Dashboard
   DynamicDashboard PIDChanger = DynamicDashboard.getInstance();
 
+  //Auton
+  Scheduler schedule = Scheduler.getInstance();
+
   /**
    * This function is run when the robot is first started up and should be used
    * for any initialization code.
@@ -90,10 +94,11 @@ public class Robot extends TimedRobot {
   }
 
   public void autonomousInit() {
-
+    schedule.add(new EndgameCylindersDeploy(18));
   }
 
   public void autonomousPeriodic() {
+    schedule.run();
   }
 
   public void disabledInit() {
