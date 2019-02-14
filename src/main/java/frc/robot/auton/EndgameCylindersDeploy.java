@@ -9,7 +9,7 @@ public class EndgameCylindersDeploy extends Command {
     private int frontElevation;
     private int rearElevation;
     private int targetElevation;
-    private final int TOLERANCE = 4;
+    private final int TOLERANCE = 2;
     private Endgame endgame = Endgame.getInstance();
     private Timer timer = new Timer();
 

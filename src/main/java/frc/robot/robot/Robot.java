@@ -51,32 +51,33 @@ public class Robot extends TimedRobot {
   CameraServer VisionCamServer;
   VideoSink server;
   Joystick1038 Joystick1 = new Joystick1038(1);
-  //Encoder1038 testEncoder = new Encoder1038(0, 1, false, 497, 2);
+  // Encoder1038 testEncoder = new Encoder1038(0, 1, false, 497, 2);
 
   public static final String JOY_TEST = "joytest";
   public static final String RECORD = "record";
 
   private XboxJoystick1038 stick;
-  private DriveTrain driveTrain;
+  //private DriveTrain driveTrain;
   private String autonSelected;
   private Auton auton;
 
-  public Compressor c;
+  public Compressor c = new Compressor();
   public DoubleSolenoid a;
   public DoubleSolenoid b;
 
   // Drive
-  public static DriveTrain robotDrive = DriveTrain.getInstance();
+ // public static DriveTrain robotDrive = DriveTrain.getInstance();
 
   // Joystick
   private XboxJoystick1038 driverJoystick = new XboxJoystick1038(0);
   public boolean previousStartButtonState = driverJoystick.getLineButton();
 
-  //Dashboard
-  DynamicDashboard PIDChanger = DynamicDashboard.getInstance();
+  // Dashboard
+ // DynamicDashboard PIDChanger = DynamicDashboard.getInstance();
 
-  //Auton
+  // Auton
   Scheduler schedule = Scheduler.getInstance();
+  private boolean scheduleEnabled = false;
 
   /**
    * This function is run when the robot is first started up and should be used
@@ -84,16 +85,29 @@ public class Robot extends TimedRobot {
    */
   @Override
   public void robotInit() {
+   
 
+  }
+  @Override
+  public void robotPeriodic(){
+    System.out.println(c.getCompressorCurrent());
   }
 
   public void teleopInit() {
   }
 
   public void teleopPeriodic() {
+    if(driverJoystick.getAButton()){
+      scheduleEnabled = true;
+    }
+    if(scheduleEnabled){
+      schedule.run();
+    }
   }
 
   public void autonomousInit() {
+    c.setClosedLoopControl(true);
+  
     schedule.add(new EndgameCylindersDeploy(18));
   }
 
@@ -106,22 +120,21 @@ public class Robot extends TimedRobot {
   }
 
   // Handle driver input
-  public void driver() {
+  // public void driver() {
+  //   switch (robotDrive.currentDriveMode) {
+  //   case tankDrive:
+  //     robotDrive.tankDrive(driverJoystick.getLeftJoystickVertical(), driverJoystick.getRightJoystickVertical());
+  //     break;
+  //   case dualArcadeDrive:
+  //     robotDrive.dualArcadeDrive(driverJoystick.getLeftJoystickVertical(), driverJoystick.getRightJoystickHorizontal());
+  //     break;
+  //   case singleArcadeDrive:
+  //     robotDrive.singleAracadeDrive(driverJoystick.getLeftJoystickVertical(),
+  //         driverJoystick.getLeftJoystickHorizontal());
+  //     break;
+  //   }
+  // }
 
-    switch (robotDrive.currentDriveMode) {
-    case tankDrive:
-      robotDrive.tankDrive(driverJoystick.getLeftJoystickVertical(), driverJoystick.getRightJoystickVertical());
-      break;
-    case dualArcadeDrive:
-      robotDrive.dualArcadeDrive(driverJoystick.getLeftJoystickVertical(), driverJoystick.getRightJoystickHorizontal());
-      break;
-    case singleArcadeDrive:
-      robotDrive.singleAracadeDrive(driverJoystick.getLeftJoystickVertical(),
-          driverJoystick.getLeftJoystickHorizontal());
-      break;
-    }
-  }
-  
   public void operator() {
 
   }
@@ -132,5 +145,4 @@ public class Robot extends TimedRobot {
   @Override
   public void testPeriodic() {
   }
-
 }

@@ -7,21 +7,31 @@ public class TurnEndgameMotor extends Command {
 
     private double motorPower;
     private Endgame endgame = Endgame.getInstance();
-    private int frontElevation; //read front laser
-    private int goalElevation = 5; //Placeholder
+    private int currentElevation;
+    private int goalElevation = 3; // Placeholder
 
-    public TurnEndgameMotor(double motorSpeed){
+    public TurnEndgameMotor(double motorSpeed) {
         motorPower = motorSpeed;
     }
 
     @Override
     protected void execute() {
-        endgame.setFrontMotor(motorPower);
+        if (!endgame.getIsFrontDeployed()) {
+            currentElevation = endgame.getRearElevation();
+        } else {
+            currentElevation = endgame.getFrontElevation();
+        }
+        //endgame.setRearMotor(motorPower);
+    }
+
+    @Override
+    protected void end() {
+        //endgame.setRearMotor(0);
     }
 
     @Override
     protected boolean isFinished() {
-        return frontElevation < goalElevation;
+        return currentElevation < goalElevation;
     }
 
 }

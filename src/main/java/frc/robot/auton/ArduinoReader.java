@@ -41,7 +41,7 @@ public class ArduinoReader {
                 arduinoDataMap = data.split(",");
                 frontLaserSensorData = Integer.parseInt(arduinoDataMap[0]);
                 rearLaserSensorData = Integer.parseInt(arduinoDataMap[1]);
-                lineFollowerData = Double.parseDouble(arduinoDataMap[2]);
+                //lineFollowerData = Double.parseDouble(arduinoDataMap[2]);
             }
         } catch (IOException e) {
             System.out.println(e + e.getMessage());

@@ -30,9 +30,9 @@ public class EndgameCylinderRetract extends TimedCommand {
 
     @Override
     public void execute() {
-        if(isFront){
+        if (isFront) {
             endgame.retractFront();
-        }else if(!isFront){
+        } else if (!isFront) {
             endgame.retractRear();
         }
     }
