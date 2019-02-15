@@ -21,17 +21,20 @@ import edu.wpi.first.wpilibj.Compressor;
 import edu.wpi.first.wpilibj.DoubleSolenoid;
 import edu.wpi.first.wpilibj.Sendable;
 import edu.wpi.first.wpilibj.TimedRobot;
+import edu.wpi.first.wpilibj.command.CommandGroup;
 import edu.wpi.first.wpilibj.command.Scheduler;
 import edu.wpi.first.wpilibj.shuffleboard.BuiltInWidgets;
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import frc.robot.auton.Auton;
 import frc.robot.auton.DynamicDashboard;
+import frc.robot.auton.EndgameCylinderRetract;
 import frc.robot.auton.EndgameCylindersDeploy;
 import frc.robot.auton.TurnMotorPID;
 import frc.robot.subsystems.Acquisition;
 import frc.robot.subsystems.Dashboard;
 import frc.robot.subsystems.DriveTrain;
+import frc.robot.subsystems.Endgame;
 import frc.robot.subsystems.Scoring;
 import edu.wpi.cscore.CvSink;
 import edu.wpi.cscore.CvSource;
@@ -62,8 +65,10 @@ public class Robot extends TimedRobot {
   private Auton auton;
 
   public Compressor c = new Compressor();
+  CommandGroup group = new CommandGroup();
   public DoubleSolenoid a;
   public DoubleSolenoid b;
+  private Endgame endgame = Endgame.getInstance();
 
   // Drive
  // public static DriveTrain robotDrive = DriveTrain.getInstance();
@@ -90,7 +95,6 @@ public class Robot extends TimedRobot {
   }
   @Override
   public void robotPeriodic(){
-    System.out.println(c.getCompressorCurrent());
   }
 
   public void teleopInit() {
@@ -98,17 +102,18 @@ public class Robot extends TimedRobot {
 
   public void teleopPeriodic() {
     if(driverJoystick.getAButton()){
-      scheduleEnabled = true;
-    }
-    if(scheduleEnabled){
-      schedule.run();
+      endgame.retractFront();
     }
   }
 
   public void autonomousInit() {
     c.setClosedLoopControl(true);
-  
-    schedule.add(new EndgameCylindersDeploy(18));
+     schedule.removeAll();
+     schedule.add(new EndgameCylindersDeploy(18));
+    //schedule.removeAll();
+    //group.addParallel(new EndgameCylinderRetract(5, EndgameCylinderRetract.Value.front));
+    //group.addParallel(new EndgameCylinderRetract(5, EndgameCylinderRetract.Value.rear));
+    //schedule.add(group);
   }
 
   public void autonomousPeriodic() {
@@ -143,6 +148,15 @@ public class Robot extends TimedRobot {
    * This function is called periodically during test mode.
    */
   @Override
+  public void testInit() {
+    schedule.removeAll();
+    group.addParallel(new EndgameCylinderRetract(5, EndgameCylinderRetract.Value.front));
+    group.addSequential(new EndgameCylinderRetract(5, EndgameCylinderRetract.Value.front));
+    schedule.add(group);
+  }
+
+  @Override
   public void testPeriodic() {
+    schedule.run();
   }
 }

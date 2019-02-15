@@ -16,8 +16,8 @@ public class Endgame extends Subsystem {
     private final int WHEEL_DIAMETER = 5; // Placeholder
     private boolean frontDeployed = false;
     private boolean rearDeployed = false;
-    private DoubleSolenoid frontCylinders = new DoubleSolenoid(0, 1); // Placeholder
-    private DoubleSolenoid rearCylinders = new DoubleSolenoid(2, 3); // Placeholder
+    private DoubleSolenoid frontCylinders = new DoubleSolenoid(1, 0); // Placeholder
+    private DoubleSolenoid rearCylinders = new DoubleSolenoid(3, 2); // Placeholder
     //private CANSpark1038 rearMotor = new CANSpark1038(2); // Placeholder
     private Encoder1038 rearMotorEncoder = new Encoder1038(FRONT_ENCODER_CHANNEL_A, FRONT_ENCODER_CHANNEL_B, false,
             COUNTS_PER_REVOLUTION, WHEEL_DIAMETER);
@@ -37,22 +37,26 @@ public class Endgame extends Subsystem {
     }
 
     public void deployFront() {
-        frontCylinders.set(DoubleSolenoid.Value.kForward);
+        frontCylinders.set(DoubleSolenoid.Value.kReverse);
+        System.out.println("Deployed front");
         frontDeployed = true;
     }
 
     public void deployRear() {
-        rearCylinders.set(DoubleSolenoid.Value.kForward);
+        rearCylinders.set(DoubleSolenoid.Value.kReverse);
+        System.out.println("Deployed rear");
         rearDeployed = true;
     }
 
     public void retractFront() {
-        frontCylinders.set(DoubleSolenoid.Value.kReverse);
+        frontCylinders.set(DoubleSolenoid.Value.kForward);
+        System.out.println("Retracted front");
         frontDeployed = false;
     }
 
     public void retractRear() {
-        rearCylinders.set(DoubleSolenoid.Value.kReverse);
+        rearCylinders.set(DoubleSolenoid.Value.kForward);
+        System.out.println("Retracted front");
         rearDeployed = false;
     }
 

@@ -9,7 +9,7 @@ public class EndgameCylindersDeploy extends Command {
     private int frontElevation;
     private int rearElevation;
     private int targetElevation;
-    private final int TOLERANCE = 2;
+    private final int TOLERANCE = 4;
     private Endgame endgame = Endgame.getInstance();
     private Timer timer = new Timer();
 
@@ -28,9 +28,14 @@ public class EndgameCylindersDeploy extends Command {
     protected void execute() {
         if(frontElevation > rearElevation + TOLERANCE || frontElevation >= targetElevation){
             endgame.stopFront();
+            System.out.println("Stopped front");
+            endgame.deployRear();
         }else if(rearElevation > frontElevation + TOLERANCE || rearElevation >= targetElevation){
             endgame.stopRear();
+            System.out.println("Stopped rear");
+            endgame.deployFront();
         }else{
+            System.out.println("Deploying both");
             endgame.deployRear();
             endgame.deployFront();
         }
@@ -40,6 +45,7 @@ public class EndgameCylindersDeploy extends Command {
     protected void interrupted() {
         endgame.retractRear();
         endgame.retractFront();
+        System.out.println("Cylinder Deploy interrupted");
     }
 
     @Override

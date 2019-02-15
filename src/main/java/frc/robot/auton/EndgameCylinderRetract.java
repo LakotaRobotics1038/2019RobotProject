@@ -6,7 +6,7 @@ import frc.robot.subsystems.Endgame;
 
 public class EndgameCylinderRetract extends TimedCommand {
 
-    private DriveTrain drive = DriveTrain.getInstance();
+    //private DriveTrain drive = DriveTrain.getInstance();
     private Endgame endgame = Endgame.getInstance();
     private boolean isFront;
 
@@ -17,7 +17,7 @@ public class EndgameCylinderRetract extends TimedCommand {
     public EndgameCylinderRetract(double timeout, Value position) {
         super(timeout);
         requires(endgame);
-        requires(drive);
+        //requires(drive);
         switch (position) {
         case front:
             isFront = true;
