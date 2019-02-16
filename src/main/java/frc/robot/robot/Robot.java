@@ -38,6 +38,7 @@ import frc.robot.subsystems.Endgame;
 import frc.robot.subsystems.Scoring;
 import edu.wpi.cscore.CvSink;
 import edu.wpi.cscore.CvSource;
+import edu.wpi.first.wpilibj.AnalogInput;
 
 /**
  * The VM is configured to automatically run this class, and to call the
@@ -53,22 +54,25 @@ public class Robot extends TimedRobot {
   boolean prevTrigger = false;
   CameraServer VisionCamServer;
   VideoSink server;
-  Joystick1038 Joystick1 = new Joystick1038(1);
+  //Joystick1038 Joystick1 = new Joystick1038(1);
   // Encoder1038 testEncoder = new Encoder1038(0, 1, false, 497, 2);
 
   public static final String JOY_TEST = "joytest";
   public static final String RECORD = "record";
 
-  private XboxJoystick1038 stick;
+  //private XboxJoystick1038 stick;
   //private DriveTrain driveTrain;
   private String autonSelected;
   private Auton auton;
 
   public Compressor c = new Compressor();
+  public AnalogInput analogInput = new AnalogInput(0);
   CommandGroup group = new CommandGroup();
   public DoubleSolenoid a;
   public DoubleSolenoid b;
   private Endgame endgame = Endgame.getInstance();
+  public CANSpark1038 endgameMotor = new CANSpark1038(57);
+  public Encoder1038 endgameEncoder = new Encoder1038(1, 0, true, 200, 4); //last two are placeholders
 
   // Drive
  // public static DriveTrain robotDrive = DriveTrain.getInstance();
@@ -98,22 +102,44 @@ public class Robot extends TimedRobot {
   }
 
   public void teleopInit() {
+    c.setClosedLoopControl(true);
   }
 
   public void teleopPeriodic() {
+    double averageVolts = analogInput.getAverageVoltage();
+    double percentVolts = averageVolts / 5;
+    double pressure = percentVolts * 200;
+    System.out.println(pressure + " PSI");
     if(driverJoystick.getAButton()){
       endgame.retractFront();
+    }
+    if(driverJoystick.getXButton() && !endgame.getIsRearDeployed()) {
+      endgame.deployRear();
+      endgameMotor.set(0);
+    }
+    else if(driverJoystick.getXButton() && endgame.getIsRearDeployed()) {
+      System.out.println("Encoder: " + endgameEncoder.get());
+      endgameMotor.set(-.40);
+    }
+    else{
+      endgameMotor.set(0);
+    }
+    if(driverJoystick.getBButton()) {
+      endgame.deployFront();
+    }
+    if(driverJoystick.getYButton()) {
+      endgame.retractRear();
     }
   }
 
   public void autonomousInit() {
     c.setClosedLoopControl(true);
-     schedule.removeAll();
-     schedule.add(new EndgameCylindersDeploy(18));
-    //schedule.removeAll();
-    //group.addParallel(new EndgameCylinderRetract(5, EndgameCylinderRetract.Value.front));
-    //group.addParallel(new EndgameCylinderRetract(5, EndgameCylinderRetract.Value.rear));
-    //schedule.add(group);
+    // schedule.removeAll();
+    // schedule.add(new EndgameCylindersDeploy(18));
+    schedule.removeAll();
+    group.addParallel(new EndgameCylinderRetract(5, EndgameCylinderRetract.Value.front));
+    group.addParallel(new EndgameCylinderRetract(5, EndgameCylinderRetract.Value.rear));
+    schedule.add(group);
   }
 
   public void autonomousPeriodic() {
