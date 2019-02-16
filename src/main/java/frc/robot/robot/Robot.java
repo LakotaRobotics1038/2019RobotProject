@@ -36,6 +36,7 @@ import frc.robot.subsystems.Dashboard;
 import frc.robot.subsystems.DriveTrain;
 import frc.robot.subsystems.Endgame;
 import frc.robot.subsystems.Scoring;
+import frc.robot.auton.ArduinoReader;
 import edu.wpi.cscore.CvSink;
 import edu.wpi.cscore.CvSource;
 import edu.wpi.first.wpilibj.AnalogInput;
@@ -87,6 +88,7 @@ public class Robot extends TimedRobot {
   // Auton
   Scheduler schedule = Scheduler.getInstance();
   private boolean scheduleEnabled = false;
+  private ArduinoReader arduinoReader = ArduinoReader.getInstance();
 
   /**
    * This function is run when the robot is first started up and should be used
@@ -109,6 +111,8 @@ public class Robot extends TimedRobot {
     double averageVolts = analogInput.getAverageVoltage();
     double percentVolts = averageVolts / 5;
     double pressure = percentVolts * 200;
+    System.out.println("Front Elevation: " + arduinoReader.returnArduinoFrontLaserValue());
+    System.out.println("Rear Elevation: " + arduinoReader.returnArduinoRearLaserValue());
     System.out.println(pressure + " PSI");
     if(driverJoystick.getAButton()){
       endgame.retractFront();
@@ -119,7 +123,7 @@ public class Robot extends TimedRobot {
     }
     else if(driverJoystick.getXButton() && endgame.getIsRearDeployed()) {
       System.out.println("Encoder: " + endgameEncoder.get());
-      endgameMotor.set(-.40);
+      endgameMotor.set(-1);
     }
     else{
       endgameMotor.set(0);

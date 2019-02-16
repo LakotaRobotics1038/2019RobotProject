@@ -59,14 +59,6 @@ public class Endgame extends Subsystem {
         rearDeployed = false;
     }
 
-    public void stopFront() {
-        frontCylinders.set(DoubleSolenoid.Value.kOff);
-    }
-
-    public void stopRear() {
-        rearCylinders.set(DoubleSolenoid.Value.kOff);
-    }
-
     // public void setRearMotor(double power) {
     //     rearMotor.set(power);
     // }

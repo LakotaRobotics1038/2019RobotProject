@@ -4,6 +4,7 @@ import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.command.Command;
 import frc.robot.subsystems.Endgame;
 
+
 public class EndgameCylindersDeploy extends Command {
 
     private int frontElevation;
@@ -11,6 +12,7 @@ public class EndgameCylindersDeploy extends Command {
     private int targetElevation;
     private final int TOLERANCE = 4;
     private Endgame endgame = Endgame.getInstance();
+    private ArduinoReader arduinoReader = ArduinoReader.getInstance();
     private Timer timer = new Timer();
 
     public EndgameCylindersDeploy(int setpoint){
@@ -26,12 +28,16 @@ public class EndgameCylindersDeploy extends Command {
 
     @Override
     protected void execute() {
-        if(frontElevation > rearElevation + TOLERANCE || frontElevation >= targetElevation){
-            endgame.stopFront();
+        frontElevation = arduinoReader.returnArduinoFrontLaserValue();
+        rearElevation = arduinoReader.returnArduinoRearLaserValue();
+        System.out.println("Front elevation: " + frontElevation + ", Rear elevation: " + rearElevation);
+        
+        if(frontElevation > rearElevation + TOLERANCE|| frontElevation >= targetElevation){
+            endgame.retractFront();
             System.out.println("Stopped front");
             endgame.deployRear();
-        }else if(rearElevation > frontElevation + TOLERANCE || rearElevation >= targetElevation){
-            endgame.stopRear();
+        }else if(rearElevation > frontElevation + TOLERANCE|| rearElevation >= targetElevation){
+            endgame.retractRear();
             System.out.println("Stopped rear");
             endgame.deployFront();
         }else{
@@ -50,8 +56,8 @@ public class EndgameCylindersDeploy extends Command {
 
     @Override
     protected void end(){
-        endgame.stopRear();
-        endgame.stopFront();
+        endgame.deployRear();
+        endgame.deployFront();
         System.out.println("Ended at: " + timer.get());
         timer.stop();
         timer.reset();
