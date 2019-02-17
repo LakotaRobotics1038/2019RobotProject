@@ -1,7 +1,8 @@
-package frc.robot.auton;
+package frc.robot.depricated;
 
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.command.Command;
+import frc.robot.robot.ArduinoReader;
 import frc.robot.subsystems.Endgame;
 
 

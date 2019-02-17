@@ -1,4 +1,4 @@
-package frc.robot.auton;
+package frc.robot.robot;
 
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
@@ -38,9 +38,12 @@ public class ArduinoReader {
                 // currEncoderValue = encoder.get();
                 // lineFollowerPrev = lineFollowerData;
                 arduinoDataMap = data.split(",");
-                frontLaserSensorData = Integer.parseInt(arduinoDataMap[0]);
-                rearLaserSensorData = Integer.parseInt(arduinoDataMap[1]);
-                //lineFollowerData = Double.parseDouble(arduinoDataMap[2]);
+                try{
+                    frontLaserSensorData = Integer.parseInt(arduinoDataMap[0]);
+                    rearLaserSensorData = Integer.parseInt(arduinoDataMap[1]);
+                    //lineFollowerData = Double.parseDouble(arduinoDataMap[2]);
+                }catch(NumberFormatException e){
+                }
             }
         } catch (IOException e) {
             System.out.println(e + e.getMessage());

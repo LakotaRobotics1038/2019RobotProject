@@ -6,46 +6,20 @@
 /*----------------------------------------------------------------------------*/
 
 package frc.robot.robot;
-
-import java.util.Map;
-
-import javax.lang.model.element.VariableElement;
-
-import com.revrobotics.CANSparkMax;
-import com.revrobotics.CANSparkMaxLowLevel;
-import com.revrobotics.CANSparkMax.IdleMode;
-import com.revrobotics.CANSparkMaxLowLevel.MotorType;
-
-import org.opencv.core.Mat;
-import org.opencv.imgproc.Imgproc;
 import edu.wpi.cscore.UsbCamera;
 import edu.wpi.cscore.VideoSink;
 import edu.wpi.first.cameraserver.CameraServer;
-import edu.wpi.first.networktables.NetworkTableEntry;
 import edu.wpi.first.wpilibj.Compressor;
-import edu.wpi.first.wpilibj.DoubleSolenoid;
-import edu.wpi.first.wpilibj.Joystick;
-import edu.wpi.first.wpilibj.Sendable;
+import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj.command.CommandGroup;
 import edu.wpi.first.wpilibj.command.Scheduler;
-import edu.wpi.first.wpilibj.shuffleboard.BuiltInWidgets;
-import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
-import frc.robot.auton.Auton;
-import frc.robot.auton.DynamicDashboard;
 import frc.robot.auton.EndgameCylinderRetract;
-import frc.robot.auton.EndgameCylindersDeploy;
-import frc.robot.auton.TurnMotorPID;
 import frc.robot.subsystems.Acquisition;
 import frc.robot.subsystems.Dashboard;
 import frc.robot.subsystems.DriveTrain;
 import frc.robot.subsystems.Endgame;
 import frc.robot.subsystems.Scoring;
-import frc.robot.auton.ArduinoReader;
-import edu.wpi.cscore.CvSink;
-import edu.wpi.cscore.CvSource;
-import edu.wpi.first.wpilibj.AnalogInput;
 
 /**
  * The VM is configured to automatically run this class, and to call the
@@ -61,42 +35,32 @@ public class Robot extends TimedRobot {
   boolean prevTrigger = false;
   CameraServer VisionCamServer;
   VideoSink server;
-  //Joystick1038 Joystick1 = new Joystick1038(1);
-  // Encoder1038 testEncoder = new Encoder1038(0, 1, false, 497, 2);
 
-  public static final String JOY_TEST = "joytest";
-  public static final String RECORD = "record";
-
-  //private XboxJoystick1038 stick;
-  private DriveTrain driveTrain = DriveTrain.getInstance();
-  private String autonSelected;
-  private Auton auton;
-
-  public Compressor c = new Compressor();
-  public AnalogInput analogInput = new AnalogInput(0);
-  CommandGroup group = new CommandGroup();
-  public DoubleSolenoid a;
-  public DoubleSolenoid b;
+  //Endgame
   private Endgame endgame = Endgame.getInstance();
-  //public CANSpark1038 endgameMotor = new CANSpark1038(57, CANSparkMaxLowLevel.MotorType.kBrushed);
- // public Encoder1038 endgameEncoder = new Encoder1038(1, 0, true, 200, 4); //last two are placeholders
 
   // Drive
- // public static DriveTrain robotDrive = DriveTrain.getInstance();
+  private DriveTrain driveTrain = DriveTrain.getInstance();
+  public Compressor c = new Compressor();
 
   // Joystick
   private XboxJoystick1038 driverJoystick = new XboxJoystick1038(0);
+  private XboxJoystick1038 operatorJoystick = new XboxJoystick1038(1);
   public boolean previousStartButtonState = driverJoystick.getLineButton();
   public double  multiplyer;
 
   // Dashboard
-  // DynamicDashboard PIDChanger = DynamicDashboard.getInstance();
   Dashboard dashboard = Dashboard.getInstance();
 
   // Auton
   Scheduler schedule = Scheduler.getInstance();
-  private boolean scheduleEnabled = false;
-  private ArduinoReader arduinoReader = ArduinoReader.getInstance();
+  CommandGroup group = new CommandGroup();
+
+  //Acquisition
+  Acquisition acquisition = Acquisition.getInstance();
+
+  //Scoring
+  Scoring scoring = Scoring.getInstance();
 
   /**
    * This function is run when the robot is first started up and should be used
@@ -114,51 +78,14 @@ public class Robot extends TimedRobot {
   public void teleopInit() {
     c.setClosedLoopControl(true);
     schedule.removeAll();
-    schedule.add(new EndgameCylindersDeploy(52));
   }
 
   public void teleopPeriodic() {
-    double averageVolts = analogInput.getAverageVoltage();
-    double percentVolts = averageVolts / 5;
-    double pressure = percentVolts * 200;
     driver();
-   // System.out.println("Front elevation: " + arduinoReader.returnArduinoFrontLaserValue() + ", Rear elevation: " + arduinoReader.returnArduinoRearLaserValue());
-    // System.out.println("Front Elevation: " + arduinoReader.returnArduinoFrontLaserValue());
-    // System.out.println("Rear Elevation: " + arduinoReader.returnArduinoRearLaserValue());
-    // System.out.println(pressure + " PSI");
-    if(driverJoystick.getAButton()){
-      endgame.retractFront();
-    }
-    if(driverJoystick.getXButton() && !endgame.getIsRearDeployed()) {
-      //endgame.deployRear();
-      //endgame.setRearMotor(0);
-      endgame.deployFront();
-      endgame.deployRear();
-    }
-    // else if(driverJoystick.getXButton() && endgame.getIsRearDeployed()) {
-    //   System.out.println("Encoder counts: " + endgame.getEncoderVelocity());
-    //   endgame.setRearMotor(0.4);
-    // }
-    // else{
-    //   endgame.setRearMotor(0);
-    // }
-    if(driverJoystick.getBButton()) {
-      schedule.run();
-    }
-    if(driverJoystick.getYButton()) {
-      endgame.retractRear();
-    }
-    if(driverJoystick.getLeftButton()){
-      endgame.setRearMotor(0.4);
-    }else{
-      endgame.setRearMotor(0.0);
-    }
   }
 
   public void autonomousInit() {
     c.setClosedLoopControl(true);
-    // schedule.removeAll();
-    // schedule.add(new EndgameCylindersDeploy(18));
     schedule.removeAll();
     group.addParallel(new EndgameCylinderRetract(5, EndgameCylinderRetract.Value.front));
     group.addParallel(new EndgameCylinderRetract(5, EndgameCylinderRetract.Value.rear));
@@ -176,18 +103,37 @@ public class Robot extends TimedRobot {
   //Handle driver input
   public void driver() {
     multiplyer = .6;
-
     if(driverJoystick.getRightTrigger() > 0.5){
       driveTrain.highGear();
     }else{
       driveTrain.lowGear();
     }
-
-    if(driverJoystick.getRightTrigger() > .5 && driverJoystick.getRightButton()){
+    if(driverJoystick.getRightButton()){
       multiplyer = 1;
+      driveTrain.highGear();
     }
-    System.out.println(driverJoystick.getRightTrigger());
-
+    
+    if(driverJoystick.getYButton()){
+      endgame.retractFront();
+      endgame.retractRear();
+    }
+    if(driverJoystick.getXButton()) {
+      endgame.deployFront();
+      endgame.deployRear();
+    }
+    if(driverJoystick.getAButton()) {
+      endgame.retractFront();
+      driverJoystick.setLeftRumble(1); //Should be heavy rumble
+    }
+    if(driverJoystick.getBButton()){
+      endgame.retractRear();
+      driverJoystick.setLeftRumble(1); //Should be heavy rumble
+    }
+    if(driverJoystick.getLeftButton()){
+      endgame.setRearMotor(0.4);
+    }else{
+      endgame.setRearMotor(0.0);
+    }
   
     switch (driveTrain.currentDriveMode) {
     case tankDrive:
@@ -200,9 +146,46 @@ public class Robot extends TimedRobot {
       driveTrain.singleAracadeDrive(driverJoystick.getLeftJoystickVertical() * multiplyer, driverJoystick.getLeftJoystickHorizontal() * multiplyer);
       break;
     }
+
+    if(DriverStation.getInstance().getMatchTime() < 30 && !DriverStation.getInstance().isAutonomous()){
+      driverJoystick.setLeftRumble(1); //hard rumble
+    }
   }
   public void operator() {
+    if(operatorJoystick.getLeftButton()){
+      acquisition.acquire();
+    }
+    if(operatorJoystick.getLeftTrigger() > 0.5){
+      acquisition.dispose();
+    }
+    if(operatorJoystick.getRightButton()){
+      acquisition.acqHatch();
+    }
+    if(operatorJoystick.getRightTrigger() > 0.5){
+      acquisition.dropHatch();
+      driverJoystick.setLeftRumble(0.5); //Should be light
+      operatorJoystick.setLeftRumble(0.5); //Should be light
+    }
 
+    if(operatorJoystick.getXButton()){
+      scoring.moveToGround();
+    }
+    if(operatorJoystick.getAButton()){
+      scoring.moveToLvl1();
+    }
+    if(operatorJoystick.getBButton()){
+      scoring.moveToLvl2();
+    }
+    if(operatorJoystick.getYButton()){
+      scoring.moveToLvl3();
+    }
+    if(Math.abs(operatorJoystick.getRightJoystickVertical()) > 0.09){
+      scoring.move(operatorJoystick.getRightJoystickVertical());
+    }
+
+    if(DriverStation.getInstance().getMatchTime() < 30 && !DriverStation.getInstance().isAutonomous()){
+      operatorJoystick.setLeftRumble(1); //hard rumble
+    }
   }
 
   /**
