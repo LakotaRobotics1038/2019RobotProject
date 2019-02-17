@@ -11,6 +11,11 @@ import java.util.Map;
 
 import javax.lang.model.element.VariableElement;
 
+import com.revrobotics.CANSparkMax;
+import com.revrobotics.CANSparkMaxLowLevel;
+import com.revrobotics.CANSparkMax.IdleMode;
+import com.revrobotics.CANSparkMaxLowLevel.MotorType;
+
 import org.opencv.core.Mat;
 import org.opencv.imgproc.Imgproc;
 import edu.wpi.cscore.UsbCamera;
@@ -19,6 +24,7 @@ import edu.wpi.first.cameraserver.CameraServer;
 import edu.wpi.first.networktables.NetworkTableEntry;
 import edu.wpi.first.wpilibj.Compressor;
 import edu.wpi.first.wpilibj.DoubleSolenoid;
+import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.Sendable;
 import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj.command.CommandGroup;
@@ -62,7 +68,7 @@ public class Robot extends TimedRobot {
   public static final String RECORD = "record";
 
   //private XboxJoystick1038 stick;
-  //private DriveTrain driveTrain;
+  private DriveTrain driveTrain = DriveTrain.getInstance();
   private String autonSelected;
   private Auton auton;
 
@@ -72,8 +78,8 @@ public class Robot extends TimedRobot {
   public DoubleSolenoid a;
   public DoubleSolenoid b;
   private Endgame endgame = Endgame.getInstance();
-  public CANSpark1038 endgameMotor = new CANSpark1038(57);
-  public Encoder1038 endgameEncoder = new Encoder1038(1, 0, true, 200, 4); //last two are placeholders
+  //public CANSpark1038 endgameMotor = new CANSpark1038(57, CANSparkMaxLowLevel.MotorType.kBrushed);
+ // public Encoder1038 endgameEncoder = new Encoder1038(1, 0, true, 200, 4); //last two are placeholders
 
   // Drive
  // public static DriveTrain robotDrive = DriveTrain.getInstance();
@@ -81,9 +87,11 @@ public class Robot extends TimedRobot {
   // Joystick
   private XboxJoystick1038 driverJoystick = new XboxJoystick1038(0);
   public boolean previousStartButtonState = driverJoystick.getLineButton();
+  public double  multiplyer;
 
   // Dashboard
- // DynamicDashboard PIDChanger = DynamicDashboard.getInstance();
+  // DynamicDashboard PIDChanger = DynamicDashboard.getInstance();
+  Dashboard dashboard = Dashboard.getInstance();
 
   // Auton
   Scheduler schedule = Scheduler.getInstance();
@@ -96,43 +104,54 @@ public class Robot extends TimedRobot {
    */
   @Override
   public void robotInit() {
-   
-
   }
   @Override
   public void robotPeriodic(){
+    dashboard.update();
   }
+
 
   public void teleopInit() {
     c.setClosedLoopControl(true);
+    schedule.removeAll();
+    schedule.add(new EndgameCylindersDeploy(52));
   }
 
   public void teleopPeriodic() {
     double averageVolts = analogInput.getAverageVoltage();
     double percentVolts = averageVolts / 5;
     double pressure = percentVolts * 200;
-    System.out.println("Front Elevation: " + arduinoReader.returnArduinoFrontLaserValue());
-    System.out.println("Rear Elevation: " + arduinoReader.returnArduinoRearLaserValue());
-    System.out.println(pressure + " PSI");
+    driver();
+   // System.out.println("Front elevation: " + arduinoReader.returnArduinoFrontLaserValue() + ", Rear elevation: " + arduinoReader.returnArduinoRearLaserValue());
+    // System.out.println("Front Elevation: " + arduinoReader.returnArduinoFrontLaserValue());
+    // System.out.println("Rear Elevation: " + arduinoReader.returnArduinoRearLaserValue());
+    // System.out.println(pressure + " PSI");
     if(driverJoystick.getAButton()){
       endgame.retractFront();
     }
     if(driverJoystick.getXButton() && !endgame.getIsRearDeployed()) {
-      endgame.deployRear();
-      endgameMotor.set(0);
-    }
-    else if(driverJoystick.getXButton() && endgame.getIsRearDeployed()) {
-      System.out.println("Encoder: " + endgameEncoder.get());
-      endgameMotor.set(-1);
-    }
-    else{
-      endgameMotor.set(0);
-    }
-    if(driverJoystick.getBButton()) {
+      //endgame.deployRear();
+      //endgame.setRearMotor(0);
       endgame.deployFront();
+      endgame.deployRear();
+    }
+    // else if(driverJoystick.getXButton() && endgame.getIsRearDeployed()) {
+    //   System.out.println("Encoder counts: " + endgame.getEncoderVelocity());
+    //   endgame.setRearMotor(0.4);
+    // }
+    // else{
+    //   endgame.setRearMotor(0);
+    // }
+    if(driverJoystick.getBButton()) {
+      schedule.run();
     }
     if(driverJoystick.getYButton()) {
       endgame.retractRear();
+    }
+    if(driverJoystick.getLeftButton()){
+      endgame.setRearMotor(0.4);
+    }else{
+      endgame.setRearMotor(0.0);
     }
   }
 
@@ -154,22 +173,34 @@ public class Robot extends TimedRobot {
 
   }
 
-  // Handle driver input
-  // public void driver() {
-  //   switch (robotDrive.currentDriveMode) {
-  //   case tankDrive:
-  //     robotDrive.tankDrive(driverJoystick.getLeftJoystickVertical(), driverJoystick.getRightJoystickVertical());
-  //     break;
-  //   case dualArcadeDrive:
-  //     robotDrive.dualArcadeDrive(driverJoystick.getLeftJoystickVertical(), driverJoystick.getRightJoystickHorizontal());
-  //     break;
-  //   case singleArcadeDrive:
-  //     robotDrive.singleAracadeDrive(driverJoystick.getLeftJoystickVertical(),
-  //         driverJoystick.getLeftJoystickHorizontal());
-  //     break;
-  //   }
-  // }
+  //Handle driver input
+  public void driver() {
+    multiplyer = .6;
 
+    if(driverJoystick.getRightTrigger() > 0.5){
+      driveTrain.highGear();
+    }else{
+      driveTrain.lowGear();
+    }
+
+    if(driverJoystick.getRightTrigger() > .5 && driverJoystick.getRightButton()){
+      multiplyer = 1;
+    }
+    System.out.println(driverJoystick.getRightTrigger());
+
+  
+    switch (driveTrain.currentDriveMode) {
+    case tankDrive:
+      driveTrain.tankDrive(driverJoystick.getLeftJoystickVertical() * multiplyer, driverJoystick.getRightJoystickVertical() * multiplyer);
+      break;
+    case dualArcadeDrive:
+      driveTrain.dualArcadeDrive(driverJoystick.getLeftJoystickVertical()  * multiplyer, driverJoystick.getRightJoystickHorizontal() * multiplyer);
+      break;
+    case singleArcadeDrive:
+      driveTrain.singleAracadeDrive(driverJoystick.getLeftJoystickVertical() * multiplyer, driverJoystick.getLeftJoystickHorizontal() * multiplyer);
+      break;
+    }
+  }
   public void operator() {
 
   }

@@ -10,9 +10,11 @@ public class EndgameCylindersDeploy extends Command {
     private int frontElevation;
     private int rearElevation;
     private int targetElevation;
-    private final int TOLERANCE = 4;
+    private final int TOLERANCE = 6;
     private Endgame endgame = Endgame.getInstance();
     private ArduinoReader arduinoReader = ArduinoReader.getInstance();
+    private Timer timerFront = new Timer();
+    private Timer timerRear = new Timer();
     private Timer timer = new Timer();
 
     public EndgameCylindersDeploy(int setpoint){
@@ -32,18 +34,27 @@ public class EndgameCylindersDeploy extends Command {
         rearElevation = arduinoReader.returnArduinoRearLaserValue();
         System.out.println("Front elevation: " + frontElevation + ", Rear elevation: " + rearElevation);
         
-        if(frontElevation > rearElevation + TOLERANCE|| frontElevation >= targetElevation){
+        if(frontElevation > rearElevation + TOLERANCE|| frontElevation >= targetElevation && timerFront.get() < 20){
             endgame.retractFront();
-            System.out.println("Stopped front");
+            timerFront.start();
             endgame.deployRear();
-        }else if(rearElevation > frontElevation + TOLERANCE|| rearElevation >= targetElevation){
+        }else if(rearElevation > frontElevation + TOLERANCE|| rearElevation >= targetElevation && timerRear.get() < 20){
             endgame.retractRear();
-            System.out.println("Stopped rear");
+            timerRear.start();
             endgame.deployFront();
         }else{
             System.out.println("Deploying both");
             endgame.deployRear();
             endgame.deployFront();
+        }
+        
+        if(timerFront.get() > 20){
+            endgame.deployFront();
+            timerFront.reset();
+        }
+        if(timerRear.get() > 20){
+            endgame.deployRear();
+            timerRear.reset();
         }
     }
 
@@ -51,6 +62,7 @@ public class EndgameCylindersDeploy extends Command {
     protected void interrupted() {
         endgame.retractRear();
         endgame.retractFront();
+        end();
         System.out.println("Cylinder Deploy interrupted");
     }
 
@@ -61,6 +73,10 @@ public class EndgameCylindersDeploy extends Command {
         System.out.println("Ended at: " + timer.get());
         timer.stop();
         timer.reset();
+        timerFront.stop();
+        timerFront.reset();
+        timerRear.stop();
+        timerRear.reset();
     }
 
     @Override

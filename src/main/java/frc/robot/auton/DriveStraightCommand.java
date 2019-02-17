@@ -28,7 +28,7 @@ public class DriveStraightCommand extends PIDCommand {
     }
 
     public void initialize(){
-        drive.resetEncoders();
+        //drive.resetEncoder();
     }
 
     public void execute(){

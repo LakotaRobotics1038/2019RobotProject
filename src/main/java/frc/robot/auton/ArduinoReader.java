@@ -33,7 +33,6 @@ public class ArduinoReader {
                 inputStreamReader = getBufferedReader(inputStreamReader);
             }
             String data = inputStreamReader.readLine();
-            System.out.println(data);
             if (data != null) {
                 // prevEncoderValue = currEncoderValue;
                 // currEncoderValue = encoder.get();
@@ -61,13 +60,11 @@ public class ArduinoReader {
     // Returns laser sensor value from arduinoDataMap
     public int returnArduinoFrontLaserValue() {
         getArduinoData();
-        System.out.println("Front elevation: " + frontLaserSensorData);
         return frontLaserSensorData;
     }
 
     public int returnArduinoRearLaserValue() {
         getArduinoData();
-        System.out.println("Rear elevation: " + rearLaserSensorData);
         return rearLaserSensorData;
     }
 
