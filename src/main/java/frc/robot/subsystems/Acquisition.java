@@ -33,7 +33,7 @@ public class Acquisition extends PIDSubsystem {
     private CANSpark1038 ballIntakeMotor = new CANSpark1038(59, MotorType.kBrushed);
     private CANSpark1038 groundAcqMotor = new CANSpark1038(60, MotorType.kBrushed);
     private CANSpark1038 vacuumGen = new CANSpark1038(58, MotorType.kBrushed); 
-    private DoubleSolenoid hatchAcq = new DoubleSolenoid(HATCH_ACQ, HATCH_DROP);
+    //private DoubleSolenoid hatchAcq = new DoubleSolenoid(HATCH_ACQ, HATCH_DROP);
     private PIDController acquisitionTilt = getPIDController();
     private static Acquisition acquisition;
 
@@ -54,13 +54,13 @@ public class Acquisition extends PIDSubsystem {
         acquisitionTilt.setOutputRange(-PID_MAX_SPEED, PID_MAX_SPEED);
     }
 
-    public void acqHatch() {
-        hatchAcq.set(DoubleSolenoid.Value.kForward); // Placeholder
-    }
+    // public void acqHatch() {
+    //     hatchAcq.set(DoubleSolenoid.Value.kForward); // Placeholder
+    // }
 
-    public void dropHatch() {
-        hatchAcq.set(DoubleSolenoid.Value.kReverse); // Placeholder
-    }
+    // public void dropHatch() {
+    //     hatchAcq.set(DoubleSolenoid.Value.kReverse); // Placeholder
+    // }
 
     public static int getAcqTilt() {
         return 5; // replace

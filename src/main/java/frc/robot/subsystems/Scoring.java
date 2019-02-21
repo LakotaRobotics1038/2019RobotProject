@@ -36,9 +36,9 @@ public class Scoring extends PIDSubsystem {
     private final int fourBarChannelA = 2; // Placeholder
     private final int fourBarChannelB = 3; // Placeholder
     private final int fourBarCountsPerRev = 220; // Placeholder
-    private CANSpark1038 fourBarMotor1 = new CANSpark1038(55, MotorType.kBrushed);
-    private CANSpark1038 fourBarMotor2 = new CANSpark1038(56, MotorType.kBrushed);
-    private Encoder1038 fourBarEncoder = new Encoder1038(fourBarChannelA, fourBarChannelB, false, fourBarCountsPerRev, 6); //Placeholder
+    //private CANSpark1038 fourBarMotor1 = new CANSpark1038(55, MotorType.kBrushed);
+    //private CANSpark1038 fourBarMotor2 = new CANSpark1038(56, MotorType.kBrushed);
+    //private Encoder1038 fourBarEncoder = new Encoder1038(fourBarChannelA, fourBarChannelB, false, fourBarCountsPerRev, 6); //Placeholder
     private PIDController scoringPID = getPIDController();
 
     public static Scoring getInstance() {
@@ -54,18 +54,18 @@ public class Scoring extends PIDSubsystem {
         scoringPID.setAbsoluteTolerance(SCORING_TOLERANCE);
         scoringPID.setOutputRange(MIN_SCORING_OUTPUT, MAX_SCORING_OUTPUT);
         scoringPID.setContinuous(false);
-        fourBarMotor1.setInverted(false); // Placeholder
-        fourBarMotor1.setInverted(true); // Placeholder
-        fourBarMotor2.follow(fourBarMotor1);
+        //fourBarMotor1.setInverted(false); // Placeholder
+        //fourBarMotor2.setInverted(true); // Placeholder
+        //fourBarMotor2.follow(fourBarMotor1);
     }
 
-    public int getEncoderCount() {
-        return fourBarEncoder.get();
-    }
+    // public int getEncoderCount() {
+    //     return fourBarEncoder.get();
+    // }
 
-    public double getScoringSpeed() {
-        return fourBarEncoder.getRate();
-    }
+    // public double getScoringSpeed() {
+    //     return fourBarEncoder.getRate();
+    // }
 
     public void scoringPeriodic() {
         if (scoringPID.isEnabled()) {
@@ -128,9 +128,9 @@ public class Scoring extends PIDSubsystem {
 		setSetpoint(SCORING_FLOOR);
     }
 
-    public void resetEncoder() {
-        fourBarEncoder.reset();
-    }
+    // public void resetEncoder() {
+    //     fourBarEncoder.reset();
+    // }
 
     public void move(double joystickValue) {
         if (getSetpoint() <= SCORING_LVL3 && joystickValue > 0.09) {
@@ -162,6 +162,6 @@ public class Scoring extends PIDSubsystem {
     @Override
     public void disable() {
         super.disable();
-        fourBarMotor1.set(0);
+        //fourBarMotor1.set(0);
     }
 }

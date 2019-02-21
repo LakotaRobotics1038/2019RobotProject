@@ -21,10 +21,10 @@ public class DriveTrain extends Subsystem {
     public DoubleSolenoid GearChangeSolenoid = new DoubleSolenoid(4, 5);
     public boolean isHighGear = false;
 
-    public static CANSpark1038 CANSparkRightFront = new CANSpark1038(51, MotorType.kBrushless);
-    public static CANSpark1038 CANSparkRightBack = new CANSpark1038(50, MotorType.kBrushless);
-    public static CANSpark1038 CANSparkLeftFront = new CANSpark1038(53, MotorType.kBrushless);
-    public static CANSpark1038 CANSparkLeftBack = new CANSpark1038(52, MotorType.kBrushless);
+    public static CANSpark1038 CANSparkRightFront = new CANSpark1038(53, MotorType.kBrushless);
+    public static CANSpark1038 CANSparkRightBack = new CANSpark1038(52, MotorType.kBrushless);
+    public static CANSpark1038 CANSparkLeftFront = new CANSpark1038(51, MotorType.kBrushless);
+    public static CANSpark1038 CANSparkLeftBack = new CANSpark1038(50, MotorType.kBrushless);
 
     public CANEncoder CANSparkRightEncoder = CANSparkRightBack.getEncoder();
     public CANEncoder CANSparkLeftEncoder = CANSparkLeftBack.getEncoder();
@@ -45,6 +45,10 @@ public class DriveTrain extends Subsystem {
         CANSparkLeftFront.restoreFactoryDefaults();
         CANSparkRightBack.restoreFactoryDefaults();
         CANSparkRightFront.restoreFactoryDefaults();
+        CANSparkLeftBack.setInverted(true);
+        CANSparkLeftFront.setInverted(true);
+        CANSparkRightBack.setInverted(true);
+        CANSparkRightFront.setInverted(true);
         CANSparkLeftBack.setIdleMode(IdleMode.kBrake);
         CANSparkLeftFront.setIdleMode(IdleMode.kBrake);
         CANSparkRightBack.setIdleMode(IdleMode.kBrake);
@@ -105,7 +109,7 @@ public class DriveTrain extends Subsystem {
 
     // Drive robot with tank controls (input range -1 to 1 for each stick)
     public void tankDrive(double leftStickInput, double rightStickInput) {
-        differentialDrive.tankDrive(leftStickInput * 0.57, rightStickInput * 0.57, true);
+        differentialDrive.tankDrive(leftStickInput, rightStickInput, true);
     }
 
     // Drive robot using a single stick (input range -1 to 1)

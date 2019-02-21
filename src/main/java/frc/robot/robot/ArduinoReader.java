@@ -14,6 +14,10 @@ public class ArduinoReader {
     public int frontLaserSensorData = 0;
     public double lineFollowerData = 0;
     public int rearLaserSensorData = 0;
+    public int frontLeftLaserSensorData = 0;
+    public int frontRightLaserSensorData = 0;
+    public int scoringAccelerometerData = 0;
+    public int acquisitionAccelerometerData = 0;
 
     public ArduinoReader() {
     }
@@ -41,7 +45,12 @@ public class ArduinoReader {
                 try{
                     frontLaserSensorData = Integer.parseInt(arduinoDataMap[0]);
                     rearLaserSensorData = Integer.parseInt(arduinoDataMap[1]);
-                    //lineFollowerData = Double.parseDouble(arduinoDataMap[2]);
+                    frontLeftLaserSensorData = Integer.parseInt(arduinoDataMap[2]);
+                    frontRightLaserSensorData = Integer.parseInt(arduinoDataMap[3]);
+                    lineFollowerData = Double.parseDouble(arduinoDataMap[2]);
+                    scoringAccelerometerData = Integer.parseInt(arduinoDataMap[4]);
+                    acquisitionAccelerometerData = Integer.parseInt(arduinoDataMap[4]);
+                    System.out.println(frontLaserSensorData + ", " + rearLaserSensorData + ", " + frontLeftLaserSensorData + ", " + frontRightLaserSensorData + ", " + lineFollowerData + ", " + scoringAccelerometerData + ", " + acquisitionAccelerometerData);
                 }catch(NumberFormatException e){
                 }
             }
@@ -62,17 +71,27 @@ public class ArduinoReader {
 
     // Returns laser sensor value from arduinoDataMap
     public int returnArduinoFrontLaserValue() {
-        getArduinoData();
+        //getArduinoData();
         return frontLaserSensorData;
     }
 
     public int returnArduinoRearLaserValue() {
-        getArduinoData();
+       // getArduinoData();
         return rearLaserSensorData;
     }
 
+    public int returnArduinoFrontLeftLaserValue() {
+       // getArduinoData();
+        return frontLeftLaserSensorData;
+    }
+
+    public int returnArduinoFrontRightLaserValue() {
+        //getArduinoData();
+        return frontRightLaserSensorData;
+    }
+
     public double returnArduinoTapeValue() {
-        getArduinoData();
+       // getArduinoData();
         // if(lineFollowerData != -1 && lineFollowerPrev != -1) {
         // double tapeDifference = lineFollowerData - lineFollowerPrev;
         // double pulseDifference = currEncoderValue - prevEncoderValue;
@@ -85,6 +104,16 @@ public class ArduinoReader {
         // return -1;
         // }
         return lineFollowerData;
+    }
+
+    public int returnScoringAccelerometerValue(){
+        //getArduinoData();
+        return scoringAccelerometerData;
+    }
+
+    public int returnAcquisitionAccelerometerValue(){
+        //getArduinoData();
+        return acquisitionAccelerometerData;
     }
 
 }
