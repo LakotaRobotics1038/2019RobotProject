@@ -58,7 +58,7 @@ public class Auton {
     }
 
     public void printEncoders() {
-        System.out.println("" + driveTrain.leftDriveEncoder.get() + "," + driveTrain.rightDriveEncoder.get());
+        System.out.println("" + driveTrain.getCANSparkLeftEncoder() + "," + driveTrain.getCANSparkRightEncoder());
     }
 
     /**

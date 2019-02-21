@@ -8,6 +8,7 @@
 package frc.robot.subsystems;
 
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+import frc.robot.robot.ArduinoReader;
 
 /**
  * Add your docs here.
@@ -15,6 +16,8 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 public class Dashboard{
 
   private static Dashboard dashboard;
+  private ArduinoReader arduinoReader = ArduinoReader.getInstance();
+  private Endgame endgame = Endgame.getInstance();
 
   public static Dashboard getInstance() {
     if (dashboard == null) {
@@ -37,5 +40,9 @@ public class Dashboard{
     SmartDashboard.putNumber("IVal", SmartDashboard.getNumber("IVal", -1));
     SmartDashboard.putNumber("DVal", SmartDashboard.getNumber("DVal", -1));
     SmartDashboard.putNumber("Setpoint", SmartDashboard.getNumber("Setpoint", -1));
+    // SmartDashboard.putNumber("Front Elevation", arduinoReader.returnArduinoFrontLaserValue());
+    // SmartDashboard.putNumber("Back Elevation", arduinoReader.returnArduinoRearLaserValue());
+    // SmartDashboard.putBoolean("Front Deployed", endgame.getIsFrontDeployed());
+    // SmartDashboard.putBoolean("Rear Deployed", endgame.getIsRearDeployed());
   }
 }
