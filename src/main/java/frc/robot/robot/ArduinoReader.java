@@ -65,7 +65,7 @@ public class ArduinoReader {
 
     public BufferedReader getBufferedReader(BufferedReader bufferedReader) throws IOException {
         BufferedReader bf = bufferedReader;
-        bf = new BufferedReader(new InputStreamReader(new FileInputStream("/dev/ttyS1")));
+        bf = new BufferedReader(new InputStreamReader(new FileInputStream("/dev/ttyUSB0")));
         return bf;
     }
 

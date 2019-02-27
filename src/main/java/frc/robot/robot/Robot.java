@@ -21,6 +21,7 @@ import edu.wpi.first.wpilibj.DoubleSolenoid.Value;
 import edu.wpi.first.wpilibj.command.CommandGroup;
 import edu.wpi.first.wpilibj.command.Scheduler;
 import frc.robot.auton.EndgameCylinderRetract;
+import frc.robot.depricated.EndgameCylindersDeploy;
 import frc.robot.subsystems.Acquisition;
 import frc.robot.subsystems.Dashboard;
 import frc.robot.subsystems.DriveTrain;
@@ -38,8 +39,8 @@ import edu.wpi.first.wpilibj.AnalogInput;
 public class Robot extends TimedRobot {
 
   // Rename cameras to more fun names
-  UsbCamera visionCam = CameraServer.getInstance().startAutomaticCapture();
-  boolean prevTrigger = false;
+  // UsbCamera visionCam = CameraServer.getInstance().startAutomaticCapture();
+  // boolean prevTrigger = false;
 
   // Endgame
   private Endgame endgame = Endgame.getInstance();
@@ -68,17 +69,17 @@ public class Robot extends TimedRobot {
   Scoring scoring = Scoring.getInstance();
 
   // Test
-  CANSpark1038 scoringMotor1 = new CANSpark1038(55, MotorType.kBrushed);
-  CANSpark1038 scoringMotor2 = new CANSpark1038(56, MotorType.kBrushed);
-  CANSpark1038 ballacqMotor = new CANSpark1038(59, MotorType.kBrushed);
-  CANSpark1038 wristMotor = new CANSpark1038(60, MotorType.kBrushed);
-  CANSpark1038 vacuumGen = new CANSpark1038(58, MotorType.kBrushed);
-  Encoder1038 scoringEncoder1 = new Encoder1038(1, 0, false, 1000000, 1);
-  Encoder1038 scoringEncoder2 = new Encoder1038(2, 3, false, 1000000, 1);
-  Gyro1038 gyro = new Gyro1038();
-  AnalogInput pressureSensor = new AnalogInput(0);
+  // CANSpark1038 scoringMotor1 = new CANSpark1038(55, MotorType.kBrushed);
+  // CANSpark1038 scoringMotor2 = new CANSpark1038(56, MotorType.kBrushed);
+  // CANSpark1038 ballacqMotor = new CANSpark1038(59, MotorType.kBrushed);
+  // CANSpark1038 wristMotor = new CANSpark1038(60, MotorType.kBrushed);
+  // CANSpark1038 vacuumGen = new CANSpark1038(58, MotorType.kBrushed);
+  // Encoder1038 scoringEncoder1 = new Encoder1038(1, 0, false, 1000000, 1);
+  // Encoder1038 scoringEncoder2 = new Encoder1038(2, 3, false, 1000000, 1);
+  // Gyro1038 gyro = new Gyro1038();
+  // AnalogInput pressureSensor = new AnalogInput(0);
   ArduinoReader arduinoReader = ArduinoReader.getInstance();
-  DoubleSolenoid hatchDetatch = new DoubleSolenoid(7, 6);
+  // DoubleSolenoid hatchDetatch = new DoubleSolenoid(7, 6);
 
   /**
    * This function is run when the robot is first started up and should be used
@@ -86,46 +87,47 @@ public class Robot extends TimedRobot {
    */
   @Override
   public void robotInit() {
-    scoringMotor1.restoreFactoryDefaults();
-    scoringMotor2.restoreFactoryDefaults();
-    ballacqMotor.restoreFactoryDefaults();
-    wristMotor.restoreFactoryDefaults();
-    vacuumGen.restoreFactoryDefaults();
-    scoringMotor1.setIdleMode(IdleMode.kBrake);
-    scoringMotor2.setIdleMode(IdleMode.kBrake);
-    ballacqMotor.setIdleMode(IdleMode.kBrake);
-    wristMotor.setIdleMode(IdleMode.kBrake);
-    vacuumGen.setIdleMode(IdleMode.kBrake);
-    visionCam.setExposureManual(10);
+    // scoringMotor1.restoreFactoryDefaults();
+    // scoringMotor2.restoreFactoryDefaults();
+    // ballacqMotor.restoreFactoryDefaults();
+    // wristMotor.restoreFactoryDefaults();
+    // vacuumGen.restoreFactoryDefaults();
+    // scoringMotor1.setIdleMode(IdleMode.kBrake);
+    // scoringMotor2.setIdleMode(IdleMode.kBrake);
+    // ballacqMotor.setIdleMode(IdleMode.kBrake);
+    // wristMotor.setIdleMode(IdleMode.kBrake);
+    // vacuumGen.setIdleMode(IdleMode.kBrake);
+    // visionCam.setExposureManual(10);
   }
 
   @Override
   public void robotPeriodic() {
     dashboard.update();
+    arduinoReader.getArduinoData();
   }
 
   public void teleopInit() {
     c.clearAllPCMStickyFaults();
     c.setClosedLoopControl(true);
     schedule.removeAll();
-    scoringMotor1.restoreFactoryDefaults();
-    scoringMotor2.restoreFactoryDefaults();
-    ballacqMotor.restoreFactoryDefaults();
-    wristMotor.restoreFactoryDefaults();
-    scoringMotor1.setIdleMode(IdleMode.kBrake);
-    scoringMotor2.setIdleMode(IdleMode.kBrake);
-    ballacqMotor.setIdleMode(IdleMode.kBrake);
-    wristMotor.setIdleMode(IdleMode.kBrake);
+    // scoringMotor1.restoreFactoryDefaults();
+    // scoringMotor2.restoreFactoryDefaults();
+    // ballacqMotor.restoreFactoryDefaults();
+    // wristMotor.restoreFactoryDefaults();
+    // scoringMotor1.setIdleMode(IdleMode.kBrake);
+    // scoringMotor2.setIdleMode(IdleMode.kBrake);
+    // ballacqMotor.setIdleMode(IdleMode.kBrake);
+    // wristMotor.setIdleMode(IdleMode.kBrake);
   }
 
   public void teleopPeriodic() {
-    //arduinoReader.getArduinoData();
+    // arduinoReader.getArduinoData();
     driver();
     //driveTrain.dualArcadeDrive(0, 0);
     operator();
-    double volts = pressureSensor.getAverageVoltage();
-    double percentage = volts / 5;
-    double pressure = percentage * 200;
+    // double volts = pressureSensor.getAverageVoltage();
+    // double percentage = volts / 5;
+    // double pressure = percentage * 200;
     //gyro.readGyro();
     //System.out.println(endgame.getEncoderCounts() + ", " + scoringEncoder1.get() + ", " + scoringEncoder2.get() + ", " + gyro.getAngle());
     // System.out.println("Scoring encoder one: " + scoringEncoder1.get() + " \n Scoring encoder two: "
@@ -142,9 +144,7 @@ public class Robot extends TimedRobot {
   public void autonomousInit() {
     c.setClosedLoopControl(true);
     schedule.removeAll();
-    group.addParallel(new EndgameCylinderRetract(5, EndgameCylinderRetract.Value.front));
-    group.addParallel(new EndgameCylinderRetract(5, EndgameCylinderRetract.Value.rear));
-    schedule.add(group);
+    schedule.add(new EndgameCylindersDeploy(35));
   }
 
   public void autonomousPeriodic() {
@@ -190,11 +190,11 @@ public class Robot extends TimedRobot {
       endgame.setRearMotor(0.0);
     }
 
-    if (driverJoystick.getLeftTrigger() > 0.5) {
-      vacuumGen.set(.5);
-    } else {
-      vacuumGen.set(0);
-    }
+    // if (driverJoystick.getLeftTrigger() > 0.5) {
+    //   vacuumGen.set(.5);
+    // } else {
+    //   vacuumGen.set(0);
+    // }
 
     switch (driveTrain.currentDriveMode) {
     case tankDrive:
@@ -217,50 +217,50 @@ public class Robot extends TimedRobot {
   }
 
   public void operator() {
-    if (operatorJoystick.getLeftButton()) {
-      acquisition.acquire();
-    }
-    if (operatorJoystick.getLeftTrigger() > 0.5) {
-      //acquisition.dispose();
-      hatchDetatch.set(Value.kForward);
-    }
-    if (operatorJoystick.getRightButton()) {
-      //acquisition.acqHatch();
-    }
-    if (operatorJoystick.getRightTrigger() > 0.5) {
-      //acquisition.dropHatch();
-      // driverJoystick.setLeftRumble(0.5); //Should be light
-      // operatorJoystick.setLeftRumble(0.5); //Should be light
-      hatchDetatch.set(Value.kReverse);
-    }
+    // if (operatorJoystick.getLeftButton()) {
+    //   acquisition.acquire();
+    // }
+    // if (operatorJoystick.getLeftTrigger() > 0.5) {
+    //   //acquisition.dispose();
+    //   hatchDetatch.set(Value.kForward);
+    // }
+    // if (operatorJoystick.getRightButton()) {
+    //   //acquisition.acqHatch();
+    // }
+    // if (operatorJoystick.getRightTrigger() > 0.5) {
+    //   //acquisition.dropHatch();
+    //   // driverJoystick.setLeftRumble(0.5); //Should be light
+    //   // operatorJoystick.setLeftRumble(0.5); //Should be light
+    //   hatchDetatch.set(Value.kReverse);
+    // }
 
-    if (operatorJoystick.getXButton()) {
-      // scoring.moveToGround();
-      wristMotor.set(0.5);
-    } else if (operatorJoystick.getAButton()) {
-      // scoring.moveToLvl1();
-      wristMotor.set(-0.5);
-    } else {
-      wristMotor.set(0);
-    }
-    if (operatorJoystick.getBButton()) {
-      scoring.moveToLvl2();
-    }
-    if (operatorJoystick.getYButton()) {
-      scoring.moveToLvl3();
-    }
-    if (Math.abs(operatorJoystick.getRightJoystickVertical()) > 0.09) {
-      // scoring.move(operatorJoystick.getRightJoystickVertical());
-      scoringMotor1.set(operatorJoystick.getRightJoystickVertical());
-      scoringMotor2.set(operatorJoystick.getRightJoystickVertical() * -1);
-    }
-    if (Math.abs(operatorJoystick.getLeftJoystickVertical()) > 0.09) {
-      ballacqMotor.set(operatorJoystick.getLeftJoystickVertical() * 0.5);
-    }
+    // if (operatorJoystick.getXButton()) {
+    //   // scoring.moveToGround();
+    //   wristMotor.set(0.5);
+    // } else if (operatorJoystick.getAButton()) {
+    //   // scoring.moveToLvl1();
+    //   wristMotor.set(-0.5);
+    // } else {
+    //   wristMotor.set(0);
+    // }
+    // if (operatorJoystick.getBButton()) {
+    //   scoring.moveToLvl2();
+    // }
+    // if (operatorJoystick.getYButton()) {
+    //   scoring.moveToLvl3();
+    // }
+    // if (Math.abs(operatorJoystick.getRightJoystickVertical()) > 0.09) {
+    //   // scoring.move(operatorJoystick.getRightJoystickVertical());
+    //   scoringMotor1.set(operatorJoystick.getRightJoystickVertical());
+    //   scoringMotor2.set(operatorJoystick.getRightJoystickVertical() * -1);
+    // }
+    // if (Math.abs(operatorJoystick.getLeftJoystickVertical()) > 0.09) {
+    //   ballacqMotor.set(operatorJoystick.getLeftJoystickVertical() * 0.5);
+    // }
 
-    if (DriverStation.getInstance().getMatchTime() < 30 && !DriverStation.getInstance().isAutonomous()) {
-      // operatorJoystick.setLeftRumble(1); //hard rumble
-    }
+    // if (DriverStation.getInstance().getMatchTime() < 30 && !DriverStation.getInstance().isAutonomous()) {
+    //   // operatorJoystick.setLeftRumble(1); //hard rumble
+    // }
   }
 
   /**

@@ -8,10 +8,9 @@ import frc.robot.subsystems.Endgame;
 
 public class EndgameCylindersDeploy extends Command {
 
-    private int frontElevation;
-    private int rearElevation;
-    private int targetElevation;
-    private final int TOLERANCE = 6;
+    private double frontElevation;
+    private double rearElevation;
+    private double targetElevation;
     private Endgame endgame = Endgame.getInstance();
     private ArduinoReader arduinoReader = ArduinoReader.getInstance();
     private Timer timerFront = new Timer();
@@ -27,6 +26,8 @@ public class EndgameCylindersDeploy extends Command {
     protected void initialize(){
         timer.start();
         System.out.println("Timer started");
+        endgame.deployFront();
+        endgame.deployRear();
     }
 
     @Override
@@ -35,42 +36,27 @@ public class EndgameCylindersDeploy extends Command {
         rearElevation = arduinoReader.returnArduinoRearLaserValue();
         System.out.println("Front elevation: " + frontElevation + ", Rear elevation: " + rearElevation);
         
-        if(frontElevation > rearElevation + TOLERANCE|| frontElevation >= targetElevation && timerFront.get() < 20){
-            endgame.retractFront();
-            timerFront.start();
-            endgame.deployRear();
-        }else if(rearElevation > frontElevation + TOLERANCE|| rearElevation >= targetElevation && timerRear.get() < 20){
+        if(rearElevation > frontElevation && timerRear.get() < 0.1){
             endgame.retractRear();
-            timerRear.start();
-            endgame.deployFront();
-        }else{
-            System.out.println("Deploying both");
-            endgame.deployRear();
-            endgame.deployFront();
-        }
-        
-        if(timerFront.get() > 20){
-            endgame.deployFront();
-            timerFront.reset();
-        }
-        if(timerRear.get() > 20){
+            timerRear.reset();
+            System.out.println("Retract Rear");
+        }else if(rearElevation < frontElevation){
             endgame.deployRear();
             timerRear.reset();
+            System.out.println("Retract Rear");
         }
     }
 
     @Override
     protected void interrupted() {
-        endgame.retractRear();
-        endgame.retractFront();
         end();
         System.out.println("Cylinder Deploy interrupted");
     }
 
     @Override
     protected void end(){
-        endgame.deployRear();
-        endgame.deployFront();
+        endgame.retractRear();
+        endgame.retractFront();
         System.out.println("Ended at: " + timer.get());
         timer.stop();
         timer.reset();
