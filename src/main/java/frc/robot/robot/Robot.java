@@ -103,7 +103,7 @@ public class Robot extends TimedRobot {
   @Override
   public void robotPeriodic() {
     dashboard.update();
-    arduinoReader.getArduinoData();
+    //arduinoReader.getArduinoData();
   }
 
   public void teleopInit() {
