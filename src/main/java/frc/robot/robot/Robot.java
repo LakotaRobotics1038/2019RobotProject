@@ -87,6 +87,7 @@ public class Robot extends TimedRobot {
    */
   @Override
   public void robotInit() {
+    arduinoReader.initialize();
     // scoringMotor1.restoreFactoryDefaults();
     //scoringMotor2.restoreFactoryDefaults();
     // ballacqMotor.restoreFactoryDefaults();
@@ -123,7 +124,8 @@ public class Robot extends TimedRobot {
   }
 
   public void teleopPeriodic() {
-    // arduinoReader.getArduinoData();
+    arduinoReader.readArduino();
+    System.out.println(arduinoReader.getFrontLaserVal());
     driver();
     //driveTrain.dualArcadeDrive(0, 0);
     operator();

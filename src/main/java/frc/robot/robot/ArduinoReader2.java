@@ -2,9 +2,9 @@ package frc.robot.robot;
 
 import edu.wpi.first.wpilibj.SerialPort;
 
-public class ArduinoReader {
+public class ArduinoReader2 {
     private static SerialPort arduinoPort;
-    private static ArduinoReader arduinoReader;
+    private static ArduinoReader2 arduinoReader;
     private String arduinoOutput;
     public String arduinoDataMap[];
     public int frontLaserSensorData = 0;
@@ -15,13 +15,13 @@ public class ArduinoReader {
     public int scoringAccelerometerData = 0;
     public int acquisitionAccelerometerData = 0;
 
-    private ArduinoReader(){
+    private ArduinoReader2(){
 
     }
 
-    public static ArduinoReader getInstance(){
+    public static ArduinoReader2 getInstance(){
         if(arduinoReader == null){
-            arduinoReader = new ArduinoReader();
+            arduinoReader = new ArduinoReader2();
         }
         return arduinoReader;
     }
