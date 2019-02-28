@@ -47,7 +47,7 @@ public class Robot extends TimedRobot {
 
   // Drive
   private DriveTrain driveTrain = DriveTrain.getInstance();
-  public Compressor c = new Compressor();
+  // public Compressor c = new Compressor();
 
   // Joystick
   private XboxJoystick1038 driverJoystick = new XboxJoystick1038(0);
@@ -70,7 +70,7 @@ public class Robot extends TimedRobot {
 
   // Test
   // CANSpark1038 scoringMotor1 = new CANSpark1038(55, MotorType.kBrushed);
-  // CANSpark1038 scoringMotor2 = new CANSpark1038(56, MotorType.kBrushed);
+  CANSpark1038 scoringMotor2 = new CANSpark1038(56, MotorType.kBrushless);
   // CANSpark1038 ballacqMotor = new CANSpark1038(59, MotorType.kBrushed);
   // CANSpark1038 wristMotor = new CANSpark1038(60, MotorType.kBrushed);
   // CANSpark1038 vacuumGen = new CANSpark1038(58, MotorType.kBrushed);
@@ -88,12 +88,12 @@ public class Robot extends TimedRobot {
   @Override
   public void robotInit() {
     // scoringMotor1.restoreFactoryDefaults();
-    // scoringMotor2.restoreFactoryDefaults();
+    //scoringMotor2.restoreFactoryDefaults();
     // ballacqMotor.restoreFactoryDefaults();
     // wristMotor.restoreFactoryDefaults();
     // vacuumGen.restoreFactoryDefaults();
     // scoringMotor1.setIdleMode(IdleMode.kBrake);
-    // scoringMotor2.setIdleMode(IdleMode.kBrake);
+    //scoringMotor2.setIdleMode(IdleMode.kBrake);
     // ballacqMotor.setIdleMode(IdleMode.kBrake);
     // wristMotor.setIdleMode(IdleMode.kBrake);
     // vacuumGen.setIdleMode(IdleMode.kBrake);
@@ -107,17 +107,19 @@ public class Robot extends TimedRobot {
   }
 
   public void teleopInit() {
-    c.clearAllPCMStickyFaults();
-    c.setClosedLoopControl(true);
+    // c.clearAllPCMStickyFaults();
+    // c.setClosedLoopControl(true);
     schedule.removeAll();
     // scoringMotor1.restoreFactoryDefaults();
-    // scoringMotor2.restoreFactoryDefaults();
+    scoringMotor2.restoreFactoryDefaults();
     // ballacqMotor.restoreFactoryDefaults();
     // wristMotor.restoreFactoryDefaults();
     // scoringMotor1.setIdleMode(IdleMode.kBrake);
-    // scoringMotor2.setIdleMode(IdleMode.kBrake);
+    scoringMotor2.setIdleMode(IdleMode.kBrake);
     // ballacqMotor.setIdleMode(IdleMode.kBrake);
     // wristMotor.setIdleMode(IdleMode.kBrake);
+    endgame.retractFront();
+    endgame.retractRear();
   }
 
   public void teleopPeriodic() {
@@ -142,7 +144,7 @@ public class Robot extends TimedRobot {
   }
 
   public void autonomousInit() {
-    c.setClosedLoopControl(true);
+    // c.setClosedLoopControl(true);
     schedule.removeAll();
     schedule.add(new EndgameCylindersDeploy(35));
   }
@@ -249,11 +251,11 @@ public class Robot extends TimedRobot {
     // if (operatorJoystick.getYButton()) {
     //   scoring.moveToLvl3();
     // }
-    // if (Math.abs(operatorJoystick.getRightJoystickVertical()) > 0.09) {
-    //   // scoring.move(operatorJoystick.getRightJoystickVertical());
-    //   scoringMotor1.set(operatorJoystick.getRightJoystickVertical());
-    //   scoringMotor2.set(operatorJoystick.getRightJoystickVertical() * -1);
-    // }
+   if (Math.abs(operatorJoystick.getRightJoystickVertical()) > 0.09) {
+      // scoring.move(operatorJoystick.getRightJoystickVertical());
+      // scoringMotor1.set(operatorJoystick.getRightJoystickVertical());
+      scoringMotor2.set(operatorJoystick.getRightJoystickVertical());
+    }
     // if (Math.abs(operatorJoystick.getLeftJoystickVertical()) > 0.09) {
     //   ballacqMotor.set(operatorJoystick.getLeftJoystickVertical() * 0.5);
     // }
