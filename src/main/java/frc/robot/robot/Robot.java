@@ -47,7 +47,7 @@ public class Robot extends TimedRobot {
 
   // Drive
   private DriveTrain driveTrain = DriveTrain.getInstance();
-  // public Compressor c = new Compressor();
+  public Compressor c = new Compressor();
 
   // Joystick
   private XboxJoystick1038 driverJoystick = new XboxJoystick1038(0);
@@ -127,6 +127,7 @@ public class Robot extends TimedRobot {
     driver();
     //driveTrain.dualArcadeDrive(0, 0);
     operator();
+    System.out.println("scoring encoder: " + scoringMotor2.getEncoder().getPosition());
     // double volts = pressureSensor.getAverageVoltage();
     // double percentage = volts / 5;
     // double pressure = percentage * 200;
@@ -144,7 +145,7 @@ public class Robot extends TimedRobot {
   }
 
   public void autonomousInit() {
-    // c.setClosedLoopControl(true);
+    c.setClosedLoopControl(true);
     schedule.removeAll();
     schedule.add(new EndgameCylindersDeploy(35));
   }

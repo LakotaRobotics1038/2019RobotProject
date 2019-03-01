@@ -7,6 +7,7 @@
 
 package frc.robot.subsystems;
 
+import com.revrobotics.CANEncoder;
 import com.revrobotics.CANSparkMaxLowLevel.MotorType;
 
 import edu.wpi.first.wpilibj.PIDController;
@@ -33,12 +34,8 @@ public class Scoring extends PIDSubsystem {
     public final static int SCORING_LVL2 = 400; // Placeholder
     public final static int SCORING_LVL1 = 20; // Placeholder
     public final static int SCORING_FLOOR = 50; // Placeholder
-    private final int fourBarChannelA = 2; // Placeholder
-    private final int fourBarChannelB = 3; // Placeholder
-    private final int fourBarCountsPerRev = 220; // Placeholder
-    //private CANSpark1038 fourBarMotor1 = new CANSpark1038(55, MotorType.kBrushed);
-    //private CANSpark1038 fourBarMotor2 = new CANSpark1038(56, MotorType.kBrushed);
-    //private Encoder1038 fourBarEncoder = new Encoder1038(fourBarChannelA, fourBarChannelB, false, fourBarCountsPerRev, 6); //Placeholder
+    // private CANSpark1038 fourBarMotor = new CANSpark1038(56, MotorType.kBrushed);
+    // private CANEncoder fourBarEncoder = fourBarMotor.getEncoder();
     private PIDController scoringPID = getPIDController();
 
     public static Scoring getInstance() {
@@ -54,17 +51,15 @@ public class Scoring extends PIDSubsystem {
         scoringPID.setAbsoluteTolerance(SCORING_TOLERANCE);
         scoringPID.setOutputRange(MIN_SCORING_OUTPUT, MAX_SCORING_OUTPUT);
         scoringPID.setContinuous(false);
-        //fourBarMotor1.setInverted(false); // Placeholder
-        //fourBarMotor2.setInverted(true); // Placeholder
-        //fourBarMotor2.follow(fourBarMotor1);
+        //fourBarMotor.setInverted(false);
     }
 
-    // public int getEncoderCount() {
-    //     return fourBarEncoder.get();
+    // public int getMotorRotations() {
+    //     return fourBarEncoder.getPosition();
     // }
 
     // public double getScoringSpeed() {
-    //     return fourBarEncoder.getRate();
+    //     return fourBarEncoder.getVelocity();
     // }
 
     public void scoringPeriodic() {
@@ -152,16 +147,17 @@ public class Scoring extends PIDSubsystem {
     @Override
     protected double returnPIDInput() {
         return 0;
+        // return fourBarEncoder.getPosition();
     }
 
     @Override
     protected void usePIDOutput(double output) {
-
+        // fourBarMotor.set(output);
     }
 
     @Override
     public void disable() {
         super.disable();
-        //fourBarMotor1.set(0);
+        //fourBarMotor.set(0);
     }
 }
