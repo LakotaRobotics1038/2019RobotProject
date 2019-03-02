@@ -17,6 +17,7 @@ import edu.wpi.first.wpilibj.Compressor;
 import edu.wpi.first.wpilibj.DoubleSolenoid;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.TimedRobot;
+import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.DoubleSolenoid.Value;
 import edu.wpi.first.wpilibj.command.CommandGroup;
 import edu.wpi.first.wpilibj.command.Scheduler;
@@ -39,7 +40,7 @@ import edu.wpi.first.wpilibj.AnalogInput;
 public class Robot extends TimedRobot {
 
   // Rename cameras to more fun names
-  // UsbCamera visionCam = CameraServer.getInstance().startAutomaticCapture();
+  UsbCamera visionCam = CameraServer.getInstance().startAutomaticCapture();
   // boolean prevTrigger = false;
 
   // Endgame
@@ -64,6 +65,10 @@ public class Robot extends TimedRobot {
 
   // Acquisition
   Acquisition acquisition = Acquisition.getInstance();
+  Timer downTimer = new Timer();
+  Timer upTimer = new Timer();
+  boolean goingUp = false;
+  boolean goingDown = false;
 
   // Scoring
   Scoring scoring = Scoring.getInstance();
@@ -71,7 +76,7 @@ public class Robot extends TimedRobot {
   // Test
   // CANSpark1038 scoringMotor1 = new CANSpark1038(55, MotorType.kBrushed);
   CANSpark1038 scoringMotor2 = new CANSpark1038(56, MotorType.kBrushless);
-  // CANSpark1038 ballacqMotor = new CANSpark1038(59, MotorType.kBrushed);
+  CANSpark1038 ballacqMotor = new CANSpark1038(59, MotorType.kBrushed);
   // CANSpark1038 wristMotor = new CANSpark1038(60, MotorType.kBrushed);
   // CANSpark1038 vacuumGen = new CANSpark1038(58, MotorType.kBrushed);
   // Encoder1038 scoringEncoder1 = new Encoder1038(1, 0, false, 1000000, 1);
@@ -89,21 +94,23 @@ public class Robot extends TimedRobot {
   public void robotInit() {
     // scoringMotor1.restoreFactoryDefaults();
     //scoringMotor2.restoreFactoryDefaults();
-    // ballacqMotor.restoreFactoryDefaults();
+    ballacqMotor.restoreFactoryDefaults();
     // wristMotor.restoreFactoryDefaults();
     // vacuumGen.restoreFactoryDefaults();
     // scoringMotor1.setIdleMode(IdleMode.kBrake);
     //scoringMotor2.setIdleMode(IdleMode.kBrake);
-    // ballacqMotor.setIdleMode(IdleMode.kBrake);
+    ballacqMotor.setIdleMode(IdleMode.kBrake);
     // wristMotor.setIdleMode(IdleMode.kBrake);
     // vacuumGen.setIdleMode(IdleMode.kBrake);
-    // visionCam.setExposureManual(10);
+    // arduinoReader.initialize();
+    visionCam.setExposureManual(40);
+    arduinoReader.initialize();
   }
 
   @Override
   public void robotPeriodic() {
     dashboard.update();
-    //arduinoReader.getArduinoData();
+    arduinoReader.readArduino();
   }
 
   public void teleopInit() {
@@ -112,22 +119,24 @@ public class Robot extends TimedRobot {
     schedule.removeAll();
     // scoringMotor1.restoreFactoryDefaults();
     scoringMotor2.restoreFactoryDefaults();
-    // ballacqMotor.restoreFactoryDefaults();
+    ballacqMotor.restoreFactoryDefaults();
     // wristMotor.restoreFactoryDefaults();
     // scoringMotor1.setIdleMode(IdleMode.kBrake);
     scoringMotor2.setIdleMode(IdleMode.kBrake);
-    // ballacqMotor.setIdleMode(IdleMode.kBrake);
+    ballacqMotor.setIdleMode(IdleMode.kBrake);
     // wristMotor.setIdleMode(IdleMode.kBrake);
     endgame.retractFront();
     endgame.retractRear();
+    // hatchDetatch.set(DoubleSolenoid.Value.kForward);
   }
 
   public void teleopPeriodic() {
-    // arduinoReader.getArduinoData();
+    // arduinoReader.readArduino();
     driver();
     //driveTrain.dualArcadeDrive(0, 0);
     operator();
-    System.out.println("scoring encoder: " + scoringMotor2.getEncoder().getPosition());
+    System.out.println(arduinoReader.getScoringAccelerometerVal());
+    // System.out.println("scoring encoder: " + scoringMotor2.getEncoder().getPosition());
     // double volts = pressureSensor.getAverageVoltage();
     // double percentage = volts / 5;
     // double pressure = percentage * 200;
@@ -193,12 +202,6 @@ public class Robot extends TimedRobot {
       endgame.setRearMotor(0.0);
     }
 
-    // if (driverJoystick.getLeftTrigger() > 0.5) {
-    //   vacuumGen.set(.5);
-    // } else {
-    //   vacuumGen.set(0);
-    // }
-
     switch (driveTrain.currentDriveMode) {
     case tankDrive:
       driveTrain.tankDrive(driverJoystick.getLeftJoystickVertical() * multiplyer,
@@ -220,46 +223,79 @@ public class Robot extends TimedRobot {
   }
 
   public void operator() {
-    // if (operatorJoystick.getLeftButton()) {
-    //   acquisition.acquire();
-    // }
-    // if (operatorJoystick.getLeftTrigger() > 0.5) {
-    //   //acquisition.dispose();
-    //   hatchDetatch.set(Value.kForward);
-    // }
-    // if (operatorJoystick.getRightButton()) {
-    //   //acquisition.acqHatch();
-    // }
-    // if (operatorJoystick.getRightTrigger() > 0.5) {
-    //   //acquisition.dropHatch();
-    //   // driverJoystick.setLeftRumble(0.5); //Should be light
-    //   // operatorJoystick.setLeftRumble(0.5); //Should be light
-    //   hatchDetatch.set(Value.kReverse);
+    if (operatorJoystick.getLeftButton()) {
+      acquisition.acqCargo();
+    }
+    else if (operatorJoystick.getLeftTrigger() > 0.5) {
+      acquisition.disposeCargo();
+    }
+    else{
+      acquisition.stop();
+    }
+    if (operatorJoystick.getRightButton()) {
+      acquisition.acqHatch();
+    }
+    else if (operatorJoystick.getRightTrigger() > 0.5) {
+      acquisition.dropHatch();
+      // driverJoystick.setLeftRumble(0.5); //Should be light
+      // operatorJoystick.setLeftRumble(0.5); //Should be light
+    } 
+    else {
+      acquisition.stopHatch();
+    }
+
+    if (operatorJoystick.getXButton()) {
+      // downTimer.reset();
+      // downTimer.start();
+      // goingDown = true;
+      acquisition.tiltDown(-1);
+    }
+    else if (operatorJoystick.getAButton()) {
+      // // scoring.moveToLvl1();
+      // upTimer.reset();
+      // upTimer.start();
+      // goingUp = true;
+      acquisition.tiltUp(1);
+    }
+    else {
+      acquisition.stopTilt();
+    }
+
+    // System.out.println(downTimer.get());
+    // if(downTimer.get() < .3 && goingDown == true) {
+    //   acquisition.tiltDown(-1);
+    // } else if(downTimer.get() < .7 && goingDown == true) {
+    //   acquisition.tiltDown(-1);
+    // } else if(downTimer.get() < 4 && goingDown == true) {
+    //   acquisition.tiltDown(-1);
+    // } else{
+    //   acquisition.stopTilt();
+    //   downTimer.stop();
+    //   goingDown = false;
     // }
 
-    // if (operatorJoystick.getXButton()) {
-    //   // scoring.moveToGround();
-    //   wristMotor.set(0.5);
-    // } else if (operatorJoystick.getAButton()) {
-    //   // scoring.moveToLvl1();
-    //   wristMotor.set(-0.5);
-    // } else {
-    //   wristMotor.set(0);
+    // if(upTimer.get() < .5 && goingUp == true) {
+    //   acquisition.tiltUp(.2);
+    // } else if(upTimer.get() < 1 && goingUp == true) {
+    //   acquisition.tiltUp(.4);
+    // } else if(upTimer.get() < 1.5 && goingUp == true) {
+    //   acquisition.tiltUp(.2);
+    // } else{
+    //   acquisition.stopTilt();
+    //   upTimer.stop();
+    //   goingUp = false;
     // }
+
     // if (operatorJoystick.getBButton()) {
     //   scoring.moveToLvl2();
     // }
     // if (operatorJoystick.getYButton()) {
     //   scoring.moveToLvl3();
     // }
-   if (Math.abs(operatorJoystick.getRightJoystickVertical()) > 0.09) {
+   if (Math.abs(operatorJoystick.getRightJoystickVertical()) > 0.1) {
       // scoring.move(operatorJoystick.getRightJoystickVertical());
-      // scoringMotor1.set(operatorJoystick.getRightJoystickVertical());
       scoringMotor2.set(operatorJoystick.getRightJoystickVertical());
     }
-    // if (Math.abs(operatorJoystick.getLeftJoystickVertical()) > 0.09) {
-    //   ballacqMotor.set(operatorJoystick.getLeftJoystickVertical() * 0.5);
-    // }
 
     // if (DriverStation.getInstance().getMatchTime() < 30 && !DriverStation.getInstance().isAutonomous()) {
     //   // operatorJoystick.setLeftRumble(1); //hard rumble

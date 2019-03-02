@@ -12,6 +12,7 @@ import com.revrobotics.CANSparkMaxLowLevel.MotorType;
 
 import edu.wpi.first.wpilibj.PIDController;
 import edu.wpi.first.wpilibj.command.PIDSubsystem;
+import frc.robot.robot.ArduinoReader;
 import frc.robot.robot.CANSpark1038;
 import frc.robot.robot.Encoder1038;
 
@@ -36,6 +37,7 @@ public class Scoring extends PIDSubsystem {
     public final static int SCORING_FLOOR = 50; // Placeholder
     // private CANSpark1038 fourBarMotor = new CANSpark1038(56, MotorType.kBrushed);
     // private CANEncoder fourBarEncoder = fourBarMotor.getEncoder();
+    private ArduinoReader arduinoReader = ArduinoReader.getInstance();
     private PIDController scoringPID = getPIDController();
 
     public static Scoring getInstance() {
@@ -147,7 +149,7 @@ public class Scoring extends PIDSubsystem {
     @Override
     protected double returnPIDInput() {
         return 0;
-        // return fourBarEncoder.getPosition();
+        // return arduinoReader.getScoringAccelerometerVal();
     }
 
     @Override
