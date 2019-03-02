@@ -30,9 +30,9 @@ public class Acquisition extends PIDSubsystem {
     private int downTilt = 90;
     private boolean hasHatch = false;
     private boolean isTiltedDown = false;
-    private CANSpark1038 ballIntakeMotor = new CANSpark1038(59, MotorType.kBrushed);
-    private CANSpark1038 groundAcqMotor = new CANSpark1038(60, MotorType.kBrushed);
-    private CANSpark1038 vacuumGen = new CANSpark1038(58, MotorType.kBrushed); 
+    // private CANSpark1038 ballIntakeMotor = new CANSpark1038(59, MotorType.kBrushed);
+    // private CANSpark1038 groundAcqMotor = new CANSpark1038(60, MotorType.kBrushed);
+    // private CANSpark1038 vacuumGen = new CANSpark1038(58, MotorType.kBrushed); 
     //private DoubleSolenoid hatchAcq = new DoubleSolenoid(HATCH_ACQ, HATCH_DROP);
     private PIDController acquisitionTilt = getPIDController();
     private static Acquisition acquisition;
@@ -47,8 +47,8 @@ public class Acquisition extends PIDSubsystem {
 
     private Acquisition() {
         super(P, I, D);
-        ballIntakeMotor.setInverted(false); // Placeholder
-        groundAcqMotor.setInverted(false); // Placeholder
+        // ballIntakeMotor.setInverted(false); // Placeholder
+        // groundAcqMotor.setInverted(false); // Placeholder
         acquisitionTilt.setAbsoluteTolerance(TOLERANCE);
         acquisitionTilt.setContinuous(false);
         acquisitionTilt.setOutputRange(-PID_MAX_SPEED, PID_MAX_SPEED);
@@ -66,17 +66,17 @@ public class Acquisition extends PIDSubsystem {
         return 5; // replace
     }
 
-    public void acquire() {
-        ballIntakeMotor.set(MAX_ACQ_SPEED);
-    }
+    // public void acquire() {
+    //     ballIntakeMotor.set(MAX_ACQ_SPEED);
+    // }
 
-    public void dispose() {
-        ballIntakeMotor.set(-acqMotorSpeed);
-    }
+    // public void dispose() {
+    //     ballIntakeMotor.set(-acqMotorSpeed);
+    // }
 
-    public void stop() {
-        ballIntakeMotor.set(0);
-    }
+    // public void stop() {
+    //     ballIntakeMotor.set(0);
+    // }
 
     public void tiltDown(){
         isTiltedDown = true;
@@ -105,12 +105,17 @@ public class Acquisition extends PIDSubsystem {
 
     @Override
     protected void usePIDOutput(double output) {
-        groundAcqMotor.set(output);
+
     }
 
-    public void disable() {
-        super.disable();
-        ballIntakeMotor.set(0);
-        groundAcqMotor.set(0);
-    }
+    // @Override
+    // protected void usePIDOutput(double output) {
+    //     groundAcqMotor.set(output);
+    // }
+
+    // public void disable() {
+    //     super.disable();
+    //     ballIntakeMotor.set(0);
+    //     groundAcqMotor.set(0);
+    // }
 }

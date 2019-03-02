@@ -86,11 +86,11 @@ public class Endgame extends Subsystem {
     }
 
     public int getFrontElevation() {
-        return arduinoReader.returnArduinoFrontLaserValue();
+        return arduinoReader.getFrontLaserVal();
     }
 
     public int getRearElevation() {
-        return arduinoReader.returnArduinoRearLaserValue();
+        return arduinoReader.getRearLaserVal();
     }
 
     @Override
