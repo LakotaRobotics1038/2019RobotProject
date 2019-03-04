@@ -13,6 +13,7 @@ import edu.wpi.first.wpilibj.DoubleSolenoid;
 import edu.wpi.first.wpilibj.PIDController;
 import edu.wpi.first.wpilibj.DoubleSolenoid.Value;
 import edu.wpi.first.wpilibj.command.Subsystem;
+import frc.robot.robot.ArduinoReader;
 import frc.robot.robot.CANSpark1038;
 
 public class Acquisition extends Subsystem {
@@ -31,6 +32,8 @@ public class Acquisition extends Subsystem {
     private int downTilt = 90;
     private boolean hasHatch = false;
     private boolean isTiltedDown = false;
+    private double acqAngle;
+    private ArduinoReader arduinoReader = ArduinoReader.getInstance();
     private CANSpark1038 ballIntakeMotor = new CANSpark1038(59, MotorType.kBrushed);
     private CANSpark1038 groundAcqMotor = new CANSpark1038(60, MotorType.kBrushed);
     private CANSpark1038 vacuumGen = new CANSpark1038(58, MotorType.kBrushed); 
@@ -83,17 +86,29 @@ public class Acquisition extends Subsystem {
     }
 
     public void tiltDown(double speed){
+        acqAngle = arduinoReader.getAcqAccelerometerVal();
+        if(acqAngle > -80) {
+            groundAcqMotor.set(speed); //Placeholder
+            acqAngle = arduinoReader.getAcqAccelerometerVal();
+        }
         isTiltedDown = true;
-        groundAcqMotor.set(speed); //Placeholder
     }
 
     public void tiltUp(double speed){
-        isTiltedDown = false;
-        groundAcqMotor.set(speed); //Placeholder
+        acqAngle = arduinoReader.getAcqAccelerometerVal();
+        if(acqAngle < -5) {
+            groundAcqMotor.set(speed); //Placeholder
+            acqAngle = arduinoReader.getAcqAccelerometerVal();
+        }
+        isTiltedDown = true;
     }
 
     public void stopTilt() {
         groundAcqMotor.set(0);
+    }
+
+    public void wristManual(double speed) {
+        groundAcqMotor.set(speed);
     }
 
     @Override
