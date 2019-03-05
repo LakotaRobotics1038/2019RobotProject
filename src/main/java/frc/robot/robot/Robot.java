@@ -16,6 +16,7 @@ import edu.wpi.first.cameraserver.CameraServer;
 import edu.wpi.first.wpilibj.Compressor;
 import edu.wpi.first.wpilibj.DoubleSolenoid;
 import edu.wpi.first.wpilibj.DriverStation;
+import edu.wpi.first.wpilibj.PowerDistributionPanel;
 import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.DoubleSolenoid.Value;
@@ -45,6 +46,7 @@ public class Robot extends TimedRobot {
 
   // Endgame
   private Endgame endgame = Endgame.getInstance();
+  private boolean isDeploying = false;
 
   // Drive
   private DriveTrain driveTrain = DriveTrain.getInstance();
@@ -129,7 +131,7 @@ public class Robot extends TimedRobot {
     endgame.retractRear();
     arduinoReader.initialize();
     // hatchDetatch.set(DoubleSolenoid.Value.kForward);
-    group.addSequential(new EndgameCylindersDeploy(8));
+    group.addSequential(new EndgameCylindersDeploy(40));
     schedule.add(group);
   }
 
@@ -139,9 +141,7 @@ public class Robot extends TimedRobot {
     //driveTrain.dualArcadeDrive(0, 0);
     operator();
     // System.out.println(arduinoReader.getScoringAccelerometerVal());
-    // System.out.println(arduinoReader.getAcqAccelerometerVal());
-    System.out.println(arduinoReader.getFrontLaserVal());
-    System.out.println(arduinoReader.getRearLaserVal());
+    System.out.println(arduinoReader.getAcqAccelerometerVal());
     // System.out.println("scoring encoder: " + scoringMotor2.getEncoder().getPosition());
     // double volts = pressureSensor.getAverageVoltage();
     // double percentage = volts / 5;
@@ -190,9 +190,10 @@ public class Robot extends TimedRobot {
     if (driverJoystick.getYButton()) {
       endgame.retractFront();
       endgame.retractRear();
+      isDeploying = false;
     }
     if (driverJoystick.getXButton()) {
-      schedule.run();
+      isDeploying = true;
       // endgame.deployFront();
       // endgame.deployRear();
     }
@@ -208,6 +209,16 @@ public class Robot extends TimedRobot {
       endgame.setRearMotor(0.4);
     } else {
       endgame.setRearMotor(0.0);
+    }
+
+    if(isDeploying) {
+      schedule.run();
+      if (arduinoReader.getFrontLaserVal() >= 15 && arduinoReader.getRearLaserVal() >= 15) {
+        isDeploying = false;
+      }
+    } else if(!isDeploying) {
+      schedule.removeAll();
+      schedule.add(group);
     }
 
     switch (driveTrain.currentDriveMode) {
@@ -269,9 +280,9 @@ public class Robot extends TimedRobot {
       goingUp = true;
     }
 
-    // if(Math.abs(operatorJoystick.getLeftJoystickVertical()) > 0.1) {
-    //   acquisition.wristManual(operatorJoystick.getLeftJoystickVertical());
-    // }
+    if(Math.abs(operatorJoystick.getLeftJoystickVertical()) > 0.1) {
+      acquisition.wristManual(operatorJoystick.getLeftJoystickVertical());
+    }
 
     // if (goingDown) {
     //   acquisition.tiltDown(-.5);
