@@ -69,8 +69,9 @@ public class Robot extends TimedRobot {
   Acquisition acquisition = Acquisition.getInstance();
   Timer downTimer = new Timer();
   Timer upTimer = new Timer();
-  boolean goingUp = false;
-  boolean goingDown = false;
+  boolean prevXButtonState = false;
+  boolean currentXButtonState = false;
+  boolean isGoingDown = false;
 
   // Scoring
   Scoring scoring = Scoring.getInstance();
@@ -264,40 +265,34 @@ public class Robot extends TimedRobot {
     }
 
     if (operatorJoystick.getXButton()) {
-      scoring.setLevel(-50);
-      goingDown = true;
+     // scoring.setLevel(-50);
+      prevXButtonState = currentXButtonState;
+      currentXButtonState = true;
     }
     if (operatorJoystick.getAButton()) {
       scoring.setLevel(-45);
-      goingUp = true;
     }
     if (operatorJoystick.getBButton()) {
       scoring.setLevel(2);
-      goingUp = true;
     }
     if (operatorJoystick.getYButton()) {
       scoring.setLevel(50);
-      goingUp = true;
     }
 
     if(Math.abs(operatorJoystick.getLeftJoystickVertical()) > 0.1) {
       acquisition.wristManual(operatorJoystick.getLeftJoystickVertical());
     }
 
-    // if (goingDown) {
-    //   acquisition.tiltDown(-.5);
-    //   if(arduinoReader.getAcqAccelerometerVal() <= -80) {
-    //     goingDown = false;
-    //   }
-    // }
-    // if (goingUp) {
-    //   acquisition.tiltUp(.5);
-    //   if(arduinoReader.getAcqAccelerometerVal() >= -5) {
-    //     goingUp = false;
-    //   }
-    // }
+    if(operatorJoystick.getPOV() == 180){
+      scoring.setLevel(-55);
+    }
 
-   if (Math.abs(operatorJoystick.getRightJoystickVertical()) > 0.1) {
+    if(currentXButtonState && !prevXButtonState) {
+      isGoingDown = !isGoingDown;
+      acquisition.setHeight(isGoingDown);
+    }
+
+    if (Math.abs(operatorJoystick.getRightJoystickVertical()) > 0.1) {
       scoring.move(operatorJoystick.getRightJoystickVertical());
       // scoringMotor2.set(operatorJoystick.getRightJoystickVertical());
     }

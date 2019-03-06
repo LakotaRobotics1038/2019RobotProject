@@ -23,12 +23,18 @@ public class Scoring extends PIDSubsystem {
 
     private static Scoring scoring;
     private final int SCORING_TOLERANCE = 5; // Placeholder
+    public final static double P_UP1 = .001; // Placeholder
+    public final static double I_UP1 = .000; // Placeholder
+    public final static double D_UP1 = .000; // Placeholder
     public final static double P_UP2 = .01; // Placeholder
     public final static double I_UP2 = .0001; // Placeholder
     public final static double D_UP2 = .000; // Placeholder
     public final static double P_UP3 = .005; // Placeholder
     public final static double I_UP3 = .000; // Placeholder
     public final static double D_UP3 = .000; // Placeholder
+    public final static double P_DOWN0 = .0001; // Placeholder
+    public final static double I_DOWN0 = .000; // Placeholder
+    public final static double D_DOWN0 = .000; // Placeholder
     public final static double P_DOWN1 = .001; // Placeholder
     public final static double I_DOWN1 = .0002; // Placeholder
     public final static double D_DOWN1 = .000; // Placeholder
@@ -84,6 +90,12 @@ public class Scoring extends PIDSubsystem {
         }
         else if (isGoingDown(angle) && angle == -45) {
             scoringPID.setPID(P_DOWN1, I_DOWN1, D_DOWN1);
+        }
+        else if (isGoingDown(angle) && angle == -50) {
+            scoringPID.setPID(P_DOWN0, I_DOWN0, D_DOWN0);
+        }
+        else if(!isGoingDown(angle) && angle == -50) {
+            scoringPID.setPID(P_UP1, I_UP1, D_UP2);
         }
         else if(!isGoingDown(angle) && angle == 2) {
             scoringPID.setPID(P_UP2, I_UP2, D_UP2);
