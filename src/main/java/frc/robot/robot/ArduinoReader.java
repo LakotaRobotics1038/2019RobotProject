@@ -2,14 +2,14 @@ package frc.robot.robot;
 
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
-import java.io.FileInputStream;
-import java.io.IOException;
+import java.io.InputStream;
+import edu.wpi.first.hal.util.UncleanStatusException;
+import edu.wpi.first.wpilibj.SerialPort;
 
 public class ArduinoReader {
-
-    FileInputStream in;
-    BufferedReader inputStreamReader;
+    private static SerialPort arduinoPort;
     private static ArduinoReader arduinoReader;
+    private String arduinoOutput;
     public String arduinoDataMap[];
     public int frontLaserSensorData = 0;
     public double lineFollowerData = 0;
@@ -18,102 +18,93 @@ public class ArduinoReader {
     public int frontRightLaserSensorData = 0;
     public int scoringAccelerometerData = 0;
     public int acquisitionAccelerometerData = 0;
+    public boolean stringRead = false;
+    public BufferedReader bufferedReader;
+    private static String inputBuffer;
+    private String line;
 
-    public ArduinoReader() {
+    private ArduinoReader(){
+
     }
 
-    public static ArduinoReader getInstance() {
-        if (arduinoReader == null) {
-            System.out.println("Creating a new Laser Reader");
+    public static ArduinoReader getInstance(){
+        if(arduinoReader == null){
             arduinoReader = new ArduinoReader();
         }
         return arduinoReader;
     }
 
-    // Can parse from string into any other variable type. Just add return method
-    public void getArduinoData() {
-        try {
-            if (inputStreamReader == null) {
-                inputStreamReader = getBufferedReader(inputStreamReader);
+    public void initialize(){
+        arduinoPort = new SerialPort(115200, SerialPort.Port.kMXP);
+        System.out.println("Created new arduino reader");
+    }
+
+    public void readArduino(){
+        try{
+            stringRead = false;
+            while(arduinoPort.getBytesReceived() != 0) {
+                arduinoOutput = arduinoPort.readString();
+                inputBuffer = inputBuffer + arduinoOutput;
+                stringRead = true;
             }
-            String data = inputStreamReader.readLine();
-            if (data != null) {
-                // prevEncoderValue = currEncoderValue;
-                // currEncoderValue = encoder.get();
-                // lineFollowerPrev = lineFollowerData;
-                arduinoDataMap = data.split(",");
-                try{
-                    frontLaserSensorData = Integer.parseInt(arduinoDataMap[0]);
-                    rearLaserSensorData = Integer.parseInt(arduinoDataMap[1]);
-                    frontLeftLaserSensorData = Integer.parseInt(arduinoDataMap[2]);
-                    frontRightLaserSensorData = Integer.parseInt(arduinoDataMap[3]);
-                    lineFollowerData = Double.parseDouble(arduinoDataMap[2]);
-                    scoringAccelerometerData = Integer.parseInt(arduinoDataMap[4]);
-                    acquisitionAccelerometerData = Integer.parseInt(arduinoDataMap[4]);
-                    System.out.println(frontLaserSensorData + ", " + rearLaserSensorData + ", " + frontLeftLaserSensorData + ", " + frontRightLaserSensorData + ", " + lineFollowerData + ", " + scoringAccelerometerData + ", " + acquisitionAccelerometerData);
-                }catch(NumberFormatException e){
+            line = "";
+            while(inputBuffer.indexOf("\r") != -1) {
+                int point = inputBuffer.indexOf("\r");
+                line = inputBuffer.substring(0, point);
+                if(inputBuffer.length() > point+1){
+                    inputBuffer = inputBuffer.substring(point + 2);
+                }
+                else {
+                    inputBuffer = "";
                 }
             }
-        } catch (IOException e) {
-            System.out.println(e + e.getMessage());
-        } catch (ArrayIndexOutOfBoundsException e1) {
-            System.out.println(e1 + e1.getMessage());
+            if(line != "") {
+                arduinoDataMap = line.split(",");
+                frontLaserSensorData = Integer.parseInt(arduinoDataMap[0]);
+                rearLaserSensorData = Integer.parseInt(arduinoDataMap[1]);
+                frontLeftLaserSensorData = Integer.parseInt(arduinoDataMap[2]);
+                frontRightLaserSensorData = Integer.parseInt(arduinoDataMap[3]);
+                //lineFollowerData = Double.parseDouble(arduinoDataMap[6]);
+                acquisitionAccelerometerData = Integer.parseInt(arduinoDataMap[4]);
+                scoringAccelerometerData = Integer.parseInt(arduinoDataMap[5]);
+            }
         } catch (NumberFormatException e2) {
-            System.out.println(e2 + e2.getMessage());
+            //System.out.println(e2 + e2.getMessage());
+        } catch (UncleanStatusException e) {
+            //System.out.print("*");
         }
     }
 
-    public BufferedReader getBufferedReader(BufferedReader bufferedReader) throws IOException {
-        BufferedReader bf = bufferedReader;
-        bf = new BufferedReader(new InputStreamReader(new FileInputStream("/dev/ttyS1")));
-        return bf;
+    public void stopSerialPort() {
+        System.out.println("im gonna close it");
+        arduinoPort.close();
     }
 
-    // Returns laser sensor value from arduinoDataMap
-    public int returnArduinoFrontLaserValue() {
-        //getArduinoData();
+    public int getFrontLaserVal() {
         return frontLaserSensorData;
     }
 
-    public int returnArduinoRearLaserValue() {
-       // getArduinoData();
+    public int getRearLaserVal() {
         return rearLaserSensorData;
     }
 
-    public int returnArduinoFrontLeftLaserValue() {
-       // getArduinoData();
+    public int getFrontLeftLaserVal() {
         return frontLeftLaserSensorData;
     }
 
-    public int returnArduinoFrontRightLaserValue() {
-        //getArduinoData();
+    public int getFrontRightLaserVal() {
         return frontRightLaserSensorData;
     }
 
-    public double returnArduinoTapeValue() {
-       // getArduinoData();
-        // if(lineFollowerData != -1 && lineFollowerPrev != -1) {
-        // double tapeDifference = lineFollowerData - lineFollowerPrev;
-        // double pulseDifference = currEncoderValue - prevEncoderValue;
-        // double distance = pulseDifference * encoder.getDistancePerPulse();
-        // double tanInv = tapeDifference / distance;
-        // double angle = java.lang.Math.tan(tanInv);
-        // return angle;
-        // }
-        // else{
-        // return -1;
-        // }
+    public double getLineFollowerVal() {
         return lineFollowerData;
     }
 
-    public int returnScoringAccelerometerValue(){
-        //getArduinoData();
+    public int getScoringAccelerometerVal(){
         return scoringAccelerometerData;
     }
 
-    public int returnAcquisitionAccelerometerValue(){
-        //getArduinoData();
+    public int getAcqAccelerometerVal(){
         return acquisitionAccelerometerData;
     }
-
 }

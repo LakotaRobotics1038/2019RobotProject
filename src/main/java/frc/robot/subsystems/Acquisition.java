@@ -11,7 +11,11 @@ import com.revrobotics.CANSparkMaxLowLevel.MotorType;
 
 import edu.wpi.first.wpilibj.DoubleSolenoid;
 import edu.wpi.first.wpilibj.PIDController;
+import edu.wpi.first.wpilibj.PowerDistributionPanel;
+import edu.wpi.first.wpilibj.DoubleSolenoid.Value;
 import edu.wpi.first.wpilibj.command.PIDSubsystem;
+import edu.wpi.first.wpilibj.command.Subsystem;
+import frc.robot.robot.ArduinoReader;
 import frc.robot.robot.CANSpark1038;
 
 public class Acquisition extends PIDSubsystem {
@@ -19,9 +23,9 @@ public class Acquisition extends PIDSubsystem {
     private final static double I = 0.00; // Placeholder
     private final static double D = 0.00; // Placeholder
     private final int TOLERANCE = 3; // Placeholder
-    private final int HATCH_ACQ = 7;
-    private final int HATCH_DROP = 6;
-    private final double MIN_ACQ_SPEED = 0.2;
+    private final int HATCH_ACQ = 6;
+    private final int HATCH_DROP = 7;
+    private final double MIN_ACQ_SPEED = -1.0;
     private final double MAX_ACQ_SPEED = 1.0;
     private double acqMotorSpeed;
     private final double PID_MAX_SPEED = 0.7;
@@ -30,11 +34,13 @@ public class Acquisition extends PIDSubsystem {
     private int downTilt = 90;
     private boolean hasHatch = false;
     private boolean isTiltedDown = false;
+    private double acqAngle;
+    private ArduinoReader arduinoReader = ArduinoReader.getInstance();
+    private PIDController acqPID = getPIDController();
     private CANSpark1038 ballIntakeMotor = new CANSpark1038(59, MotorType.kBrushed);
     private CANSpark1038 groundAcqMotor = new CANSpark1038(60, MotorType.kBrushed);
     private CANSpark1038 vacuumGen = new CANSpark1038(58, MotorType.kBrushed); 
-    //private DoubleSolenoid hatchAcq = new DoubleSolenoid(HATCH_ACQ, HATCH_DROP);
-    private PIDController acquisitionTilt = getPIDController();
+    private DoubleSolenoid hatchAcq = new DoubleSolenoid(HATCH_ACQ, HATCH_DROP);
     private static Acquisition acquisition;
 
     public static Acquisition getInstance() {
@@ -47,70 +53,88 @@ public class Acquisition extends PIDSubsystem {
 
     private Acquisition() {
         super(P, I, D);
+        acqPID.setAbsoluteTolerance(TOLERANCE);
+        acqPID.setOutputRange(MIN_ACQ_SPEED, MAX_ACQ_SPEED);
+        acqPID.setInputRange(-100, 5);
+        acqPID.setContinuous(false);
+        acqPID.setSetpoint(-5);
         ballIntakeMotor.setInverted(false); // Placeholder
         groundAcqMotor.setInverted(false); // Placeholder
-        acquisitionTilt.setAbsoluteTolerance(TOLERANCE);
-        acquisitionTilt.setContinuous(false);
-        acquisitionTilt.setOutputRange(-PID_MAX_SPEED, PID_MAX_SPEED);
+        hatchAcq.set(Value.kForward);
     }
 
-    // public void acqHatch() {
-    //     hatchAcq.set(DoubleSolenoid.Value.kForward); // Placeholder
-    // }
-
-    // public void dropHatch() {
-    //     hatchAcq.set(DoubleSolenoid.Value.kReverse); // Placeholder
-    // }
-
-    public static int getAcqTilt() {
-        return 5; // replace
+    public void acqHatch() {
+        hatchAcq.set(DoubleSolenoid.Value.kForward); // Placeholder
+        vacuumGen.set(.5);
     }
 
-    public void acquire() {
+    public void dropHatch() {
+        hatchAcq.set(DoubleSolenoid.Value.kReverse); // Placeholder
+        vacuumGen.set(0);
+    }
+
+    public void stopHatch() {
+        hatchAcq.set(Value.kForward);
+        vacuumGen.set(0);
+    }
+
+    // public static int getAcqTilt() {
+    //     return 5; // replace
+    // }
+
+    public void acqCargo() {
         ballIntakeMotor.set(MAX_ACQ_SPEED);
     }
 
-    public void dispose() {
-        ballIntakeMotor.set(-acqMotorSpeed);
+    public void disposeCargo() {
+        ballIntakeMotor.set(MIN_ACQ_SPEED);
     }
 
     public void stop() {
         ballIntakeMotor.set(0);
     }
 
-    public void tiltDown(){
-        isTiltedDown = true;
+    public void setHeight(boolean height) {
+        if(height) {
+            setSetpoint(-90);
+        }
+        else if(!height) {
+            setSetpoint(-5);
+        }
     }
 
-    public void tiltUp(){
-        isTiltedDown = false;
+    public void stopTilt() {
+        groundAcqMotor.set(0);
     }
 
-    public void setAcqSpeed(SpeedModes mode) {
-        if (acqMotorSpeed < MAX_ACQ_SPEED && mode == SpeedModes.Aquire)
-            acqMotorSpeed += .2;
-        else if (acqMotorSpeed > MIN_ACQ_SPEED && mode == SpeedModes.Eject)
-            acqMotorSpeed -= .2;
-}
+    public void wristManual(double speed) {
+        groundAcqMotor.set(speed);
+    }
 
     @Override
     protected void initDefaultCommand() {
 
     }
 
+    // public void setAcqSpeed(SpeedModes mode) {
+    //     if (acqMotorSpeed < MAX_ACQ_SPEED && mode == SpeedModes.Aquire)
+    //         acqMotorSpeed += .2;
+    //     else if (acqMotorSpeed > MIN_ACQ_SPEED && mode == SpeedModes.Eject)
+    //         acqMotorSpeed -= .2;
+    // }
+
+    public void disable() {
+        ballIntakeMotor.set(0);
+        groundAcqMotor.set(0);
+    }
+
     @Override
     protected double returnPIDInput() {
-        return acquisitionTilt.get();
+        return arduinoReader.getAcqAccelerometerVal();
     }
 
     @Override
     protected void usePIDOutput(double output) {
         groundAcqMotor.set(output);
-    }
-
-    public void disable() {
-        super.disable();
-        ballIntakeMotor.set(0);
-        groundAcqMotor.set(0);
     }
 }
