@@ -35,20 +35,6 @@ public class EndgameCylindersDeploy extends Command {
         frontElevation = arduinoReader.getFrontLaserVal();
         rearElevation = arduinoReader.getRearLaserVal();
         System.out.println("Front elevation: " + frontElevation + ", Rear elevation: " + rearElevation);
-        // if(Math.abs(rearElevation - frontElevation) > 9) {
-        //     System.out.println("i wanna retract them both");
-        //     endgame.retractFront();
-        //     endgame.retractRear();
-        // }
-        // if(rearElevation > frontElevation && timerRear.get() < 0.1){
-        //     endgame.retractRear();
-        //     timerRear.reset();
-        //     System.out.println("Retract Rear");
-        // }else if(rearElevation < frontElevation){
-        //     endgame.deployRear();
-        //     timerRear.reset();
-        //     System.out.println("Retract Rear");
-        // }
     }
 
     @Override

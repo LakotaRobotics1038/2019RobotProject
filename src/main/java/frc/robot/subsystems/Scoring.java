@@ -14,7 +14,6 @@ import edu.wpi.first.wpilibj.PIDController;
 import edu.wpi.first.wpilibj.command.PIDSubsystem;
 import frc.robot.robot.ArduinoReader;
 import frc.robot.robot.CANSpark1038;
-import frc.robot.robot.Encoder1038;
 
 /**
  * Add your docs here.
@@ -22,27 +21,27 @@ import frc.robot.robot.Encoder1038;
 public class Scoring extends PIDSubsystem {
 
     private static Scoring scoring;
-    private final int SCORING_TOLERANCE = 5; // Placeholder
-    public final static double P_UP1 = .001; // Placeholder
-    public final static double I_UP1 = .000; // Placeholder
-    public final static double D_UP1 = .000; // Placeholder
-    public final static double P_UP2 = .01; // Placeholder
-    public final static double I_UP2 = .0001; // Placeholder
-    public final static double D_UP2 = .000; // Placeholder
-    public final static double P_UP3 = .005; // Placeholder
-    public final static double I_UP3 = .000; // Placeholder
-    public final static double D_UP3 = .000; // Placeholder
-    public final static double P_DOWN0 = .0001; // Placeholder
-    public final static double I_DOWN0 = .000; // Placeholder
-    public final static double D_DOWN0 = .000; // Placeholder
-    public final static double P_DOWN1 = .001; // Placeholder
-    public final static double I_DOWN1 = .0002; // Placeholder
-    public final static double D_DOWN1 = .000; // Placeholder
-    public final static double P_DOWN2 = .005; // Placeholder
-    public final static double I_DOWN2 = .0002; // Placeholder
-    public final static double D_DOWN2 = .000; // Placeholder
-    public final static double MAX_SCORING_OUTPUT = .3; // Placeholder
-    public final static double MIN_SCORING_OUTPUT = -.2; // Placeholder
+    private final int SCORING_TOLERANCE = 5;  
+    public final static double P_UP1 = .001;  
+    public final static double I_UP1 = .000;  
+    public final static double D_UP1 = .000;  
+    public final static double P_UP2 = .01;   
+    public final static double I_UP2 = .0001;  
+    public final static double D_UP2 = .000;  
+    public final static double P_UP3 = .005;  
+    public final static double I_UP3 = .000;  
+    public final static double D_UP3 = .000;  
+    public final static double P_DOWN0 = .0001;  
+    public final static double I_DOWN0 = .000;   
+    public final static double D_DOWN0 = .000;  
+    public final static double P_DOWN1 = .0022;  
+    public final static double I_DOWN1 = .000;  
+    public final static double D_DOWN1 = .025;  
+    public final static double P_DOWN2 = .005;  
+    public final static double I_DOWN2 = .0002;   
+    public final static double D_DOWN2 = .000;   
+    public static double MAX_SCORING_OUTPUT = .3;
+    public final static double MIN_SCORING_OUTPUT = -.2;
     public boolean goingDown;
     private CANSpark1038 fourBarMotor = new CANSpark1038(56, MotorType.kBrushless);
     // private CANEncoder fourBarEncoder = fourBarMotor.getEncoder();
@@ -67,23 +66,8 @@ public class Scoring extends PIDSubsystem {
         fourBarMotor.setInverted(false);
     }
 
-    // public int getMotorRotations() {
-    //     return fourBarEncoder.getPosition();
-    // }
-
-    // public double getScoringSpeed() {
-    //     return fourBarEncoder.getVelocity();
-    // }
-
-    // public void scoringPeriodic() {
-    //     if (scoringPID.isEnabled()) {
-    //         double PIDVal = scoringPID.get();
-    //         System.out.println("setpoint: " + getSetpoint() + ", angle: " + arduinoReader.getScoringAccelerometerVal() + ", motor power: " + PIDVal);
-    //         usePIDOutput(PIDVal);
-    //     }
-    // }
-
     public void setLevel(int angle) {
+        MAX_SCORING_OUTPUT = 0.3;
         setSetpoint(angle);
         if(isGoingDown(angle) && angle == 2) {
             scoringPID.setPID(P_DOWN2, I_DOWN2, D_DOWN2);
@@ -173,6 +157,7 @@ public class Scoring extends PIDSubsystem {
     // }
 
     public void move(double joystickValue) {
+        MAX_SCORING_OUTPUT = 0.75;
         if (getSetpoint() <= 5 && joystickValue > 0.09) {
             scoringPID.setPID(P_UP2, I_UP2, D_UP2);
             enable();
@@ -204,7 +189,6 @@ public class Scoring extends PIDSubsystem {
 
     @Override
     protected void usePIDOutput(double output) {
-        // System.out.println("angle: " + arduinoReader.getScoringAccelerometerVal()+", setpoint: " + getSetpoint() + ", power: " + output + ", P: " + scoringPID.getP());
         if(output < 0 && getSetpoint() == 2 && !goingDown) {
             output = output * .05;
         }

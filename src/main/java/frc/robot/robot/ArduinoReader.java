@@ -1,8 +1,6 @@
 package frc.robot.robot;
 
 import java.io.BufferedReader;
-import java.io.InputStreamReader;
-import java.io.InputStream;
 import edu.wpi.first.hal.util.UncleanStatusException;
 import edu.wpi.first.wpilibj.SerialPort;
 
@@ -20,7 +18,7 @@ public class ArduinoReader {
     public int acquisitionAccelerometerData = 0;
     public boolean stringRead = false;
     public BufferedReader bufferedReader;
-    private static String inputBuffer;
+    private static String inputBuffer = "";
     private String line;
 
     private ArduinoReader(){
@@ -64,14 +62,11 @@ public class ArduinoReader {
                 rearLaserSensorData = Integer.parseInt(arduinoDataMap[1]);
                 frontLeftLaserSensorData = Integer.parseInt(arduinoDataMap[2]);
                 frontRightLaserSensorData = Integer.parseInt(arduinoDataMap[3]);
-                //lineFollowerData = Double.parseDouble(arduinoDataMap[6]);
                 acquisitionAccelerometerData = Integer.parseInt(arduinoDataMap[4]);
                 scoringAccelerometerData = Integer.parseInt(arduinoDataMap[5]);
             }
         } catch (NumberFormatException e2) {
-            //System.out.println(e2 + e2.getMessage());
         } catch (UncleanStatusException e) {
-            //System.out.print("*");
         }
     }
 

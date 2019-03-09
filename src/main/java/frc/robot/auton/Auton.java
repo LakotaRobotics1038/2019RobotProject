@@ -75,8 +75,6 @@ public class Auton {
                 Double.parseDouble((String) autonInstructions[index][2]));
 
          printEncoders();
-        //System.out.println(index);
-        //System.out.println(autonInstructions.length);
         if (index == autonInstructions.length - 2) {
             // put anything here for when instruction is finished
         }
@@ -114,12 +112,10 @@ public class Auton {
 
         driveTrain.dualArcadeDrive(joystickPos1, joystickPos2);
         Object[] newLineArr = { System.currentTimeMillis() - startTime, joystickPos1, joystickPos2 };
-        //System.out.println(Arrays.toString(newLineArr));
 
         String newLine = combine(Arrays.copyOfRange(newLineArr, 1, newLineArr.length));
 
         if (0 != newLine.compareTo(oldLine)) {
-            //System.out.println("Updating file!");
             oldLine = newLine;
             frc.robot.auton.CSV.writeLine2csv(newLineArr, autonFile);
 
@@ -143,7 +139,6 @@ public class Auton {
      */
     public void disabledInit() {
         if (mode == 2) { // only execute code if we were just in teleop
-            //System.out.println("Updating file one last time!");
             String[] finalLine = { "" + (System.currentTimeMillis() - startTime), "" + 0, "" + 0 };
             frc.robot.auton.CSV.writeLine2csv(finalLine, autonFile);
             finalLine[0] = "" + Long.MAX_VALUE;

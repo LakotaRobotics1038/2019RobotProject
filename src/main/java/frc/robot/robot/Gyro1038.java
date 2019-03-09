@@ -4,7 +4,7 @@ import edu.wpi.first.wpilibj.GyroBase;
 import edu.wpi.first.wpilibj.I2C;
 
 public class Gyro1038 extends GyroBase{
-	//VARIABLES
+
 	private final int SENSOR_ID_CODE = 0x02;
 	private final int COMMAND = 0x03;
 	private final int HEADING_DATA = 0x04;
@@ -24,7 +24,6 @@ public class Gyro1038 extends GyroBase{
 	//Class constructor
 	Gyro1038() {
 		I2CBus = new I2C(I2C.Port.kOnboard, DEVICE_ADDRESS);
-		//I2CBus.write(0x10, 22);
 		calibrate();
 
 	}

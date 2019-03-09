@@ -7,6 +7,7 @@
 
 package frc.robot.subsystems;
 
+import com.revrobotics.CANSparkMax.IdleMode;
 import com.revrobotics.CANSparkMaxLowLevel.MotorType;
 
 import edu.wpi.first.wpilibj.DoubleSolenoid;
@@ -18,7 +19,7 @@ import edu.wpi.first.wpilibj.command.Subsystem;
 import frc.robot.robot.ArduinoReader;
 import frc.robot.robot.CANSpark1038;
 
-public class Acquisition extends PIDSubsystem {
+public class Acquisition extends Subsystem {
     private final static double P = 0.00; // Placeholder
     private final static double I = 0.00; // Placeholder
     private final static double D = 0.00; // Placeholder
@@ -36,9 +37,9 @@ public class Acquisition extends PIDSubsystem {
     private boolean isTiltedDown = false;
     private double acqAngle;
     private ArduinoReader arduinoReader = ArduinoReader.getInstance();
-    private PIDController acqPID = getPIDController();
+    // private PIDController acqPID = getPIDController();
     private CANSpark1038 ballIntakeMotor = new CANSpark1038(59, MotorType.kBrushed);
-    private CANSpark1038 groundAcqMotor = new CANSpark1038(60, MotorType.kBrushed);
+    // private CANSpark1038 groundAcqMotor = new CANSpark1038(60, MotorType.kBrushed);
     private CANSpark1038 vacuumGen = new CANSpark1038(58, MotorType.kBrushed); 
     private DoubleSolenoid hatchAcq = new DoubleSolenoid(HATCH_ACQ, HATCH_DROP);
     private static Acquisition acquisition;
@@ -52,24 +53,26 @@ public class Acquisition extends PIDSubsystem {
     }
 
     private Acquisition() {
-        super(P, I, D);
-        acqPID.setAbsoluteTolerance(TOLERANCE);
-        acqPID.setOutputRange(MIN_ACQ_SPEED, MAX_ACQ_SPEED);
-        acqPID.setInputRange(-100, 5);
-        acqPID.setContinuous(false);
-        acqPID.setSetpoint(-5);
+        // super(P, I, D);
+        // acqPID.setAbsoluteTolerance(TOLERANCE);
+        // acqPID.setOutputRange(MIN_ACQ_SPEED, MAX_ACQ_SPEED);
+        // acqPID.setInputRange(-100, 5);
+        // acqPID.setContinuous(false);
+        // acqPID.setSetpoint(-5);
         ballIntakeMotor.setInverted(false); // Placeholder
-        groundAcqMotor.setInverted(false); // Placeholder
+        // groundAcqMotor.restoreFactoryDefaults();
+        // groundAcqMotor.setIdleMode(IdleMode.kBrake);
+        // groundAcqMotor.setInverted(false); // Placeholder
         hatchAcq.set(Value.kForward);
     }
 
     public void acqHatch() {
-        hatchAcq.set(DoubleSolenoid.Value.kForward); // Placeholder
+        hatchAcq.set(DoubleSolenoid.Value.kForward);
         vacuumGen.set(.5);
     }
 
     public void dropHatch() {
-        hatchAcq.set(DoubleSolenoid.Value.kReverse); // Placeholder
+        hatchAcq.set(DoubleSolenoid.Value.kReverse);
         vacuumGen.set(0);
     }
 
@@ -95,20 +98,21 @@ public class Acquisition extends PIDSubsystem {
     }
 
     public void setHeight(boolean height) {
-        if(height) {
-            setSetpoint(-90);
-        }
-        else if(!height) {
-            setSetpoint(-5);
-        }
+        // if(height) {
+        //     setSetpoint(-90);
+        // }
+        // else if(!height) {
+        //     setSetpoint(-5);
+        // }
     }
 
     public void stopTilt() {
-        groundAcqMotor.set(0);
+        // groundAcqMotor.set(0);
     }
 
     public void wristManual(double speed) {
-        groundAcqMotor.set(speed);
+        // acqPID.disable();
+        // groundAcqMotor.set(speed);
     }
 
     @Override
@@ -125,16 +129,16 @@ public class Acquisition extends PIDSubsystem {
 
     public void disable() {
         ballIntakeMotor.set(0);
-        groundAcqMotor.set(0);
+        // groundAcqMotor.set(0);
     }
 
-    @Override
-    protected double returnPIDInput() {
-        return arduinoReader.getAcqAccelerometerVal();
-    }
+    // @Override
+    // protected double returnPIDInput() {
+    //     return arduinoReader.getAcqAccelerometerVal();
+    // }
 
-    @Override
-    protected void usePIDOutput(double output) {
-        groundAcqMotor.set(output);
-    }
+    // @Override
+    // protected void usePIDOutput(double output) {
+    //     groundAcqMotor.set(output);
+    // }
 }

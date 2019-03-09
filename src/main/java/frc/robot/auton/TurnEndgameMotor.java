@@ -21,12 +21,11 @@ public class TurnEndgameMotor extends Command {
         } else {
             currentElevation = endgame.getFrontElevation();
         }
-        //endgame.setRearMotor(motorPower);
     }
 
     @Override
     protected void end() {
-        //endgame.setRearMotor(0);
+        endgame.setRearMotor(0);
     }
 
     @Override
