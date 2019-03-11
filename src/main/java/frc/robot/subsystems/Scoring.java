@@ -7,7 +7,6 @@
 
 package frc.robot.subsystems;
 
-import com.revrobotics.CANEncoder;
 import com.revrobotics.CANSparkMaxLowLevel.MotorType;
 
 import edu.wpi.first.wpilibj.PIDController;
@@ -15,9 +14,6 @@ import edu.wpi.first.wpilibj.command.PIDSubsystem;
 import frc.robot.robot.ArduinoReader;
 import frc.robot.robot.CANSpark1038;
 
-/**
- * Add your docs here.
- */
 public class Scoring extends PIDSubsystem {
 
     private static Scoring scoring;
@@ -44,10 +40,13 @@ public class Scoring extends PIDSubsystem {
     public final static double MIN_SCORING_OUTPUT = -.2;
     public boolean goingDown;
     private CANSpark1038 fourBarMotor = new CANSpark1038(56, MotorType.kBrushless);
-    // private CANEncoder fourBarEncoder = fourBarMotor.getEncoder();
     private ArduinoReader arduinoReader = ArduinoReader.getInstance();
     private PIDController scoringPID = getPIDController();
 
+    /**
+     * Returns the scoring instance created when the robot starts
+     * @return Scoring instance
+     */
     public static Scoring getInstance() {
         if (scoring == null) {
             System.out.println("Creating new Scoring");
@@ -56,6 +55,9 @@ public class Scoring extends PIDSubsystem {
         return scoring;
     }
 
+    /**
+     * Instantiates scoring object
+     */
     private Scoring() {
         super(P_UP2, I_UP2, D_UP2);
         scoringPID.setAbsoluteTolerance(SCORING_TOLERANCE);
@@ -66,6 +68,10 @@ public class Scoring extends PIDSubsystem {
         fourBarMotor.setInverted(false);
     }
 
+    /**
+     * Sets level scoring arms should go to
+     * @param angle The angle in degrees the scoring arm should be at relative the horizontal plane
+     */
     public void setLevel(int angle) {
         MAX_SCORING_OUTPUT = 0.3;
         setSetpoint(angle);
@@ -90,6 +96,11 @@ public class Scoring extends PIDSubsystem {
         enable();
     }
 
+    /**
+     * Whether the scoring arm is going down
+     * @param newSetpoint The new setpoint for the scoring arm
+     * @return Returns whether the scoring arm is going down
+     */
     public boolean isGoingDown(int newSetpoint) {
         if (arduinoReader.getScoringAccelerometerVal() > newSetpoint) {
             System.out.println("Going down");
@@ -102,60 +113,10 @@ public class Scoring extends PIDSubsystem {
         }
     }
 
-    // public void manualOverride(double speed) {
-    //     scoringPID.disable();
-    //     fourBarMotor.set(speed);
-    //     System.out.println("oh man! manual override");
-    // }
-
-    // public void moveToLvl3() {
-    //     enable();
-    //     if(isGoingDown(SCORING_LVL3)){
-    //         scoringPID.setPID(P_DOWN, I_DOWN, D_DOWN);
-    //     }
-	// 	else{
-	// 		scoringPID.setPID(P_UP, I_UP, D_UP);
-    //     }
-	// 	setSetpoint(SCORING_LVL3);
-    // }
-
-    // public void moveToLvl2() {
-    //     enable();
-    //     if(isGoingDown(SCORING_LVL2)){
-    //         scoringPID.setPID(P_DOWN, I_DOWN, D_DOWN);
-    //     }
-	// 	else{
-	// 		scoringPID.setPID(P_UP, I_UP, D_UP);
-    //     }
-	// 	setSetpoint(SCORING_LVL2);
-    // }
-
-    // public void moveToLvl1() {
-    //     enable();
-    //     if(isGoingDown(SCORING_LVL1)){
-    //         scoringPID.setPID(P_DOWN, I_DOWN, D_DOWN);
-    //     }
-	// 	else{
-	// 		scoringPID.setPID(P_UP, I_UP, D_UP);
-    //     }
-	// 	setSetpoint(SCORING_LVL1);
-    // }
-
-    // public void moveToGround() {
-    //     enable();
-    //     if(isGoingDown(SCORING_FLOOR)){
-    //         scoringPID.setPID(P_DOWN, I_DOWN, D_DOWN);
-    //     }
-	// 	else{
-	// 		scoringPID.setPID(P_UP, I_UP, D_UP);
-    //     }
-	// 	setSetpoint(SCORING_FLOOR);
-    // }
-
-    // public void resetEncoder() {
-    //     fourBarEncoder.reset();
-    // }
-
+    /**
+     * Should be used to manually controll the scoring arm
+     * @param joystickValue The joystick value between -1 and 1
+     */
     public void move(double joystickValue) {
         MAX_SCORING_OUTPUT = 0.75;
         if (getSetpoint() <= 5 && joystickValue > 0.09) {

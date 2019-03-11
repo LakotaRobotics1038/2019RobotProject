@@ -28,6 +28,10 @@ public class Gyro1038 extends GyroBase{
 
 	}
 	
+	/**
+     * Returns the gyro instance created when the robot starts
+     * @return Gyro instance
+     */
 	public static Gyro1038 getInstance() {
 		if (gyroSensor == null) {
 			System.out.println("Creating a new Gyro");
@@ -43,7 +47,6 @@ public class Gyro1038 extends GyroBase{
 	
 	/**
 	 * Calculate the heading of the gyro
-	 * @return
 	 */
 	public void readGyro() {
 		byte[] dataBuffer = new byte[6];
@@ -69,7 +72,6 @@ public class Gyro1038 extends GyroBase{
 		}
 	}
 	
-	//Sets current gyro value to 0
 	@Override
 	public void reset() {
 		I2CBus.write(COMMAND, RESET_Z_AXIS_INTEGRATOR);
@@ -88,7 +90,6 @@ public class Gyro1038 extends GyroBase{
 	 * This method is not currently implemented
 	 */
 	public double getRate() {
-		// TODO Auto-generated method stub
 		return 0;
 	}
 }

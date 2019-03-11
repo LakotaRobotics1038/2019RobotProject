@@ -20,30 +20,19 @@ import frc.robot.robot.ArduinoReader;
 import frc.robot.robot.CANSpark1038;
 
 public class Acquisition extends Subsystem {
-    private final static double P = 0.00; // Placeholder
-    private final static double I = 0.00; // Placeholder
-    private final static double D = 0.00; // Placeholder
-    private final int TOLERANCE = 3; // Placeholder
     private final int HATCH_ACQ = 6;
     private final int HATCH_DROP = 7;
     private final double MIN_ACQ_SPEED = -1.0;
     private final double MAX_ACQ_SPEED = 1.0;
-    private double acqMotorSpeed;
-    private final double PID_MAX_SPEED = 0.7;
-    private enum SpeedModes {Aquire, Eject};
-    private int upTilt = 0;
-    private int downTilt = 90;
-    private boolean hasHatch = false;
-    private boolean isTiltedDown = false;
-    private double acqAngle;
-    private ArduinoReader arduinoReader = ArduinoReader.getInstance();
-    // private PIDController acqPID = getPIDController();
     private CANSpark1038 ballIntakeMotor = new CANSpark1038(59, MotorType.kBrushed);
-    // private CANSpark1038 groundAcqMotor = new CANSpark1038(60, MotorType.kBrushed);
     private CANSpark1038 vacuumGen = new CANSpark1038(58, MotorType.kBrushed); 
     private DoubleSolenoid hatchAcq = new DoubleSolenoid(HATCH_ACQ, HATCH_DROP);
     private static Acquisition acquisition;
 
+    /**
+     * Returns the acquisition instance created when the robot starts
+     * @return Acquisition instance
+     */
     public static Acquisition getInstance() {
         if (acquisition == null) {
             System.out.println("Creating new Acquisition");
@@ -52,67 +41,57 @@ public class Acquisition extends Subsystem {
         return acquisition;
     }
 
+    /**
+     * Instantiates acquisition object
+     */
     private Acquisition() {
-        // super(P, I, D);
-        // acqPID.setAbsoluteTolerance(TOLERANCE);
-        // acqPID.setOutputRange(MIN_ACQ_SPEED, MAX_ACQ_SPEED);
-        // acqPID.setInputRange(-100, 5);
-        // acqPID.setContinuous(false);
-        // acqPID.setSetpoint(-5);
-        ballIntakeMotor.setInverted(false); // Placeholder
-        // groundAcqMotor.restoreFactoryDefaults();
-        // groundAcqMotor.setIdleMode(IdleMode.kBrake);
-        // groundAcqMotor.setInverted(false); // Placeholder
+        ballIntakeMotor.setInverted(false);
         hatchAcq.set(Value.kForward);
     }
 
+    /**
+     * Retracts the eject and runs the choo choo
+     */
     public void acqHatch() {
         hatchAcq.set(DoubleSolenoid.Value.kForward);
         vacuumGen.set(.5);
     }
 
+    /**
+     * Extends the eject and turns the choo choo off
+     */
     public void dropHatch() {
         hatchAcq.set(DoubleSolenoid.Value.kReverse);
         vacuumGen.set(0);
     }
 
+    /**
+     * Retracts the eject and turns the choo choo off
+     */
     public void stopHatch() {
         hatchAcq.set(Value.kForward);
         vacuumGen.set(0);
     }
 
-    // public static int getAcqTilt() {
-    //     return 5; // replace
-    // }
-
+    /**
+     * Sets the ball intake motor to the set max speed
+     */
     public void acqCargo() {
         ballIntakeMotor.set(MAX_ACQ_SPEED);
     }
 
+    /**
+     * Sets the ball intake motor to the set min speed
+     */
     public void disposeCargo() {
         ballIntakeMotor.set(MIN_ACQ_SPEED);
     }
 
+    /**
+     * Stops the ball intake motor
+     */
     public void stop() {
         ballIntakeMotor.set(0);
-    }
-
-    public void setHeight(boolean height) {
-        // if(height) {
-        //     setSetpoint(-90);
-        // }
-        // else if(!height) {
-        //     setSetpoint(-5);
-        // }
-    }
-
-    public void stopTilt() {
-        // groundAcqMotor.set(0);
-    }
-
-    public void wristManual(double speed) {
-        // acqPID.disable();
-        // groundAcqMotor.set(speed);
     }
 
     @Override
@@ -120,25 +99,10 @@ public class Acquisition extends Subsystem {
 
     }
 
-    // public void setAcqSpeed(SpeedModes mode) {
-    //     if (acqMotorSpeed < MAX_ACQ_SPEED && mode == SpeedModes.Aquire)
-    //         acqMotorSpeed += .2;
-    //     else if (acqMotorSpeed > MIN_ACQ_SPEED && mode == SpeedModes.Eject)
-    //         acqMotorSpeed -= .2;
-    // }
-
+    /**
+     * Stops the ball intake motor
+     */
     public void disable() {
         ballIntakeMotor.set(0);
-        // groundAcqMotor.set(0);
     }
-
-    // @Override
-    // protected double returnPIDInput() {
-    //     return arduinoReader.getAcqAccelerometerVal();
-    // }
-
-    // @Override
-    // protected void usePIDOutput(double output) {
-    //     groundAcqMotor.set(output);
-    // }
 }

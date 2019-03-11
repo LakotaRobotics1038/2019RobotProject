@@ -17,6 +17,10 @@ public class Dashboard{
   private ArduinoReader arduinoReader = ArduinoReader.getInstance();
   private DriverStation driverStation = DriverStation.getInstance();
 
+  /**
+     * Returns the dashboard instance created when the robot starts
+     * @return Dashboard instance
+     */
   public static Dashboard getInstance() {
     if (dashboard == null) {
       System.out.println("Creating a new Dashboard");
@@ -25,12 +29,18 @@ public class Dashboard{
     return dashboard;
   }
 
+  /**
+   * Instantiates dashboard object
+   */
   private Dashboard() {
     SmartDashboard.putNumber("Left Distance", 0);
     SmartDashboard.putNumber("Right Distance", 0);
     SmartDashboard.putNumber("Match Time", -1);
   }
 
+  /**
+   * Updates dashboard with current values
+   */
   public void update(){
     SmartDashboard.putNumber("Left Distance", arduinoReader.getFrontLeftLaserVal());
     SmartDashboard.putNumber("Right Distance", arduinoReader.getFrontRightLaserVal());

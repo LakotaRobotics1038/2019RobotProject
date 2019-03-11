@@ -25,6 +25,10 @@ public class ArduinoReader {
 
     }
 
+    /**
+     * Returns the arduino instance created when the robot starts
+     * @return Arduino instance
+     */
     public static ArduinoReader getInstance(){
         if(arduinoReader == null){
             arduinoReader = new ArduinoReader();
@@ -32,11 +36,17 @@ public class ArduinoReader {
         return arduinoReader;
     }
 
+    /**
+     * Creates serial port listener
+     */
     public void initialize(){
         arduinoPort = new SerialPort(115200, SerialPort.Port.kMXP);
         System.out.println("Created new arduino reader");
     }
 
+    /**
+     * Updates arduino values and reads arduino serial port
+     */
     public void readArduino(){
         try{
             stringRead = false;
@@ -70,35 +80,66 @@ public class ArduinoReader {
         }
     }
 
+    /**
+     * Closes serial port listener
+     */
     public void stopSerialPort() {
         System.out.println("im gonna close it");
         arduinoPort.close();
     }
 
-    public int getFrontLaserVal() {
+    /**
+     * The front laser looking towards the ground
+     * @return Distance to ground from front bottom laser in cm
+     */
+    public int getFrontBottomLaserVal() {
         return frontLaserSensorData;
     }
 
-    public int getRearLaserVal() {
+    /**
+     * The rear laser looking towards the ground
+     * @return Distance to ground from rear bottom laser in cm
+     */
+    public int getRearBottomLaserVal() {
         return rearLaserSensorData;
     }
 
+    /**
+     * The front left laser looking forwards
+     * @return Distance to object from front left in cm
+     */
     public int getFrontLeftLaserVal() {
         return frontLeftLaserSensorData;
     }
 
+    /**
+     * The front right laser looking forwards
+     * @return Distance to object from front right in cm
+     */
     public int getFrontRightLaserVal() {
         return frontRightLaserSensorData;
     }
 
+    /**
+     * Position of middle of white tape
+     * @return Middle of white tape as an average
+     */
     public double getLineFollowerVal() {
         return lineFollowerData;
     }
 
+    /**
+     * Accelerometer on the four bar
+     * @return Angle of scoring arm by calculating from vertical and horizontal forces
+     */
     public int getScoringAccelerometerVal(){
         return scoringAccelerometerData;
     }
 
+    /**
+     * Accelerometer on the wrist piece
+     * @return Angle of wrist by calculating from vertical and horizontal forces
+     */
     public int getAcqAccelerometerVal(){
         return acquisitionAccelerometerData;
     }

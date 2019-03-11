@@ -32,8 +32,8 @@ public class EndgameCylindersDeploy extends Command {
 
     @Override
     protected void execute() {
-        frontElevation = arduinoReader.getFrontLaserVal();
-        rearElevation = arduinoReader.getRearLaserVal();
+        frontElevation = arduinoReader.getFrontBottomLaserVal();
+        rearElevation = arduinoReader.getRearBottomLaserVal();
         System.out.println("Front elevation: " + frontElevation + ", Rear elevation: " + rearElevation);
     }
 
