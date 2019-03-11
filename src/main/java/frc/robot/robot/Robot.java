@@ -142,6 +142,9 @@ public class Robot extends TimedRobot {
     scoring.disable();
   }
 
+  /**
+   * Runs driver operations according to button map
+   */
   public void driver() {
     multiplyer = .6;
     if (driverJoystick.getRightTrigger() > 0.5) {
@@ -182,7 +185,7 @@ public class Robot extends TimedRobot {
 
     if(isDeploying) {
       schedule.run();
-      if (arduinoReader.getFrontLaserVal() >= 15 && arduinoReader.getRearLaserVal() >= 15) {
+      if (arduinoReader.getFrontBottomLaserVal() >= 15 && arduinoReader.getRearBottomLaserVal() >= 15) {
         isDeploying = false;
       }
     } else if(!isDeploying) {
@@ -206,6 +209,9 @@ public class Robot extends TimedRobot {
     }
   }
 
+  /**
+   * Runs operator controls according to button map
+   */
   public void operator() {
     if (operatorJoystick.getLeftButton()) {
       acquisition.acqCargo();
