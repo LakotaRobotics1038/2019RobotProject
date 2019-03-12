@@ -7,18 +7,21 @@
 
 package frc.robot.subsystems;
 
+import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import frc.robot.robot.ArduinoReader;
 
-/**
- * Add your docs here.
- */
-public class Dashboard{
+public class Dashboard {
 
   private static Dashboard dashboard;
   private ArduinoReader arduinoReader = ArduinoReader.getInstance();
-  private Endgame endgame = Endgame.getInstance();
+  private DriverStation driverStation = DriverStation.getInstance();
 
+  /**
+   * Returns the dashboard instance created when the robot starts
+   * 
+   * @return Dashboard instance
+   */
   public static Dashboard getInstance() {
     if (dashboard == null) {
       System.out.println("Creating a new Dashboard");
@@ -27,22 +30,21 @@ public class Dashboard{
     return dashboard;
   }
 
+  /**
+   * Instantiates dashboard object
+   */
   private Dashboard() {
-    //SmartDashboard.Method(something);
-    SmartDashboard.putNumber("PVal", 0);
-    SmartDashboard.putNumber("IVal", 0);
-    SmartDashboard.putNumber("DVal", 0);
-    SmartDashboard.putNumber("Setpoint", 100);
+    SmartDashboard.putNumber("Left Distance", 0);
+    SmartDashboard.putNumber("Right Distance", 0);
+    SmartDashboard.putNumber("Match Time", -1);
   }
 
-  public void update(){
-    SmartDashboard.putNumber("PVal", SmartDashboard.getNumber("PVal", -1));
-    SmartDashboard.putNumber("IVal", SmartDashboard.getNumber("IVal", -1));
-    SmartDashboard.putNumber("DVal", SmartDashboard.getNumber("DVal", -1));
-    SmartDashboard.putNumber("Setpoint", SmartDashboard.getNumber("Setpoint", -1));
-    // SmartDashboard.putNumber("Front Elevation", arduinoReader.returnArduinoFrontLaserValue());
-    // SmartDashboard.putNumber("Back Elevation", arduinoReader.returnArduinoRearLaserValue());
-    // SmartDashboard.putBoolean("Front Deployed", endgame.getIsFrontDeployed());
-    // SmartDashboard.putBoolean("Rear Deployed", endgame.getIsRearDeployed());
+  /**
+   * Updates dashboard with current values
+   */
+  public void update() {
+    SmartDashboard.putNumber("Left Distance", arduinoReader.getFrontLeftLaserVal());
+    SmartDashboard.putNumber("Right Distance", arduinoReader.getFrontRightLaserVal());
+    SmartDashboard.putNumber("Match Time", driverStation.getMatchTime());
   }
 }

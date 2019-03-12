@@ -1,7 +1,5 @@
 package frc.robot.auton;
 
-import com.sun.jdi.Value;
-
 import edu.wpi.first.wpilibj.command.Command;
 import frc.robot.subsystems.Endgame;
 
@@ -11,18 +9,21 @@ public class MoveCylinders extends Command {
         up, down
     };
 
-    private int frontElevation; //set to laser value
-    private int backElevation; //set to laser value
+    private int frontElevation; // set to laser value
+    private int backElevation; // set to laser value
     private int setpoint;
-    private int upSetpoint = 5; // Placeholder
-    private int downSetpoint = 20; // Placeholder
+    private int upSetpoint = 5;
+    private int downSetpoint = 20;
     public Value setPosition;
     private Endgame endgame = Endgame.getInstance();
     private boolean moveFront;
 
     /**
-     * @param pos     - either up or down, move cylinders up or down respectively
-     * @param isFront - true if the front cylinders should move
+     * Instantiates the move cylinders command
+     * 
+     * @param pos     Whether the cylinders are moving up or down
+     * @param isFront Whether you are moving the front cylinder (true) or the rear
+     *                cylinder (false)
      */
     public MoveCylinders(final Value pos, boolean isFront) {
         setPosition = pos;

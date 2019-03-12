@@ -1,4 +1,4 @@
-package frc.robot.robot;
+package frc.robot.depricated;
 
 import edu.wpi.first.wpilibj.DigitalInput;
 
