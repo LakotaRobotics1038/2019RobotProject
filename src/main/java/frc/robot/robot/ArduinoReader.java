@@ -21,16 +21,17 @@ public class ArduinoReader {
     private static String inputBuffer = "";
     private String line;
 
-    private ArduinoReader(){
+    private ArduinoReader() {
 
     }
 
     /**
      * Returns the arduino instance created when the robot starts
+     * 
      * @return Arduino instance
      */
-    public static ArduinoReader getInstance(){
-        if(arduinoReader == null){
+    public static ArduinoReader getInstance() {
+        if (arduinoReader == null) {
             arduinoReader = new ArduinoReader();
         }
         return arduinoReader;
@@ -39,7 +40,7 @@ public class ArduinoReader {
     /**
      * Creates serial port listener
      */
-    public void initialize(){
+    public void initialize() {
         arduinoPort = new SerialPort(115200, SerialPort.Port.kMXP);
         System.out.println("Created new arduino reader");
     }
@@ -47,26 +48,25 @@ public class ArduinoReader {
     /**
      * Updates arduino values and reads arduino serial port
      */
-    public void readArduino(){
-        try{
+    public void readArduino() {
+        try {
             stringRead = false;
-            while(arduinoPort.getBytesReceived() != 0) {
+            while (arduinoPort.getBytesReceived() != 0) {
                 arduinoOutput = arduinoPort.readString();
                 inputBuffer = inputBuffer + arduinoOutput;
                 stringRead = true;
             }
             line = "";
-            while(inputBuffer.indexOf("\r") != -1) {
+            while (inputBuffer.indexOf("\r") != -1) {
                 int point = inputBuffer.indexOf("\r");
                 line = inputBuffer.substring(0, point);
-                if(inputBuffer.length() > point+1){
+                if (inputBuffer.length() > point + 1) {
                     inputBuffer = inputBuffer.substring(point + 2);
-                }
-                else {
+                } else {
                     inputBuffer = "";
                 }
             }
-            if(line != "") {
+            if (line != "") {
                 arduinoDataMap = line.split(",");
                 frontLaserSensorData = Integer.parseInt(arduinoDataMap[0]);
                 rearLaserSensorData = Integer.parseInt(arduinoDataMap[1]);
@@ -90,6 +90,7 @@ public class ArduinoReader {
 
     /**
      * The front laser looking towards the ground
+     * 
      * @return Distance to ground from front bottom laser in cm
      */
     public int getFrontBottomLaserVal() {
@@ -98,6 +99,7 @@ public class ArduinoReader {
 
     /**
      * The rear laser looking towards the ground
+     * 
      * @return Distance to ground from rear bottom laser in cm
      */
     public int getRearBottomLaserVal() {
@@ -106,6 +108,7 @@ public class ArduinoReader {
 
     /**
      * The front left laser looking forwards
+     * 
      * @return Distance to object from front left in cm
      */
     public int getFrontLeftLaserVal() {
@@ -114,6 +117,7 @@ public class ArduinoReader {
 
     /**
      * The front right laser looking forwards
+     * 
      * @return Distance to object from front right in cm
      */
     public int getFrontRightLaserVal() {
@@ -122,6 +126,7 @@ public class ArduinoReader {
 
     /**
      * Position of middle of white tape
+     * 
      * @return Middle of white tape as an average
      */
     public double getLineFollowerVal() {
@@ -130,17 +135,20 @@ public class ArduinoReader {
 
     /**
      * Accelerometer on the four bar
-     * @return Angle of scoring arm by calculating from vertical and horizontal forces
+     * 
+     * @return Angle of scoring arm by calculating from vertical and horizontal
+     *         forces
      */
-    public int getScoringAccelerometerVal(){
+    public int getScoringAccelerometerVal() {
         return scoringAccelerometerData;
     }
 
     /**
      * Accelerometer on the wrist piece
+     * 
      * @return Angle of wrist by calculating from vertical and horizontal forces
      */
-    public int getAcqAccelerometerVal(){
+    public int getAcqAccelerometerVal() {
         return acquisitionAccelerometerData;
     }
 }

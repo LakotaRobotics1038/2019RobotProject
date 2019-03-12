@@ -11,16 +11,17 @@ import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import frc.robot.robot.ArduinoReader;
 
-public class Dashboard{
+public class Dashboard {
 
   private static Dashboard dashboard;
   private ArduinoReader arduinoReader = ArduinoReader.getInstance();
   private DriverStation driverStation = DriverStation.getInstance();
 
   /**
-     * Returns the dashboard instance created when the robot starts
-     * @return Dashboard instance
-     */
+   * Returns the dashboard instance created when the robot starts
+   * 
+   * @return Dashboard instance
+   */
   public static Dashboard getInstance() {
     if (dashboard == null) {
       System.out.println("Creating a new Dashboard");
@@ -41,7 +42,7 @@ public class Dashboard{
   /**
    * Updates dashboard with current values
    */
-  public void update(){
+  public void update() {
     SmartDashboard.putNumber("Left Distance", arduinoReader.getFrontLeftLaserVal());
     SmartDashboard.putNumber("Right Distance", arduinoReader.getFrontRightLaserVal());
     SmartDashboard.putNumber("Match Time", driverStation.getMatchTime());

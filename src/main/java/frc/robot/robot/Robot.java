@@ -13,12 +13,10 @@ import com.revrobotics.CANSparkMaxLowLevel.MotorType;
 import edu.wpi.cscore.UsbCamera;
 import edu.wpi.first.cameraserver.CameraServer;
 import edu.wpi.first.wpilibj.Compressor;
-import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.command.CommandGroup;
 import edu.wpi.first.wpilibj.command.Scheduler;
-import frc.robot.auton.EndgameCylinderRetract;
 import frc.robot.auton.EndgameCylindersDeploy;
 import frc.robot.subsystems.Acquisition;
 import frc.robot.subsystems.Dashboard;
@@ -74,7 +72,7 @@ public class Robot extends TimedRobot {
   CANSpark1038 ballacqMotor = new CANSpark1038(59, MotorType.kBrushed);
   CANSpark1038 wristMotor = new CANSpark1038(60, MotorType.kBrushed);
 
-  //Arduino
+  // Arduino
   ArduinoReader arduinoReader = ArduinoReader.getInstance();
 
   /**
@@ -83,7 +81,7 @@ public class Robot extends TimedRobot {
    */
   @Override
   public void robotInit() {
-    
+
     c.setClosedLoopControl(true);
     ballacqMotor.restoreFactoryDefaults();
     wristMotor.restoreFactoryDefaults();
@@ -177,18 +175,18 @@ public class Robot extends TimedRobot {
     }
     if (driverJoystick.getLeftButton()) {
       endgame.setRearMotor(0.4);
-    } else if(driverJoystick.getLeftTrigger() > 0.5){
+    } else if (driverJoystick.getLeftTrigger() > 0.5) {
       endgame.setRearMotor(-0.4);
-    } else{
+    } else {
       endgame.setRearMotor(0.0);
     }
 
-    if(isDeploying) {
+    if (isDeploying) {
       schedule.run();
       if (arduinoReader.getFrontBottomLaserVal() >= 15 && arduinoReader.getRearBottomLaserVal() >= 15) {
         isDeploying = false;
       }
-    } else if(!isDeploying) {
+    } else if (!isDeploying) {
       schedule.removeAll();
       schedule.add(group);
     }
@@ -215,27 +213,23 @@ public class Robot extends TimedRobot {
   public void operator() {
     if (operatorJoystick.getLeftButton()) {
       acquisition.acqCargo();
-    }
-    else if (operatorJoystick.getLeftTrigger() > 0.5) {
+    } else if (operatorJoystick.getLeftTrigger() > 0.5) {
       acquisition.disposeCargo();
-    }
-    else{
+    } else {
       acquisition.stop();
     }
     if (operatorJoystick.getRightButton()) {
       acquisition.acqHatch();
-    }
-    else if (operatorJoystick.getRightTrigger() > 0.5) {
+    } else if (operatorJoystick.getRightTrigger() > 0.5) {
       acquisition.dropHatch();
       // driverJoystick.setLeftRumble(0.5); //Should be light
       // operatorJoystick.setLeftRumble(0.5); //Should be light
-    } 
-    else {
+    } else {
       acquisition.stopHatch();
     }
 
     if (operatorJoystick.getXButton()) {
-     // scoring.setLevel(-50);
+      // scoring.setLevel(-50);
       prevXButtonState = currentXButtonState;
       currentXButtonState = true;
     }
@@ -249,24 +243,23 @@ public class Robot extends TimedRobot {
       scoring.setLevel(50);
     }
 
-    if(Math.abs(operatorJoystick.getLeftJoystickVertical()) > 0.25) {
+    if (Math.abs(operatorJoystick.getLeftJoystickVertical()) > 0.25) {
       wristMotor.set(operatorJoystick.getLeftJoystickVertical());
-    }
-    else{
+    } else {
       wristMotor.set(0);
     }
 
-    if(operatorJoystick.getPOV() == 0){
+    if (operatorJoystick.getPOV() == 0) {
       scoring.setLevel(-25);
     }
 
-    if(operatorJoystick.getPOV() == 180){
+    if (operatorJoystick.getPOV() == 180) {
       scoring.setLevel(-55);
     }
 
-    if(currentXButtonState && !prevXButtonState) {
+    if (currentXButtonState && !prevXButtonState) {
       isGoingDown = !isGoingDown;
-      //acquisition.setHeight(isGoingDown);
+      // acquisition.setHeight(isGoingDown);
     }
 
     if (Math.abs(operatorJoystick.getRightJoystickVertical()) > 0.1) {

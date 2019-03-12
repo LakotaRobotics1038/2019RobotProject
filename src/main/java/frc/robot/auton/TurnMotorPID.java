@@ -15,7 +15,15 @@ public class TurnMotorPID extends PIDCommand {
     private PIDController turnPID = getPIDController();
     private DriveTrain robotDrive = DriveTrain.getInstance();
 
-    public TurnMotorPID(double setpoint, double P, double I, double D){
+    /**
+     * Instantiates the turn motor with PID command
+     * 
+     * @param setpoint The distance to turn the motorin counts
+     * @param P        The P value
+     * @param I        The I value
+     * @param D        The D value
+     */
+    public TurnMotorPID(double setpoint, double P, double I, double D) {
         super(P, I, D);
         setSetpoint(setpoint);
         turnPID.setAbsoluteTolerance(tolerance);
@@ -35,9 +43,9 @@ public class TurnMotorPID extends PIDCommand {
         System.out.println(turnPID.get());
         this.usePIDOutput(turnPID.get());
     }
-    
+
     @Override
-    protected void end(){
+    protected void end() {
         turnPID.reset();
         System.out.println("Destroyed TurnMotorPID" + " Ended at: " + robotDrive.getCANSparkLeftEncoder());
     }

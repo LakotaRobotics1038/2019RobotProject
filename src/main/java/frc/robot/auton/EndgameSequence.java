@@ -10,6 +10,11 @@ public class EndgameSequence {
     private double deployTime = 20;
     CommandGroup group = new CommandGroup();
 
+    /**
+     * The command sequence for endgame
+     * 
+     * @return The command group of the commands to run the endgame sequence
+     */
     public CommandGroup getEndgameSequenceGroup() {
         group.addSequential(new EndgameCylindersDeploy(18));
         group.addSequential(new TurnEndgameMotor(0.3));

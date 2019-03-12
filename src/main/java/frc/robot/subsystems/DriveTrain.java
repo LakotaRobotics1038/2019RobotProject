@@ -34,6 +34,7 @@ public class DriveTrain extends Subsystem {
 
     /**
      * Returns the drive train instance created when the robot starts
+     * 
      * @return Drive train instance
      */
     public static DriveTrain getInstance() {
@@ -68,6 +69,7 @@ public class DriveTrain extends Subsystem {
 
     /**
      * Gets and returns distance driven by the left of the robot
+     * 
      * @return Distance driven by the left of the robot in wheel diameter's units
      */
     public double getLeftDriveEncoderDistance() {
@@ -76,6 +78,7 @@ public class DriveTrain extends Subsystem {
 
     /**
      * Gets and returns distance driven by the right of the robot
+     * 
      * @return Distance driven by the right of the robot in wheel diameter's units
      */
     public double getRightDriveEncoderDistance() {
@@ -84,6 +87,7 @@ public class DriveTrain extends Subsystem {
 
     /**
      * Gets and returns revolutions driven by the right of the robot
+     * 
      * @return Revolutions driven by the right of the robot
      */
     public double getCANSparkRightEncoder() {
@@ -92,6 +96,7 @@ public class DriveTrain extends Subsystem {
 
     /**
      * Gets and returns revolutions driven by the left of the robot
+     * 
      * @return Revolutions driven by the left of the robot
      */
     public double getCANSparkLeftEncoder() {
@@ -115,7 +120,8 @@ public class DriveTrain extends Subsystem {
     }
 
     /**
-     * Toggles the drive mode between tank drive, single arcade drive, and dual arcade drive
+     * Toggles the drive mode between tank drive, single arcade drive, and dual
+     * arcade drive
      */
     public void driveModeToggler() {
 
@@ -137,7 +143,8 @@ public class DriveTrain extends Subsystem {
 
     /**
      * Drives robot with tank controls (input range -1 to 1 for each stick)
-     * @param leftStickInput Left joystick input between -1 and 1
+     * 
+     * @param leftStickInput  Left joystick input between -1 and 1
      * @param rightStickInput Right joystick input between -1 and 1
      */
     public void tankDrive(double leftStickInput, double rightStickInput) {
@@ -146,7 +153,8 @@ public class DriveTrain extends Subsystem {
 
     /**
      * Drives robot with single arcade controls (input range -1 to 1 for each stick)
-     * @param leftStickInput Left joystick input between -1 and 1
+     * 
+     * @param leftStickInput  Left joystick input between -1 and 1
      * @param rightStickInput Right joystick input between -1 and 1
      */
     public void singleAracadeDrive(double speed, double turnValue) {
@@ -155,7 +163,8 @@ public class DriveTrain extends Subsystem {
 
     /**
      * Drives robot with dual arcade controls (input range -1 to 1 for each stick)
-     * @param leftStickInput Left joystick input between -1 and 1
+     * 
+     * @param leftStickInput  Left joystick input between -1 and 1
      * @param rightStickInput Right joystick input between -1 and 1
      */
     public void dualArcadeDrive(double yaxis, double xaxis) {

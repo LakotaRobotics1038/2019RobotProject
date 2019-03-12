@@ -10,6 +10,11 @@ public class TurnEndgameMotor extends Command {
     private int currentElevation;
     private int goalElevation = 3; // Placeholder
 
+    /**
+     * Instantiates turning the endgame motor at a designated speed
+     * 
+     * @param motorSpeed The speed at which the motor turns between -1 and 1
+     */
     public TurnEndgameMotor(double motorSpeed) {
         motorPower = motorSpeed;
     }

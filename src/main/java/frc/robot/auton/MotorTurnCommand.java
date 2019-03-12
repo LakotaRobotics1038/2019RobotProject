@@ -16,7 +16,14 @@ public class MotorTurnCommand extends PIDCommand {
     private PIDController drivePID = getPIDController();
     private Encoder1038 motorEncoder = new Encoder1038(0, 1, false, 220, 1);
 
-    public MotorTurnCommand(double setpoint){
+    /**
+     * Instantiates the motor turn command with the designated distance to move the
+     * motor
+     * 
+     * @param setpoint The distance the motor should move in the wheel diameter's
+     *                 units
+     */
+    public MotorTurnCommand(double setpoint) {
         super(mP, mI, mD);
         setSetpoint(setpoint);
         drivePID.setAbsoluteTolerance(TOLERANCE);
@@ -25,25 +32,31 @@ public class MotorTurnCommand extends PIDCommand {
         requires(drive);
     }
 
-    public void initialize(){
+    @Override
+    public void initialize() {
     }
 
-    public void execute(){
+    @Override
+    public void execute() {
         usePIDOutput(drivePID.get());
     }
 
-    public void interrupted(){
+    @Override
+    public void interrupted() {
         end();
     }
 
-    public void end(){
+    @Override
+    public void end() {
         drivePID.reset();
     }
 
-    public boolean isFinished(){
+    @Override
+    public boolean isFinished() {
         return drivePID.onTarget();
     }
 
+    @Override
     protected double returnPIDInput() {
         return drive.getRightDriveEncoderDistance();
     }

@@ -25,12 +25,13 @@ public class Acquisition extends Subsystem {
     private final double MIN_ACQ_SPEED = -1.0;
     private final double MAX_ACQ_SPEED = 1.0;
     private CANSpark1038 ballIntakeMotor = new CANSpark1038(59, MotorType.kBrushed);
-    private CANSpark1038 vacuumGen = new CANSpark1038(58, MotorType.kBrushed); 
+    private CANSpark1038 vacuumGen = new CANSpark1038(58, MotorType.kBrushed);
     private DoubleSolenoid hatchAcq = new DoubleSolenoid(HATCH_ACQ, HATCH_DROP);
     private static Acquisition acquisition;
 
     /**
      * Returns the acquisition instance created when the robot starts
+     * 
      * @return Acquisition instance
      */
     public static Acquisition getInstance() {

@@ -23,19 +23,31 @@ public class DynamicDashboard {
 
     private static DynamicDashboard dynDash;
 
-    public DynamicDashboard(){
+    /**
+     * Instantiates the dynamic dashboard object
+     */
+    public DynamicDashboard() {
 
     }
 
-    public static DynamicDashboard getInstance(){
+    /**
+     * Returns the instance of the created dashboard object
+     * 
+     * @return The dynamic dashboard object
+     */
+    public static DynamicDashboard getInstance() {
         if (dynDash == null) {
             System.out.println("Creating a new Dashboard");
             dynDash = new DynamicDashboard();
-          }
-          return dynDash;
+        }
+        return dynDash;
     }
 
-    public void initialize(){
+    /**
+     * Initializes the dynamic dashboard by sending the P, I, and D values to the
+     * dashbaord
+     */
+    public void initialize() {
         dashboard = Dashboard.getInstance();
         P = SmartDashboard.getNumber("PVal", -1);
         I = SmartDashboard.getNumber("IVal", -1);
@@ -45,21 +57,24 @@ public class DynamicDashboard {
         schedule.add(new TurnMotorPID(setpoint, P, I, D));
     }
 
-    public void periodic(){
+    /**
+     * What should be looped through in order to update the dynamic dashboard
+     */
+    public void periodic() {
         PCurrent = SmartDashboard.getNumber("PVal", -1);
         ICurrent = SmartDashboard.getNumber("IVal", -1);
         DCurrent = SmartDashboard.getNumber("DVal", -1);
         setpointCurrent = SmartDashboard.getNumber("Setpoint", -1);
         dashboard.update();
-    
+
         System.out.println(PCurrent + ", " + ICurrent + ", " + DCurrent + ", " + setpointCurrent);
-    
+
         schedule.run();
-        if(PCurrent != PPast ||ICurrent != IPast || DCurrent != DPast || setpointCurrent != setpointPast){
-          schedule.removeAll();
-          schedule.add(new TurnMotorPID(setpointCurrent, PCurrent, ICurrent, DCurrent));
+        if (PCurrent != PPast || ICurrent != IPast || DCurrent != DPast || setpointCurrent != setpointPast) {
+            schedule.removeAll();
+            schedule.add(new TurnMotorPID(setpointCurrent, PCurrent, ICurrent, DCurrent));
         }
-    
+
         PPast = PCurrent;
         IPast = ICurrent;
         DPast = DCurrent;

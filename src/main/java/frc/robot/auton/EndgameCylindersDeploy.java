@@ -5,7 +5,6 @@ import edu.wpi.first.wpilibj.command.Command;
 import frc.robot.robot.ArduinoReader;
 import frc.robot.subsystems.Endgame;
 
-
 public class EndgameCylindersDeploy extends Command {
 
     private double frontElevation;
@@ -17,13 +16,18 @@ public class EndgameCylindersDeploy extends Command {
     private Timer timerRear = new Timer();
     private Timer timer = new Timer();
 
-    public EndgameCylindersDeploy(int setpoint){
+    /**
+     * Instantiates endgame cylinder deploy command
+     * 
+     * @param setpoint The target elevation for endgame in cm
+     */
+    public EndgameCylindersDeploy(int setpoint) {
         targetElevation = setpoint;
         requires(endgame);
     }
 
     @Override
-    protected void initialize(){
+    protected void initialize() {
         timerRear.start();
         System.out.println("Timer started");
         endgame.deployFront();
@@ -44,7 +48,7 @@ public class EndgameCylindersDeploy extends Command {
     }
 
     @Override
-    protected void end(){
+    protected void end() {
         endgame.retractRear();
         endgame.retractFront();
         System.out.println("Ended at: " + timer.get());

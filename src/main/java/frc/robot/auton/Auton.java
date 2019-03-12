@@ -25,12 +25,21 @@ public class Auton {
     private int mode;
     private SendableChooser<String> autonList;
 
+    /**
+     * Instantiates auton object
+     * 
+     * @param dt Drive train instance
+     * @param s  Controller instance
+     */
     public Auton(DriveTrain dt, XboxJoystick1038 s) {
         driveTrain = dt;
         stick = s;
         init();
     }
 
+    /**
+     * Initializes auton object and creates a file
+     */
     private void init() {
         autonList = new SendableChooser();
         autonList.addDefault("Pick a code", null);
@@ -44,7 +53,6 @@ public class Auton {
     }
 
     /**
-     * 
      * This method should be called in autonomousInit()
      */
     public void playbackInit() {
@@ -74,7 +82,7 @@ public class Auton {
         driveTrain.dualArcadeDrive(Double.parseDouble((String) autonInstructions[index][1]),
                 Double.parseDouble((String) autonInstructions[index][2]));
 
-         printEncoders();
+        printEncoders();
         if (index == autonInstructions.length - 2) {
             // put anything here for when instruction is finished
         }
@@ -120,9 +128,15 @@ public class Auton {
             frc.robot.auton.CSV.writeLine2csv(newLineArr, autonFile);
 
         }
-         printEncoders();
+        printEncoders();
     }
 
+    /**
+     * Combines array elements into strings seperated by commas
+     * 
+     * @param arr Array to be combined
+     * @return The array turned into a comma seperated string
+     */
     public static String combine(Object[] arr) {
         String ret = "";
         for (int i = 0; i < arr.length; i++) {
