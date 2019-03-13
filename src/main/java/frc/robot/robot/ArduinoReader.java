@@ -1,8 +1,6 @@
 package frc.robot.robot;
 
 import java.io.BufferedReader;
-import java.io.InputStreamReader;
-import java.io.InputStream;
 import edu.wpi.first.hal.util.UncleanStatusException;
 import edu.wpi.first.wpilibj.SerialPort;
 
@@ -20,91 +18,137 @@ public class ArduinoReader {
     public int acquisitionAccelerometerData = 0;
     public boolean stringRead = false;
     public BufferedReader bufferedReader;
-    private static String inputBuffer;
+    private static String inputBuffer = "";
     private String line;
 
-    private ArduinoReader(){
+    private ArduinoReader() {
 
     }
 
-    public static ArduinoReader getInstance(){
-        if(arduinoReader == null){
+    /**
+     * Returns the arduino instance created when the robot starts
+     * 
+     * @return Arduino instance
+     */
+    public static ArduinoReader getInstance() {
+        if (arduinoReader == null) {
             arduinoReader = new ArduinoReader();
         }
         return arduinoReader;
     }
 
-    public void initialize(){
+    /**
+     * Creates serial port listener
+     */
+    public void initialize() {
         arduinoPort = new SerialPort(115200, SerialPort.Port.kMXP);
         System.out.println("Created new arduino reader");
     }
 
-    public void readArduino(){
-        try{
+    /**
+     * Updates arduino values and reads arduino serial port
+     */
+    public void readArduino() {
+        try {
             stringRead = false;
-            while(arduinoPort.getBytesReceived() != 0) {
+            while (arduinoPort.getBytesReceived() != 0) {
                 arduinoOutput = arduinoPort.readString();
                 inputBuffer = inputBuffer + arduinoOutput;
                 stringRead = true;
             }
             line = "";
-            while(inputBuffer.indexOf("\r") != -1) {
+            while (inputBuffer.indexOf("\r") != -1) {
                 int point = inputBuffer.indexOf("\r");
                 line = inputBuffer.substring(0, point);
-                if(inputBuffer.length() > point+1){
+                if (inputBuffer.length() > point + 1) {
                     inputBuffer = inputBuffer.substring(point + 2);
-                }
-                else {
+                } else {
                     inputBuffer = "";
                 }
             }
-            if(line != "") {
+            if (line != "") {
                 arduinoDataMap = line.split(",");
                 frontLaserSensorData = Integer.parseInt(arduinoDataMap[0]);
                 rearLaserSensorData = Integer.parseInt(arduinoDataMap[1]);
                 frontLeftLaserSensorData = Integer.parseInt(arduinoDataMap[2]);
                 frontRightLaserSensorData = Integer.parseInt(arduinoDataMap[3]);
-                //lineFollowerData = Double.parseDouble(arduinoDataMap[6]);
                 acquisitionAccelerometerData = Integer.parseInt(arduinoDataMap[4]);
                 scoringAccelerometerData = Integer.parseInt(arduinoDataMap[5]);
             }
         } catch (NumberFormatException e2) {
-            //System.out.println(e2 + e2.getMessage());
         } catch (UncleanStatusException e) {
-            //System.out.print("*");
         }
     }
 
+    /**
+     * Closes serial port listener
+     */
     public void stopSerialPort() {
         System.out.println("im gonna close it");
         arduinoPort.close();
     }
 
-    public int getFrontLaserVal() {
+    /**
+     * The front laser looking towards the ground
+     * 
+     * @return Distance to ground from front bottom laser in cm
+     */
+    public int getFrontBottomLaserVal() {
         return frontLaserSensorData;
     }
 
-    public int getRearLaserVal() {
+    /**
+     * The rear laser looking towards the ground
+     * 
+     * @return Distance to ground from rear bottom laser in cm
+     */
+    public int getRearBottomLaserVal() {
         return rearLaserSensorData;
     }
 
+    /**
+     * The front left laser looking forwards
+     * 
+     * @return Distance to object from front left in cm
+     */
     public int getFrontLeftLaserVal() {
         return frontLeftLaserSensorData;
     }
 
+    /**
+     * The front right laser looking forwards
+     * 
+     * @return Distance to object from front right in cm
+     */
     public int getFrontRightLaserVal() {
         return frontRightLaserSensorData;
     }
 
+    /**
+     * Position of middle of white tape
+     * 
+     * @return Middle of white tape as an average
+     */
     public double getLineFollowerVal() {
         return lineFollowerData;
     }
 
-    public int getScoringAccelerometerVal(){
+    /**
+     * Accelerometer on the four bar
+     * 
+     * @return Angle of scoring arm by calculating from vertical and horizontal
+     *         forces
+     */
+    public int getScoringAccelerometerVal() {
         return scoringAccelerometerData;
     }
 
-    public int getAcqAccelerometerVal(){
+    /**
+     * Accelerometer on the wrist piece
+     * 
+     * @return Angle of wrist by calculating from vertical and horizontal forces
+     */
+    public int getAcqAccelerometerVal() {
         return acquisitionAccelerometerData;
     }
 }

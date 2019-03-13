@@ -32,6 +32,11 @@ public class DriveTrain extends Subsystem {
     private DifferentialDrive differentialDrive;
     private static DriveTrain driveTrain;
 
+    /**
+     * Returns the drive train instance created when the robot starts
+     * 
+     * @return Drive train instance
+     */
     public static DriveTrain getInstance() {
         if (driveTrain == null) {
             System.out.println("Creating a new DriveTrain");
@@ -40,6 +45,9 @@ public class DriveTrain extends Subsystem {
         return driveTrain;
     }
 
+    /**
+     * Instantiates drive train object
+     */
     private DriveTrain() {
         CANSparkLeftBack.restoreFactoryDefaults();
         CANSparkLeftFront.restoreFactoryDefaults();
@@ -59,36 +67,62 @@ public class DriveTrain extends Subsystem {
 
     }
 
-    // Get and return distance driven by the left of the robot in inches
+    /**
+     * Gets and returns distance driven by the left of the robot
+     * 
+     * @return Distance driven by the left of the robot in wheel diameter's units
+     */
     public double getLeftDriveEncoderDistance() {
         return CANSparkLeftEncoder.getPosition() * Math.PI * WHEEL_DIAMETER;
     }
 
-    // Get and return distance driven by the right of the robot in inches
+    /**
+     * Gets and returns distance driven by the right of the robot
+     * 
+     * @return Distance driven by the right of the robot in wheel diameter's units
+     */
     public double getRightDriveEncoderDistance() {
         return CANSparkRightEncoder.getPosition() * Math.PI * WHEEL_DIAMETER;
     }
 
+    /**
+     * Gets and returns revolutions driven by the right of the robot
+     * 
+     * @return Revolutions driven by the right of the robot
+     */
     public double getCANSparkRightEncoder() {
         return CANSparkRightEncoder.getPosition() * -1;
     }
 
+    /**
+     * Gets and returns revolutions driven by the left of the robot
+     * 
+     * @return Revolutions driven by the left of the robot
+     */
     public double getCANSparkLeftEncoder() {
         return CANSparkLeftEncoder.getPosition() * -1;
     }
 
-    // Pneumatics
+    /**
+     * Switches robot into high gear by changing solenoid state
+     */
     public void highGear() {
         isHighGear = true;
         GearChangeSolenoid.set(DoubleSolenoid.Value.kForward);
     }
 
+    /**
+     * Switches robot into low gear by changing solenoid state
+     */
     public void lowGear() {
         isHighGear = false;
         GearChangeSolenoid.set(DoubleSolenoid.Value.kReverse);
     }
 
-    // Switch between drive modes
+    /**
+     * Toggles the drive mode between tank drive, single arcade drive, and dual
+     * arcade drive
+     */
     public void driveModeToggler() {
 
         switch (currentDriveMode) {
@@ -107,17 +141,32 @@ public class DriveTrain extends Subsystem {
         }
     }
 
-    // Drive robot with tank controls (input range -1 to 1 for each stick)
+    /**
+     * Drives robot with tank controls (input range -1 to 1 for each stick)
+     * 
+     * @param leftStickInput  Left joystick input between -1 and 1
+     * @param rightStickInput Right joystick input between -1 and 1
+     */
     public void tankDrive(double leftStickInput, double rightStickInput) {
         differentialDrive.tankDrive(leftStickInput, rightStickInput, true);
     }
 
-    // Drive robot using a single stick (input range -1 to 1)
+    /**
+     * Drives robot with single arcade controls (input range -1 to 1 for each stick)
+     * 
+     * @param leftStickInput  Left joystick input between -1 and 1
+     * @param rightStickInput Right joystick input between -1 and 1
+     */
     public void singleAracadeDrive(double speed, double turnValue) {
         differentialDrive.arcadeDrive(speed, turnValue, true);
     }
 
-    // Drive robot using 2 sticks (input ranges -1 to 1)
+    /**
+     * Drives robot with dual arcade controls (input range -1 to 1 for each stick)
+     * 
+     * @param leftStickInput  Left joystick input between -1 and 1
+     * @param rightStickInput Right joystick input between -1 and 1
+     */
     public void dualArcadeDrive(double yaxis, double xaxis) {
         differentialDrive.arcadeDrive(yaxis, xaxis, true);
     }

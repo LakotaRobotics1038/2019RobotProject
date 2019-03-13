@@ -1,12 +1,10 @@
 package frc.robot.auton;
 
 import edu.wpi.first.wpilibj.command.TimedCommand;
-import frc.robot.subsystems.DriveTrain;
 import frc.robot.subsystems.Endgame;
 
 public class EndgameCylinderRetract extends TimedCommand {
 
-    //private DriveTrain drive = DriveTrain.getInstance();
     private Endgame endgame = Endgame.getInstance();
     private boolean isFront;
 
@@ -14,10 +12,17 @@ public class EndgameCylinderRetract extends TimedCommand {
         front, rear
     };
 
+    /**
+     * Instantiates endgame cylinder retract command
+     * 
+     * @param timeout  How long to wait (in seconds) for the cylinders to retract
+     *                 before the command times out
+     * @param position Whether the front or rear cylinders should be retracted
+     */
     public EndgameCylinderRetract(double timeout, Value position) {
         super(timeout);
         requires(endgame);
-        //requires(drive);
+        // requires(drive);
         switch (position) {
         case front:
             isFront = true;
