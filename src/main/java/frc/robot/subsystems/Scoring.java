@@ -9,8 +9,10 @@ package frc.robot.subsystems;
 
 import com.revrobotics.CANEncoder;
 import com.revrobotics.CANSparkMaxLowLevel.MotorType;
-
+import edu.wpi.first.wpilibj.AnalogInput;
+import edu.wpi.first.wpilibj.DoubleSolenoid;
 import edu.wpi.first.wpilibj.PIDController;
+import edu.wpi.first.wpilibj.DoubleSolenoid.Value;
 import edu.wpi.first.wpilibj.command.PIDSubsystem;
 import frc.robot.robot.ArduinoReader;
 import frc.robot.robot.CANSpark1038;
@@ -47,7 +49,9 @@ public class Scoring extends PIDSubsystem {
     private CANSpark1038 fourBarMotor = new CANSpark1038(56, MotorType.kBrushless);
     // private CANEncoder fourBarEncoder = fourBarMotor.getEncoder();
     private ArduinoReader arduinoReader = ArduinoReader.getInstance();
+    private AnalogInput armPot = new AnalogInput(0);
     private PIDController scoringPID = getPIDController();
+    private DoubleSolenoid armBrake = new DoubleSolenoid(2, 3);
 
     public static Scoring getInstance() {
         if (scoring == null) {
@@ -104,6 +108,7 @@ public class Scoring extends PIDSubsystem {
             scoringPID.setPID(P_UP3, I_UP3, D_UP3);
         }
         enable();
+        armBrake.set(Value.kReverse);
     }
 
     public boolean isGoingDown(int newSetpoint) {
@@ -190,6 +195,16 @@ public class Scoring extends PIDSubsystem {
             enable();
             setSetpoint(getSetpoint() - 2);
         }
+        armBrake.set(Value.kReverse);
+    }
+
+    public void deployBrake() {
+        if(armBrake.get() == Value.kForward) {
+            armBrake.set(Value.kReverse);
+        }
+        else{
+            armBrake.set(Value.kForward);
+        }
     }
 
     @Override
@@ -199,6 +214,9 @@ public class Scoring extends PIDSubsystem {
 
     @Override
     protected double returnPIDInput() {
+        double volts = armPot.getAverageVoltage();
+        double angle = ((volts / 5) * 360) - 90;
+        //return angle;
         return arduinoReader.getScoringAccelerometerVal();
     }
 
@@ -209,6 +227,9 @@ public class Scoring extends PIDSubsystem {
             output = output * .05;
         }
         fourBarMotor.set(output);
+        if(returnPIDInput() == getSetpoint()) {
+            armBrake.set(Value.kForward);
+        }
     }
 
     @Override

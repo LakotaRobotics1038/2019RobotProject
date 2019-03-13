@@ -278,6 +278,7 @@ public class Robot extends TimedRobot {
     if (operatorJoystick.getYButton()) {
       scoring.setLevel(50);
     }
+    
 
     if(Math.abs(operatorJoystick.getLeftJoystickVertical()) > 0.1) {
       acquisition.wristManual(operatorJoystick.getLeftJoystickVertical());
