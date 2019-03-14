@@ -21,6 +21,7 @@ public class Endgame extends Subsystem {
     private DoubleSolenoid frontCylinders = new DoubleSolenoid(0, 1);
     // private DoubleSolenoid rearCylinders = new DoubleSolenoid(2, 3);
     private static CANSparkMax rearMotor = new CANSparkMax(57, CANSparkMaxLowLevel.MotorType.kBrushed);
+    // private CANSparkMax leadScrewMotor = new CANSparkMax(60, CANSparkMaxLowLevel.MotorType.kBrushed);
     private Encoder1038 rearMotorEncoder = new Encoder1038(FRONT_ENCODER_CHANNEL_A, FRONT_ENCODER_CHANNEL_B, false,
             COUNTS_PER_REVOLUTION, WHEEL_DIAMETER);
 
@@ -65,7 +66,12 @@ public class Endgame extends Subsystem {
      */
     public void deployRear() {
         // rearCylinders.set(DoubleSolenoid.Value.kReverse);
+        // leadScrewMotor.set(.5);
         rearDeployed = true;
+    }
+
+    public void stopRear() {
+        // leadScrewMotor.set(0);
     }
 
     /**
