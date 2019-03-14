@@ -19,10 +19,10 @@ import frc.robot.robot.CANSpark1038;
 public class Scoring extends PIDSubsystem {
 
     private static Scoring scoring;
-    private final int SCORING_TOLERANCE = 5;
+    private final int SCORING_TOLERANCE = 2;
     public final static double P_UP1 = .001;
     public final static double I_UP1 = .000;
-    public final static double D_UP1 = .000;
+    public final static double D_UP1 = .0001;
     public final static double P_UP2 = .01;
     public final static double I_UP2 = .0001;
     public final static double D_UP2 = .000;
@@ -38,7 +38,7 @@ public class Scoring extends PIDSubsystem {
     public final static double P_DOWN2 = .005;
     public final static double I_DOWN2 = .0002;
     public final static double D_DOWN2 = .000;
-    public static double MAX_SCORING_OUTPUT = .3;
+    public static double MAX_SCORING_OUTPUT = .5;
     public final static double MIN_SCORING_OUTPUT = -.2;
     public boolean goingDown;
     private CANSpark1038 fourBarMotor = new CANSpark1038(56, MotorType.kBrushless);
@@ -71,6 +71,7 @@ public class Scoring extends PIDSubsystem {
         scoringPID.setContinuous(false);
         scoringPID.setSetpoint(-50);
         fourBarMotor.setInverted(false);
+        armBrake.set(Value.kForward);
     }
 
     /**
@@ -96,7 +97,7 @@ public class Scoring extends PIDSubsystem {
             scoringPID.setPID(P_UP3, I_UP3, D_UP3);
         }
         enable();
-        armBrake.set(Value.kReverse);
+        armBrake.set(Value.kForward);
     }
 
     /**
@@ -141,7 +142,7 @@ public class Scoring extends PIDSubsystem {
             enable();
             setSetpoint(getSetpoint() - 2);
         }
-        armBrake.set(Value.kReverse);
+        armBrake.set(Value.kForward);
     }
 
     public void deployBrake() {
@@ -163,6 +164,7 @@ public class Scoring extends PIDSubsystem {
         double volts = armPot.getAverageVoltage();
         double angle = ((volts / 5) * 360) - 90;
         //return angle;
+        System.out.println(arduinoReader.getScoringAccelerometerVal());
         return arduinoReader.getScoringAccelerometerVal();
     }
 
@@ -170,11 +172,15 @@ public class Scoring extends PIDSubsystem {
     protected void usePIDOutput(double output) {
         if (output < 0 && getSetpoint() == 2 && !goingDown) {
             output = output * .05;
+            System.out.println("Running this");
         }
-        fourBarMotor.set(output);
+        fourBarMotor.set(1.0/(1.0+Math.pow((Math.pow(3, (8.0 *output -1.92))),Math.E)));
         if(returnPIDInput() == getSetpoint()) {
-            armBrake.set(Value.kForward);
+            armBrake.set(Value.kReverse);
+            System.out.println("Set arm brake");
+            disable();
         }
+        // System.out.println("pot:" + armPot.getAverageVoltage());
     }
 
     @Override
