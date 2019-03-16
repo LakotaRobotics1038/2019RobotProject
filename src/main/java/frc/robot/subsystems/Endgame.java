@@ -45,7 +45,7 @@ public class Endgame extends Subsystem {
      * Instantiates endgame object
      */
     private Endgame() {
-        retractFront();
+        deployFront();
         retractRear();
         rearMotor.restoreFactoryDefaults();
         rearMotor.setIdleMode(CANSparkMax.IdleMode.kBrake);

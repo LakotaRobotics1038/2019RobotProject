@@ -34,7 +34,7 @@ import frc.robot.subsystems.Scoring;
 public class Robot extends TimedRobot {
 
   // Camera
-  UsbCamera visionCam = CameraServer.getInstance().startAutomaticCapture();
+  //UsbCamera visionCam = CameraServer.getInstance().startAutomaticCapture();
 
   // Endgame
   private Endgame endgame = Endgame.getInstance();
@@ -87,7 +87,7 @@ public class Robot extends TimedRobot {
     wristMotor.restoreFactoryDefaults();
     ballacqMotor.setIdleMode(IdleMode.kBrake);
     wristMotor.setIdleMode(IdleMode.kBrake);
-    visionCam.setExposureManual(40);
+    //visionCam.setExposureManual(40);
     arduinoReader.initialize();
   }
 
@@ -112,6 +112,8 @@ public class Robot extends TimedRobot {
 
   public void teleopPeriodic() {
     arduinoReader.readArduino();
+    scoring.returnArmPot();
+    arduinoReader.getScoringAccelerometerVal();
     driver();
     operator();
   }
@@ -138,6 +140,9 @@ public class Robot extends TimedRobot {
   public void disabledInit() {
     arduinoReader.stopSerialPort();
     scoring.disable();
+  }
+
+  public void disabledPeriodic() {
   }
 
   /**
@@ -234,13 +239,13 @@ public class Robot extends TimedRobot {
       currentXButtonState = true;
     }
     if (operatorJoystick.getAButton()) {
-      scoring.setLevel(-40);
+      scoring.setLevel(-37);
     }
     if (operatorJoystick.getBButton()) {
-      scoring.setLevel(2);
+      scoring.setLevel(10);
     }
     if (operatorJoystick.getYButton()) {
-      scoring.setLevel(50);
+      scoring.setLevel(55);
     }
     
 
@@ -255,7 +260,7 @@ public class Robot extends TimedRobot {
     }
 
     if (operatorJoystick.getPOV() == 180) {
-      scoring.setLevel(-55);
+      scoring.setLevel(-48);
     }
 
     if (currentXButtonState && !prevXButtonState) {

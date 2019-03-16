@@ -26,20 +26,21 @@ public class Scoring extends PIDSubsystem {
     public final static double P_UP2 = .01;
     public final static double I_UP2 = .0001;
     public final static double D_UP2 = .000;
-    public final static double P_UP3 = .005;
+    public final static double P_UP3 = .008;
     public final static double I_UP3 = .000;
     public final static double D_UP3 = .000;
     public final static double P_DOWN0 = .0001;
     public final static double I_DOWN0 = .000;
     public final static double D_DOWN0 = .000;
-    public final static double P_DOWN1 = .0022;
-    public final static double I_DOWN1 = .000;
-    public final static double D_DOWN1 = .025;
-    public final static double P_DOWN2 = .005;
-    public final static double I_DOWN2 = .0002;
+    public final static double P_DOWN1 = .012;
+    public final static double I_DOWN1 = .0005;
+    public final static double D_DOWN1 = .000;
+    public final static double P_DOWN2 = .004;
+    public final static double I_DOWN2 = .000;
     public final static double D_DOWN2 = .000;
-    public static double MAX_SCORING_OUTPUT = .5;
-    public final static double MIN_SCORING_OUTPUT = -.2;
+    public static double MAX_SCORING_OUTPUT = 0.6;
+    public final static double MIN_SCORING_OUTPUT = -.5;
+    private boolean isInManual = false;
     public boolean goingDown;
     private CANSpark1038 fourBarMotor = new CANSpark1038(56, MotorType.kBrushless);
     private ArduinoReader arduinoReader = ArduinoReader.getInstance();
@@ -81,19 +82,20 @@ public class Scoring extends PIDSubsystem {
      *              horizontal plane
      */
     public void setLevel(int angle) {
+        isInManual = false;
         MAX_SCORING_OUTPUT = 0.3;
         setSetpoint(angle);
-        if (isGoingDown(angle) && angle == 2) {
+        if (isGoingDown(angle) && angle == 10) {
             scoringPID.setPID(P_DOWN2, I_DOWN2, D_DOWN2);
-        } else if (isGoingDown(angle) && angle == -45) {
+        } else if (isGoingDown(angle) && angle == -37) {
             scoringPID.setPID(P_DOWN1, I_DOWN1, D_DOWN1);
-        } else if (isGoingDown(angle) && angle == -50) {
+        } else if (isGoingDown(angle) && angle == -48) {
             scoringPID.setPID(P_DOWN0, I_DOWN0, D_DOWN0);
-        } else if (!isGoingDown(angle) && angle == -50) {
-            scoringPID.setPID(P_UP1, I_UP1, D_UP2);
-        } else if (!isGoingDown(angle) && angle == 2) {
+        } else if (!isGoingDown(angle) && angle == -37) {
+            scoringPID.setPID(P_UP1, I_UP1, D_UP1);
+        } else if (!isGoingDown(angle) && angle == 10) {
             scoringPID.setPID(P_UP2, I_UP2, D_UP2);
-        } else if (!isGoingDown(angle) && angle == 50) {
+        } else if (!isGoingDown(angle) && angle == 55) {
             scoringPID.setPID(P_UP3, I_UP3, D_UP3);
         }
         enable();
@@ -108,11 +110,9 @@ public class Scoring extends PIDSubsystem {
      */
     public boolean isGoingDown(int newSetpoint) {
         if (arduinoReader.getScoringAccelerometerVal() > newSetpoint) {
-            System.out.println("Going down");
             goingDown = true;
             return true;
         } else {
-            System.out.println("Going up");
             goingDown = false;
             return false;
         }
@@ -124,24 +124,27 @@ public class Scoring extends PIDSubsystem {
      * @param joystickValue The joystick value between -1 and 1
      */
     public void move(double joystickValue) {
-        MAX_SCORING_OUTPUT = 0.75;
-        if (getSetpoint() <= 5 && joystickValue > 0.09) {
-            scoringPID.setPID(P_UP2, I_UP2, D_UP2);
-            enable();
-            setSetpoint(getSetpoint() + 2);
-        } else if (getSetpoint() <= 50 && joystickValue > 0.09) {
-            scoringPID.setPID(P_UP3, I_UP3, D_UP3);
-            enable();
-            setSetpoint(getSetpoint() + 2);
-        } else if (getSetpoint() > 5 && joystickValue < -0.09) {
-            scoringPID.setPID(P_DOWN2, I_DOWN2, D_DOWN2); // Check if should be up or down
-            enable();
-            setSetpoint(getSetpoint() - 2);
-        } else if (getSetpoint() > -40 && joystickValue < -0.09) {
-            scoringPID.setPID(P_DOWN1, I_DOWN1, D_DOWN1); // Check if should be up or down
-            enable();
-            setSetpoint(getSetpoint() - 2);
-        }
+        isInManual = true;
+        // MAX_SCORING_OUTPUT = 0.75;
+        // if (getSetpoint() <= 5 && joystickValue > 0.09) {
+        //     scoringPID.setPID(P_UP2, I_UP2, D_UP2);
+        //     enable();
+        //     setSetpoint(getSetpoint() + 2);
+        // } else if (getSetpoint() <= 50 && joystickValue > 0.09) {
+        //     scoringPID.setPID(P_UP3, I_UP3, D_UP3);
+        //     enable();
+        //     setSetpoint(getSetpoint() + 2);
+        // } else if (getSetpoint() > 5 && joystickValue < -0.09) {
+        //     scoringPID.setPID(P_DOWN2, I_DOWN2, D_DOWN2); // Check if should be up or down
+        //     enable();
+        //     setSetpoint(getSetpoint() - 2);
+        // } else if (getSetpoint() > -40 && joystickValue < -0.09) {
+        //     scoringPID.setPID(P_DOWN1, I_DOWN1, D_DOWN1); // Check if should be up or down
+        //     enable();
+        //     setSetpoint(getSetpoint() - 2);
+        // }
+        disable();
+        fourBarMotor.set(joystickValue * 0.5);
         armBrake.set(Value.kForward);
     }
 
@@ -162,25 +165,30 @@ public class Scoring extends PIDSubsystem {
     @Override
     protected double returnPIDInput() {
         double volts = armPot.getAverageVoltage();
-        double angle = ((volts / 5) * 360) - 90;
-        //return angle;
-        System.out.println(arduinoReader.getScoringAccelerometerVal());
-        return arduinoReader.getScoringAccelerometerVal();
+        double angle = (volts * 53.11443747) - 64.77305649;
+        System.out.println(angle);
+        return angle;
+        // System.out.println(arduinoReader.getScoringAccelerometerVal());
+        // return arduinoReader.getScoringAccelerometerVal();
+    }
+
+    public double returnArmPot() {
+        return armPot.getAverageVoltage();
     }
 
     @Override
     protected void usePIDOutput(double output) {
         if (output < 0 && getSetpoint() == 2 && !goingDown) {
             output = output * .05;
-            System.out.println("Running this");
         }
-        fourBarMotor.set(1.0/(1.0+Math.pow((Math.pow(3, (8.0 *output -1.92))),Math.E)));
-        if(returnPIDInput() == getSetpoint()) {
-            armBrake.set(Value.kReverse);
-            System.out.println("Set arm brake");
-            disable();
-        }
-        // System.out.println("pot:" + armPot.getAverageVoltage());
+        //fourBarMotor.set(1.0/(1.0+Math.pow((Math.pow(3, -(8.0 *output))),Math.E))-0.5);
+        fourBarMotor.set(output);
+        // if(returnPIDInput() == getSetpoint() && !isInManual) {
+        //     armBrake.set(Value.kReverse);
+        //     disable();
+        // }
+        System.out.println("pot:" + armPot.getAverageVoltage());
+        System.out.println("angle: " + arduinoReader.getScoringAccelerometerVal());
     }
 
     @Override
