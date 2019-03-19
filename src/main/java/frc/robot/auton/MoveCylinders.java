@@ -56,7 +56,7 @@ public class MoveCylinders extends Command {
             if (moveFront) {
                 endgame.deployFront();
             } else {
-                endgame.deployRear();
+                endgame.deployRear(-1);
             }
             break;
         }

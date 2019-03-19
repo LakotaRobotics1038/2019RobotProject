@@ -5,12 +5,14 @@ import com.revrobotics.CANSparkMax;
 import com.revrobotics.CANSparkMaxLowLevel;
 
 import edu.wpi.first.wpilibj.DoubleSolenoid;
+import edu.wpi.first.wpilibj.PIDController;
+import edu.wpi.first.wpilibj.command.PIDSubsystem;
 import edu.wpi.first.wpilibj.command.Subsystem;
 import frc.robot.robot.ArduinoReader;
 import frc.robot.robot.CANSpark1038;
 import frc.robot.robot.Encoder1038;
 
-public class Endgame extends Subsystem {
+public class Endgame extends PIDSubsystem {
 
     private final int FRONT_ENCODER_CHANNEL_A = 4;
     private final int FRONT_ENCODER_CHANNEL_B = 5;
@@ -19,6 +21,11 @@ public class Endgame extends Subsystem {
 
     private boolean frontDeployed = false;
     private boolean rearDeployed = false;
+
+    private PIDController endgamePID = getPIDController();
+    private final static double P = .000;
+    private final static double I = .000;
+    private final static double D = .000;
 
     private DoubleSolenoid frontCylinders = new DoubleSolenoid(0, 1);
     // private DoubleSolenoid rearCylinders = new DoubleSolenoid(2, 3);
@@ -49,6 +56,12 @@ public class Endgame extends Subsystem {
      * Instantiates endgame object
      */
     private Endgame() {
+        super(P, I, D);
+        endgamePID.setPID(P, I, D);
+        endgamePID.setAbsoluteTolerance(0);
+        endgamePID.setContinuous(false);
+        endgamePID.setOutputRange(-1, 0);
+        endgamePID.setSetpoint(0);
         deployFront();
         retractRear();
         rearMotor.restoreFactoryDefaults();
@@ -68,13 +81,14 @@ public class Endgame extends Subsystem {
      * Deploys rear cylinders by switching the solenoid state and sets rearDeployed
      * boolean to true
      */
-    public void deployRear() {
+    public void deployRear(double power) {
         // rearCylinders.set(DoubleSolenoid.Value.kReverse);
         if(leadScrewEncoder.getPosition() > (rearUpCounts - 394)){
-            leadScrewMotor.set(-1);
+            leadScrewMotor.set(power);
         }
         else{
             leadScrewMotor.set(0);
+            disable();
         }
         //deployedCounter+=1;
         // System.out.println("deploying:" + deployedCounter);
@@ -83,6 +97,7 @@ public class Endgame extends Subsystem {
 
     public void stopRear() {
         leadScrewMotor.set(0);
+        disable();
         // deployedCounter+=1;
         // System.out.println("stopped: " + deployedCounter);
     }
@@ -94,6 +109,7 @@ public class Endgame extends Subsystem {
     public void retractFront() {
         frontCylinders.set(DoubleSolenoid.Value.kForward);
         frontDeployed = false;
+        disable();
     }
 
     /**
@@ -110,6 +126,7 @@ public class Endgame extends Subsystem {
         }
         // retractCounter+=1;
         // System.out.println(retractCounter);
+        disable();
         rearDeployed = false;
     }
 
@@ -123,16 +140,8 @@ public class Endgame extends Subsystem {
     }
 
     public void deployEndgame() {
-        int frontHeight = arduinoReader.getFrontBottomLaserVal();
-        int rearHeight = arduinoReader.getRearBottomLaserVal();
-        System.out.println("front: " + frontHeight + ", rear: " + rearHeight);
         this.deployFront();
-        if(frontHeight - rearHeight > 2) {
-            this.deployRear();
-        }
-        else{
-            this.stopRear();
-        }
+        enable();
     }
 
     /**
@@ -205,6 +214,22 @@ public class Endgame extends Subsystem {
     @Override
     protected void initDefaultCommand() {
 
+    }
+
+    @Override
+    protected double returnPIDInput() {
+        int frontElevation = arduinoReader.getFrontBottomLaserVal();
+        int rearElevation = arduinoReader.getRearBottomLaserVal();
+        return frontElevation - rearElevation;
+    }
+
+    @Override
+    protected void usePIDOutput(double output) {
+        this.deployRear(output);
+    }
+
+    public void disable() {
+        super.disable();
     }
 
 }

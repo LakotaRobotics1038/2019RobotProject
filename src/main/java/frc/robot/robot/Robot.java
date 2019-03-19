@@ -166,7 +166,7 @@ public class Robot extends TimedRobot {
       // endgame.retractFront();
       // endgame.retractRear();
       // isDeploying = false;
-      endgame.deployRear();
+      endgame.deployRear(-1);
     }
     else if (driverJoystick.getBButton()) {
       endgame.retractRear();
