@@ -30,8 +30,7 @@ public class Endgame extends Subsystem {
 
     private static Endgame endgame;
     private static ArduinoReader arduinoReader = ArduinoReader.getInstance();
-    int deployedCounter=0;
-    int retractCounter=0;
+    private double rearUpCounts = leadScrewEncoder.getPosition();
 
     /**
      * Returns the endgame instance created when the robot starts
@@ -71,8 +70,8 @@ public class Endgame extends Subsystem {
      */
     public void deployRear() {
         // rearCylinders.set(DoubleSolenoid.Value.kReverse);
-        if(leadScrewEncoder.getPosition() > -198){
-            leadScrewMotor.set(-.5);
+        if(leadScrewEncoder.getPosition() > (rearUpCounts - 394)){
+            leadScrewMotor.set(-1);
         }
         else{
             leadScrewMotor.set(0);
@@ -103,7 +102,7 @@ public class Endgame extends Subsystem {
      */
     public void retractRear() {
         // rearCylinders.set(DoubleSolenoid.Value.kForward);
-        if(leadScrewEncoder.getPosition() < 187){
+        if(leadScrewEncoder.getPosition() < rearUpCounts - 4){
             leadScrewMotor.set(.5);
         }
         else{
@@ -121,6 +120,19 @@ public class Endgame extends Subsystem {
      */
     public void setRearMotor(double power) {
         rearMotor.set(-power);
+    }
+
+    public void deployEndgame() {
+        int frontHeight = arduinoReader.getFrontBottomLaserVal();
+        int rearHeight = arduinoReader.getRearBottomLaserVal();
+        System.out.println("front: " + frontHeight + ", rear: " + rearHeight);
+        this.deployFront();
+        if(frontHeight - rearHeight > 2) {
+            this.deployRear();
+        }
+        else{
+            this.stopRear();
+        }
     }
 
     /**

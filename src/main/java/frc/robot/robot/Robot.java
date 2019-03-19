@@ -172,13 +172,13 @@ public class Robot extends TimedRobot {
       endgame.retractRear();
       // driverJoystick.setLeftRumble(1); //Should be heavy rumble
     }
+    else if (driverJoystick.getXButton()) {
+      isDeploying = true;
+      endgame.deployEndgame();
+      // endgame.deployRear();
+    }
     else{
       endgame.stopRear();
-    }
-    if (driverJoystick.getXButton()) {
-      isDeploying = true;
-      endgame.deployFront();
-      // endgame.deployRear();
     }
     if (driverJoystick.getAButton()) {
       endgame.retractFront();
