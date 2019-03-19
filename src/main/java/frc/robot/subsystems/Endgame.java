@@ -1,11 +1,13 @@
 package frc.robot.subsystems;
 
+import com.revrobotics.CANEncoder;
 import com.revrobotics.CANSparkMax;
 import com.revrobotics.CANSparkMaxLowLevel;
 
 import edu.wpi.first.wpilibj.DoubleSolenoid;
 import edu.wpi.first.wpilibj.command.Subsystem;
 import frc.robot.robot.ArduinoReader;
+import frc.robot.robot.CANSpark1038;
 import frc.robot.robot.Encoder1038;
 
 public class Endgame extends Subsystem {
@@ -20,13 +22,16 @@ public class Endgame extends Subsystem {
 
     private DoubleSolenoid frontCylinders = new DoubleSolenoid(0, 1);
     // private DoubleSolenoid rearCylinders = new DoubleSolenoid(2, 3);
-    private static CANSparkMax rearMotor = new CANSparkMax(57, CANSparkMaxLowLevel.MotorType.kBrushed);
-    // private CANSparkMax leadScrewMotor = new CANSparkMax(60, CANSparkMaxLowLevel.MotorType.kBrushed);
+    private static CANSpark1038 rearMotor = new CANSpark1038(57, CANSparkMaxLowLevel.MotorType.kBrushed);
+    private CANSpark1038 leadScrewMotor = new CANSpark1038(60, CANSparkMaxLowLevel.MotorType.kBrushless);
+    private CANEncoder leadScrewEncoder = leadScrewMotor.getEncoder();
     private Encoder1038 rearMotorEncoder = new Encoder1038(FRONT_ENCODER_CHANNEL_A, FRONT_ENCODER_CHANNEL_B, false,
             COUNTS_PER_REVOLUTION, WHEEL_DIAMETER);
 
     private static Endgame endgame;
     private static ArduinoReader arduinoReader = ArduinoReader.getInstance();
+    int deployedCounter=0;
+    int retractCounter=0;
 
     /**
      * Returns the endgame instance created when the robot starts
@@ -66,12 +71,21 @@ public class Endgame extends Subsystem {
      */
     public void deployRear() {
         // rearCylinders.set(DoubleSolenoid.Value.kReverse);
-        // leadScrewMotor.set(.5);
+        if(leadScrewEncoder.getPosition() > -198){
+            leadScrewMotor.set(-.5);
+        }
+        else{
+            leadScrewMotor.set(0);
+        }
+        //deployedCounter+=1;
+        // System.out.println("deploying:" + deployedCounter);
         rearDeployed = true;
     }
 
     public void stopRear() {
-        // leadScrewMotor.set(0);
+        leadScrewMotor.set(0);
+        // deployedCounter+=1;
+        // System.out.println("stopped: " + deployedCounter);
     }
 
     /**
@@ -89,6 +103,14 @@ public class Endgame extends Subsystem {
      */
     public void retractRear() {
         // rearCylinders.set(DoubleSolenoid.Value.kForward);
+        if(leadScrewEncoder.getPosition() < 187){
+            leadScrewMotor.set(.5);
+        }
+        else{
+            leadScrewMotor.set(0);
+        }
+        // retractCounter+=1;
+        // System.out.println(retractCounter);
         rearDeployed = false;
     }
 
@@ -144,6 +166,10 @@ public class Endgame extends Subsystem {
      */
     public double getEncoderVelocity() {
         return rearMotorEncoder.getRate();
+    }
+
+    public double getScrewCounts() {
+        return leadScrewEncoder.getPosition();
     }
 
     /**

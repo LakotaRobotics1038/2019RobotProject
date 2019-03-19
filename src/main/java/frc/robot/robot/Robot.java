@@ -66,11 +66,12 @@ public class Robot extends TimedRobot {
   boolean isGoingDown = false;
 
   // Scoring
+  boolean manualSet = false;
   Scoring scoring = Scoring.getInstance();
 
   // Test
   CANSpark1038 ballacqMotor = new CANSpark1038(59, MotorType.kBrushed);
-  CANSpark1038 wristMotor = new CANSpark1038(60, MotorType.kBrushed);
+  // CANSpark1038 wristMotor = new CANSpark1038(60, MotorType.kBrushed);
 
   // Arduino
   ArduinoReader arduinoReader = ArduinoReader.getInstance();
@@ -84,9 +85,9 @@ public class Robot extends TimedRobot {
 
     c.setClosedLoopControl(true);
     ballacqMotor.restoreFactoryDefaults();
-    wristMotor.restoreFactoryDefaults();
+    // wristMotor.restoreFactoryDefaults();
     ballacqMotor.setIdleMode(IdleMode.kBrake);
-    wristMotor.setIdleMode(IdleMode.kBrake);
+    // wristMotor.setIdleMode(IdleMode.kBrake);
     //visionCam.setExposureManual(40);
     arduinoReader.initialize();
   }
@@ -104,7 +105,7 @@ public class Robot extends TimedRobot {
     ballacqMotor.restoreFactoryDefaults();
     ballacqMotor.setIdleMode(IdleMode.kBrake);
     endgame.retractFront();
-    endgame.retractRear();
+    // endgame.retractRear();
     arduinoReader.initialize();
     group.addSequential(new EndgameCylindersDeploy(40));
     schedule.add(group);
@@ -112,8 +113,9 @@ public class Robot extends TimedRobot {
 
   public void teleopPeriodic() {
     arduinoReader.readArduino();
-    scoring.returnArmPot();
-    arduinoReader.getScoringAccelerometerVal();
+    // scoring.returnArmPot();
+    // arduinoReader.getScoringAccelerometerVal();
+    System.out.println(endgame.getScrewCounts());
     driver();
     operator();
   }
@@ -161,21 +163,25 @@ public class Robot extends TimedRobot {
     }
 
     if (driverJoystick.getYButton()) {
-      endgame.retractFront();
+      // endgame.retractFront();
+      // endgame.retractRear();
+      // isDeploying = false;
+      endgame.deployRear();
+    }
+    else if (driverJoystick.getBButton()) {
       endgame.retractRear();
-      isDeploying = false;
+      // driverJoystick.setLeftRumble(1); //Should be heavy rumble
+    }
+    else{
+      endgame.stopRear();
     }
     if (driverJoystick.getXButton()) {
       isDeploying = true;
       endgame.deployFront();
-      endgame.deployRear();
+      // endgame.deployRear();
     }
     if (driverJoystick.getAButton()) {
       endgame.retractFront();
-      // driverJoystick.setLeftRumble(1); //Should be heavy rumble
-    }
-    if (driverJoystick.getBButton()) {
-      endgame.retractRear();
       // driverJoystick.setLeftRumble(1); //Should be heavy rumble
     }
     if (driverJoystick.getLeftButton()) {
@@ -186,15 +192,15 @@ public class Robot extends TimedRobot {
       endgame.setRearMotor(0.0);
     }
 
-    if (isDeploying) {
-      schedule.run();
-      if (arduinoReader.getFrontBottomLaserVal() >= 15 && arduinoReader.getRearBottomLaserVal() >= 15) {
-        isDeploying = false;
-      }
-    } else if (!isDeploying) {
-      schedule.removeAll();
-      schedule.add(group);
-    }
+    // if (isDeploying) {
+    //   schedule.run();
+    //   if (arduinoReader.getFrontBottomLaserVal() >= 15 && arduinoReader.getRearBottomLaserVal() >= 15) {
+    //     isDeploying = false;
+    //   }
+    // } else if (!isDeploying) {
+    //   schedule.removeAll();
+    //   schedule.add(group);
+    // }
 
     switch (driveTrain.currentDriveMode) {
     case tankDrive:
@@ -250,12 +256,12 @@ public class Robot extends TimedRobot {
     
 
     if (Math.abs(operatorJoystick.getLeftJoystickVertical()) > 0.25) {
-      wristMotor.set(operatorJoystick.getLeftJoystickVertical());
+      // wristMotor.set(operatorJoystick.getLeftJoystickVertical());
     } else {
-      wristMotor.set(0);
+      // wristMotor.set(0);
     }
 
-    if (operatorJoystick.getPOV() == 0) {
+    if (operatorJoystick.getXButton()) {
       scoring.setLevel(-25);
     }
 
@@ -268,8 +274,12 @@ public class Robot extends TimedRobot {
       // acquisition.setHeight(isGoingDown);
     }
 
-    if (Math.abs(operatorJoystick.getRightJoystickVertical()) > 0.1) {
+    if (Math.abs(operatorJoystick.getRightJoystickVertical()) > 0.25) {
       scoring.move(operatorJoystick.getRightJoystickVertical());
+      manualSet = true;
+    }else if(Math.abs(operatorJoystick.getRightJoystickVertical()) < 0.25 && manualSet){
+      scoring.move(0);
+      manualSet = false;
     }
   }
 

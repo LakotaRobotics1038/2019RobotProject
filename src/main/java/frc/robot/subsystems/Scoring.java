@@ -23,7 +23,7 @@ public class Scoring extends PIDSubsystem {
     public final static double P_UP1 = .001;
     public final static double I_UP1 = .000;
     public final static double D_UP1 = .0001;
-    public final static double P_UP2 = .01;
+    public final static double P_UP2 = .008;
     public final static double I_UP2 = .0001;
     public final static double D_UP2 = .000;
     public final static double P_UP3 = .008;
@@ -82,7 +82,7 @@ public class Scoring extends PIDSubsystem {
      *              horizontal plane
      */
     public void setLevel(int angle) {
-        isInManual = false;
+        // isInManual = false;
         MAX_SCORING_OUTPUT = 0.3;
         setSetpoint(angle);
         if (isGoingDown(angle) && angle == 10) {
@@ -124,7 +124,7 @@ public class Scoring extends PIDSubsystem {
      * @param joystickValue The joystick value between -1 and 1
      */
     public void move(double joystickValue) {
-        isInManual = true;
+        // isInManual = true;
         // MAX_SCORING_OUTPUT = 0.75;
         // if (getSetpoint() <= 5 && joystickValue > 0.09) {
         //     scoringPID.setPID(P_UP2, I_UP2, D_UP2);
@@ -183,12 +183,22 @@ public class Scoring extends PIDSubsystem {
         }
         //fourBarMotor.set(1.0/(1.0+Math.pow((Math.pow(3, -(8.0 *output))),Math.E))-0.5);
         fourBarMotor.set(output);
-        // if(returnPIDInput() == getSetpoint() && !isInManual) {
-        //     armBrake.set(Value.kReverse);
-        //     disable();
-        // }
-        System.out.println("pot:" + armPot.getAverageVoltage());
-        System.out.println("angle: " + arduinoReader.getScoringAccelerometerVal());
+        // double volts = armPot.getAverageVoltage();
+        // double angle = (volts * 53.11443747) - 64.77305649;
+        // angle = Math.toIntExact(Math.round(angle));
+        // System.out.println(getSetpoint());
+        int angle = Math.toIntExact(Math.round(this.returnPIDInput()));
+        if(angle == getSetpoint()) {
+            armBrake.set(Value.kReverse);
+            disable();
+            System.out.println("set brake");
+        }
+        //System.out.println("pot:" + armPot.getAverageVoltage());
+        //System.out.println("angle: " + arduinoReader.getScoringAccelerometerVal());
+    }
+
+    public boolean atTarget(){
+        return scoringPID.onTarget();
     }
 
     @Override
