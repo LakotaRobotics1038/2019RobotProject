@@ -96,6 +96,7 @@ public class Robot extends TimedRobot {
   public void robotPeriodic() {
     dashboard.update();
     arduinoReader.readArduino();
+    // System.out.println(scoring.returnArmPot());
   }
 
   public void teleopInit() {
@@ -113,7 +114,6 @@ public class Robot extends TimedRobot {
 
   public void teleopPeriodic() {
     arduinoReader.readArduino();
-    // scoring.returnArmPot();
     // arduinoReader.getScoringAccelerometerVal();
     // System.out.println(endgame.getScrewCounts());
     driver();
@@ -174,11 +174,11 @@ public class Robot extends TimedRobot {
     }
     else if (driverJoystick.getXButton()) {
       isDeploying = true;
-      endgame.deployEndgame();
-      // endgame.deployRear();
+      //endgame.deployEndgame();
+      endgame.deployRear(-1);
     }
     else{
-      // endgame.stopRear();
+      endgame.stopRear();
     }
     if (driverJoystick.getAButton()) {
       endgame.retractFront();

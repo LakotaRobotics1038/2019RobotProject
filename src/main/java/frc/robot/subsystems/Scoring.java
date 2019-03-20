@@ -183,7 +183,10 @@ public class Scoring extends PIDSubsystem {
     }
 
     public double returnArmPot() {
-        return armPot.getAverageVoltage();
+        double volts = armPot.getAverageVoltage();
+        double angle = (volts * 53.11443747) - 64.77305649;
+        // System.out.println(angle);
+        return angle;
     }
 
     @Override

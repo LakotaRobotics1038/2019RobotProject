@@ -23,8 +23,8 @@ public class Endgame extends PIDSubsystem {
     private boolean rearDeployed = false;
 
     private PIDController endgamePID = getPIDController();
-    private final static double P = .1;
-    private final static double I = .000;
+    private final static double P = 1;
+    private final static double I = .0001;
     private final static double D = .000;
 
     private DoubleSolenoid frontCylinders = new DoubleSolenoid(0, 1);
@@ -83,7 +83,8 @@ public class Endgame extends PIDSubsystem {
      */
     public void deployRear(double power) {
         // rearCylinders.set(DoubleSolenoid.Value.kReverse);
-        if(leadScrewEncoder.getPosition() > (rearUpCounts - 394)){
+        disable();
+        if(leadScrewEncoder.getPosition() > (rearUpCounts - 397)){
             leadScrewMotor.set(power);
         }
         else{
@@ -119,7 +120,7 @@ public class Endgame extends PIDSubsystem {
     public void retractRear() {
         // rearCylinders.set(DoubleSolenoid.Value.kForward);
         disable();
-        if(leadScrewEncoder.getPosition() < rearUpCounts - 4){
+        if(leadScrewEncoder.getPosition() < rearUpCounts - 2){
             leadScrewMotor.set(.5);
         }
         else{
