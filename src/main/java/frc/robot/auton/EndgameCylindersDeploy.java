@@ -31,7 +31,7 @@ public class EndgameCylindersDeploy extends Command {
         timerRear.start();
         System.out.println("Timer started");
         endgame.deployFront();
-        endgame.deployRear();
+        endgame.deployRear(-1);
     }
 
     @Override
@@ -43,7 +43,7 @@ public class EndgameCylindersDeploy extends Command {
             endgame.stopRear();
         }
         else {
-            endgame.deployRear();
+            endgame.deployRear(-1);
         }
     }
 

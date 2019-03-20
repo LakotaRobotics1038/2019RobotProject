@@ -36,7 +36,7 @@ public class Acquisition extends Subsystem {
      */
     public static Acquisition getInstance() {
         if (acquisition == null) {
-            System.out.println("Creating new Acquisition");
+            // System.out.println("Creating new Acquisition");
             acquisition = new Acquisition();
         }
         return acquisition;

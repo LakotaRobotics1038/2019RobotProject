@@ -23,6 +23,9 @@ public class Scoring extends PIDSubsystem {
     public final static double P_UP1 = .001;
     public final static double I_UP1 = .000;
     public final static double D_UP1 = .0001;
+    public final static double P_UPBALL = .007;
+    public final static double I_UPBALL = .0001;
+    public final static double D_UPBALL = .000;
     public final static double P_UP2 = .008;
     public final static double I_UP2 = .0001;
     public final static double D_UP2 = .000;
@@ -35,6 +38,9 @@ public class Scoring extends PIDSubsystem {
     public final static double P_DOWN1 = .012;
     public final static double I_DOWN1 = .0005;
     public final static double D_DOWN1 = .000;
+    public final static double P_DOWNBALL = .002;
+    public final static double I_DOWNBALL = .0001;
+    public final static double D_DOWNBALL = .000;
     public final static double P_DOWN2 = .004;
     public final static double I_DOWN2 = .000;
     public final static double D_DOWN2 = .000;
@@ -55,7 +61,7 @@ public class Scoring extends PIDSubsystem {
      */
     public static Scoring getInstance() {
         if (scoring == null) {
-            System.out.println("Creating new Scoring");
+            // System.out.println("Creating new Scoring");
             scoring = new Scoring();
         }
         return scoring;
@@ -91,12 +97,16 @@ public class Scoring extends PIDSubsystem {
             scoringPID.setPID(P_DOWN1, I_DOWN1, D_DOWN1);
         } else if (isGoingDown(angle) && angle == -48) {
             scoringPID.setPID(P_DOWN0, I_DOWN0, D_DOWN0);
+        }else if (isGoingDown(angle) && angle == -15){
+            scoringPID.setPID(P_DOWNBALL, I_DOWNBALL, D_DOWNBALL);
         } else if (!isGoingDown(angle) && angle == -37) {
             scoringPID.setPID(P_UP1, I_UP1, D_UP1);
         } else if (!isGoingDown(angle) && angle == 10) {
             scoringPID.setPID(P_UP2, I_UP2, D_UP2);
         } else if (!isGoingDown(angle) && angle == 55) {
             scoringPID.setPID(P_UP3, I_UP3, D_UP3);
+        } else if (!isGoingDown(angle) && angle == -15) {
+            scoringPID.setPID(P_UPBALL, I_UPBALL, D_UPBALL);
         }
         enable();
         armBrake.set(Value.kForward);
@@ -166,7 +176,7 @@ public class Scoring extends PIDSubsystem {
     protected double returnPIDInput() {
         double volts = armPot.getAverageVoltage();
         double angle = (volts * 53.11443747) - 64.77305649;
-        System.out.println(angle);
+        // System.out.println(angle);
         return angle;
         // System.out.println(arduinoReader.getScoringAccelerometerVal());
         // return arduinoReader.getScoringAccelerometerVal();
@@ -191,7 +201,7 @@ public class Scoring extends PIDSubsystem {
         if(angle == getSetpoint()) {
             armBrake.set(Value.kReverse);
             disable();
-            System.out.println("set brake");
+            // System.out.println("set brake");
         }
         //System.out.println("pot:" + armPot.getAverageVoltage());
         //System.out.println("angle: " + arduinoReader.getScoringAccelerometerVal());

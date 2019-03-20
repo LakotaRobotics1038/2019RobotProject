@@ -39,7 +39,7 @@ public class DriveTrain extends Subsystem {
      */
     public static DriveTrain getInstance() {
         if (driveTrain == null) {
-            System.out.println("Creating a new DriveTrain");
+            // System.out.println("Creating a new DriveTrain");
             driveTrain = new DriveTrain();
         }
         return driveTrain;
@@ -136,7 +136,7 @@ public class DriveTrain extends Subsystem {
             currentDriveMode = driveModes.tankDrive;
             break;
         default:
-            System.out.println("Help I have fallen and I can't get up!");
+            // System.out.println("Help I have fallen and I can't get up!");
             break;
         }
     }
