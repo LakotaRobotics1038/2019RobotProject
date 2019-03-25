@@ -23,9 +23,11 @@ public class Endgame extends PIDSubsystem {
     private boolean rearDeployed = false;
 
     private PIDController endgamePID = getPIDController();
-    private final static double P = 1;
-    private final static double I = .0001;
+    private final static double P = .15; //fuck
+    private final static double I = .000;
     private final static double D = .000;
+    int frontElevation;
+    int rearElevation;
 
     private DoubleSolenoid frontCylinders = new DoubleSolenoid(0, 1);
     // private DoubleSolenoid rearCylinders = new DoubleSolenoid(2, 3);
@@ -83,13 +85,13 @@ public class Endgame extends PIDSubsystem {
      */
     public void deployRear(double power) {
         // rearCylinders.set(DoubleSolenoid.Value.kReverse);
-        disable();
+        // disable();
         if(leadScrewEncoder.getPosition() > (rearUpCounts - 397)){
             leadScrewMotor.set(power);
         }
         else{
             leadScrewMotor.set(0);
-            disable();
+            this.disable();
         }
         //deployedCounter+=1;
         // System.out.println("deploying:" + deployedCounter);
@@ -98,7 +100,7 @@ public class Endgame extends PIDSubsystem {
 
     public void stopRear() {
         leadScrewMotor.set(0);
-        disable();
+        this.disable();
         // deployedCounter+=1;
         // System.out.println("stopped: " + deployedCounter);
     }
@@ -110,7 +112,7 @@ public class Endgame extends PIDSubsystem {
     public void retractFront() {
         frontCylinders.set(DoubleSolenoid.Value.kForward);
         frontDeployed = false;
-        disable();
+        this.disable();
     }
 
     /**
@@ -119,7 +121,7 @@ public class Endgame extends PIDSubsystem {
      */
     public void retractRear() {
         // rearCylinders.set(DoubleSolenoid.Value.kForward);
-        disable();
+        this.disable();
         if(leadScrewEncoder.getPosition() < rearUpCounts - 2){
             leadScrewMotor.set(.5);
         }
@@ -219,13 +221,14 @@ public class Endgame extends PIDSubsystem {
 
     @Override
     protected double returnPIDInput() {
-        int frontElevation = arduinoReader.getFrontBottomLaserVal();
-        int rearElevation = arduinoReader.getRearBottomLaserVal();
+        frontElevation = arduinoReader.getFrontBottomLaserVal();
+        rearElevation = arduinoReader.getRearBottomLaserVal();
         return frontElevation - rearElevation;
     }
 
     @Override
     protected void usePIDOutput(double output) {
+        // System.out.println(output + "," + frontElevation + "," + rearElevation);
         this.deployRear(output);
     }
 

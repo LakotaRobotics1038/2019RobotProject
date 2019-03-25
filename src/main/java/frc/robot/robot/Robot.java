@@ -74,7 +74,7 @@ public class Robot extends TimedRobot {
   // CANSpark1038 wristMotor = new CANSpark1038(60, MotorType.kBrushed);
 
   // Arduino
-  ArduinoReader arduinoReader = ArduinoReader.getInstance();
+  // ArduinoReader arduinoReader = ArduinoReader.getInstance();
 
   /**
    * This function is run when the robot is first started up and should be used
@@ -89,31 +89,32 @@ public class Robot extends TimedRobot {
     ballacqMotor.setIdleMode(IdleMode.kBrake);
     // wristMotor.setIdleMode(IdleMode.kBrake);
     visionCam.setExposureManual(60);
-    arduinoReader.initialize();
+    // arduinoReader.initialize();
   }
 
   @Override
   public void robotPeriodic() {
-    dashboard.update();
-    arduinoReader.readArduino();
+    // dashboard.update();
+    // arduinoReader.readArduino();
+    // System.out.println(arduinoReader.getFrontBottomLaserVal() + "," + arduinoReader.getRearBottomLaserVal());
     // System.out.println(scoring.returnArmPot());
   }
 
   public void teleopInit() {
-    arduinoReader.initialize();
+    // arduinoReader.initialize();
     c.setClosedLoopControl(true);
     schedule.removeAll();
     ballacqMotor.restoreFactoryDefaults();
     ballacqMotor.setIdleMode(IdleMode.kBrake);
     endgame.retractFront();
     // endgame.retractRear();
-    arduinoReader.initialize();
+    // arduinoReader.initialize();
     group.addSequential(new EndgameCylindersDeploy(40));
     schedule.add(group);
   }
 
   public void teleopPeriodic() {
-    arduinoReader.readArduino();
+    // arduinoReader.readArduino();
     // arduinoReader.getScoringAccelerometerVal();
     // System.out.println(endgame.getScrewCounts());
     driver();
@@ -121,26 +122,26 @@ public class Robot extends TimedRobot {
   }
 
   public void autonomousInit() {
-    arduinoReader.initialize();
+    // arduinoReader.initialize();
     c.setClosedLoopControl(true);
     schedule.removeAll();
     ballacqMotor.restoreFactoryDefaults();
     ballacqMotor.setIdleMode(IdleMode.kBrake);
     endgame.retractFront();
     endgame.retractRear();
-    arduinoReader.initialize();
+    // arduinoReader.initialize();
     group.addSequential(new EndgameCylindersDeploy(40));
     schedule.add(group);
   }
 
   public void autonomousPeriodic() {
-    arduinoReader.readArduino();
+    // arduinoReader.readArduino();
     driver();
     operator();
   }
 
   public void disabledInit() {
-    arduinoReader.stopSerialPort();
+    // arduinoReader.stopSerialPort();
     scoring.disable();
   }
 
@@ -174,8 +175,8 @@ public class Robot extends TimedRobot {
     }
     else if (driverJoystick.getXButton()) {
       isDeploying = true;
-      //endgame.deployEndgame();
-      endgame.deployRear(-1);
+      endgame.deployEndgame();
+      // endgame.deployRear(-1);
     }
     else{
       endgame.stopRear();
@@ -245,12 +246,15 @@ public class Robot extends TimedRobot {
       currentXButtonState = true;
     }
     if (operatorJoystick.getAButton()) {
+      System.out.println("pushing buttons");
       scoring.setLevel(-37);
     }
     if (operatorJoystick.getBButton()) {
-      scoring.setLevel(10);
+      System.out.println("pushing buttons");
+      scoring.setLevel(20);
     }
     if (operatorJoystick.getYButton()) {
+      System.out.println("pushing buttons");
       scoring.setLevel(55);
     }
     
@@ -262,10 +266,12 @@ public class Robot extends TimedRobot {
     }
 
     if (operatorJoystick.getXButton()) {
+      System.out.println("pushing buttons");
       scoring.setLevel(-15);
     }
 
     if (operatorJoystick.getPOV() == 180) {
+      System.out.println("pushing buttons");
       scoring.setLevel(-48);
     }
 

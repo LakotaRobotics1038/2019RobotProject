@@ -20,6 +20,7 @@ public class ArduinoReader {
     public BufferedReader bufferedReader;
     private static String inputBuffer = "";
     private String line;
+    private double number = 0;
 
     private ArduinoReader() {
 
@@ -103,7 +104,11 @@ public class ArduinoReader {
      * @return Distance to ground from rear bottom laser in cm
      */
     public int getRearBottomLaserVal() {
-        return rearLaserSensorData;
+        number = rearLaserSensorData * 53.0/58.0;
+        long longNumber = Math.round(number);
+        int intNumber = Math.toIntExact(longNumber);
+        return intNumber;
+        //return rearLaserSensorData;
     }
 
     /**
