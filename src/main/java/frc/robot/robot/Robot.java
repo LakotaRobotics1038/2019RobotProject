@@ -97,7 +97,7 @@ public class Robot extends TimedRobot {
     // dashboard.update();
     // arduinoReader.readArduino();
     // System.out.println(arduinoReader.getFrontBottomLaserVal() + "," + arduinoReader.getRearBottomLaserVal());
-    // System.out.println(scoring.returnArmPot());
+    System.out.println(scoring.returnArmPot());
   }
 
   public void teleopInit() {
@@ -251,7 +251,7 @@ public class Robot extends TimedRobot {
     }
     if (operatorJoystick.getBButton()) {
       System.out.println("pushing buttons");
-      scoring.setLevel(20);
+      scoring.setLevel(10);
     }
     if (operatorJoystick.getYButton()) {
       System.out.println("pushing buttons");
