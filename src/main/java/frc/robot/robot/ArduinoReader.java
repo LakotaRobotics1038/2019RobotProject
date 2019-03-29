@@ -55,19 +55,23 @@ public class ArduinoReader {
             while (arduinoPort.getBytesReceived() != 0) {
                 arduinoOutput = arduinoPort.readString();
                 inputBuffer = inputBuffer + arduinoOutput;
+                // System.out.println(inputBuffer);
                 stringRead = true;
             }
             line = "";
             while (inputBuffer.indexOf("\r") != -1) {
                 int point = inputBuffer.indexOf("\r");
+                // System.out.println("line: " + line);
                 line = inputBuffer.substring(0, point);
+                // System.out.println(line);
                 if (inputBuffer.length() > point + 1) {
-                    inputBuffer = inputBuffer.substring(point + 2);
+                    inputBuffer = inputBuffer.substring(point + 2, inputBuffer.length());
                 } else {
                     inputBuffer = "";
                 }
             }
             if (line != "") {
+                // System.out.println(line);
                 arduinoDataMap = line.split(",");
                 frontLaserSensorData = Integer.parseInt(arduinoDataMap[0]);
                 rearLaserSensorData = Integer.parseInt(arduinoDataMap[1]);
@@ -104,7 +108,7 @@ public class ArduinoReader {
      * @return Distance to ground from rear bottom laser in cm
      */
     public int getRearBottomLaserVal() {
-        number = rearLaserSensorData * 53.0/58.0;
+        number = rearLaserSensorData;
         long longNumber = Math.round(number);
         int intNumber = Math.toIntExact(longNumber);
         return intNumber;

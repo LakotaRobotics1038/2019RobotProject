@@ -37,6 +37,7 @@ public class Dashboard {
     SmartDashboard.putNumber("Left Distance", 0);
     SmartDashboard.putNumber("Right Distance", 0);
     SmartDashboard.putNumber("Match Time", -1);
+    SmartDashboard.putBoolean("Reset Endagme Encoder", false);
   }
 
   /**
@@ -46,5 +47,9 @@ public class Dashboard {
     SmartDashboard.putNumber("Left Distance", arduinoReader.getFrontLeftLaserVal());
     SmartDashboard.putNumber("Right Distance", arduinoReader.getFrontRightLaserVal());
     SmartDashboard.putNumber("Match Time", driverStation.getMatchTime());
+    if (SmartDashboard.getBoolean("Reset Endagme Encoder", false)) {
+      Endgame.getInstance().setRearUpCounts(Endgame.getInstance().getScrewCounts() + 397);
+			SmartDashboard.putBoolean("Reset Endagme Encoder", false);
+		}
   }
 }

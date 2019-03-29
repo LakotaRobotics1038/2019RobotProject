@@ -23,9 +23,12 @@ public class Endgame extends PIDSubsystem {
     private boolean rearDeployed = false;
 
     private PIDController endgamePID = getPIDController();
-    private final static double P = .15; //fuck
-    private final static double I = .000;
-    private final static double D = .000;
+    private final static double UP_P = .2;
+    private final static double UP_I = .000;
+    private final static double UP_D = .000;
+    private final static double DOWN_P = .2;
+    private final static double DOWN_I = .000;
+    private final static double DOWN_D = .000;
     int frontElevation;
     int rearElevation;
 
@@ -58,12 +61,12 @@ public class Endgame extends PIDSubsystem {
      * Instantiates endgame object
      */
     private Endgame() {
-        super(P, I, D);
-        endgamePID.setPID(P, I, D);
+        super(UP_P, UP_I, UP_D);
+        endgamePID.setPID(UP_P, UP_I, UP_D);
         endgamePID.setAbsoluteTolerance(0);
         endgamePID.setContinuous(false);
         endgamePID.setOutputRange(-1, 0);
-        endgamePID.setSetpoint(0);
+        endgamePID.setSetpoint(-2);
         deployFront();
         retractRear();
         rearMotor.restoreFactoryDefaults();
@@ -91,7 +94,7 @@ public class Endgame extends PIDSubsystem {
         }
         else{
             leadScrewMotor.set(0);
-            this.disable();
+            // this.disable();
         }
         //deployedCounter+=1;
         // System.out.println("deploying:" + deployedCounter);
@@ -214,6 +217,13 @@ public class Endgame extends PIDSubsystem {
         return arduinoReader.getRearBottomLaserVal();
     }
 
+    /**
+     * @param rearUpCounts the rearUpCounts to set
+     */
+    public void setRearUpCounts(double rearUpCounts) {
+        this.rearUpCounts = rearUpCounts;
+    }
+
     @Override
     protected void initDefaultCommand() {
 
@@ -223,12 +233,18 @@ public class Endgame extends PIDSubsystem {
     protected double returnPIDInput() {
         frontElevation = arduinoReader.getFrontBottomLaserVal();
         rearElevation = arduinoReader.getRearBottomLaserVal();
+        if((frontElevation - rearElevation) < -2){
+            endgamePID.setPID(DOWN_P, DOWN_I, DOWN_D);
+        }
+        else if ((frontElevation - rearElevation) >= -2){
+            endgamePID.setPID(UP_P, UP_I, UP_D);
+        }
         return frontElevation - rearElevation;
     }
 
     @Override
     protected void usePIDOutput(double output) {
-        // System.out.println(output + "," + frontElevation + "," + rearElevation);
+        System.out.println("power: " + output);
         this.deployRear(output);
     }
 
