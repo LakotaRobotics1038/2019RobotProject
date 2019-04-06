@@ -31,7 +31,7 @@ public class EndgameCylindersDeploy extends Command {
         timerRear.start();
         System.out.println("Timer started");
         endgame.deployFront();
-        endgame.deployRear();
+        endgame.deployRear(-1);
     }
 
     @Override
@@ -39,6 +39,12 @@ public class EndgameCylindersDeploy extends Command {
         frontElevation = arduinoReader.getFrontBottomLaserVal();
         rearElevation = arduinoReader.getRearBottomLaserVal();
         System.out.println("Front elevation: " + frontElevation + ", Rear elevation: " + rearElevation);
+        if(rearElevation - frontElevation >= 4) {
+            endgame.stopRear();
+        }
+        else {
+            endgame.deployRear(-1);
+        }
     }
 
     @Override

@@ -10,12 +10,14 @@ package frc.robot.subsystems;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import frc.robot.robot.ArduinoReader;
+import frc.robot.robot.Robot;
 
 public class Dashboard {
 
   private static Dashboard dashboard;
   private ArduinoReader arduinoReader = ArduinoReader.getInstance();
   private DriverStation driverStation = DriverStation.getInstance();
+  private String endgameHeight;
 
   /**
    * Returns the dashboard instance created when the robot starts
@@ -24,7 +26,7 @@ public class Dashboard {
    */
   public static Dashboard getInstance() {
     if (dashboard == null) {
-      System.out.println("Creating a new Dashboard");
+      // System.out.println("Creating a new Dashboard");
       dashboard = new Dashboard();
     }
     return dashboard;
@@ -37,6 +39,7 @@ public class Dashboard {
     SmartDashboard.putNumber("Left Distance", 0);
     SmartDashboard.putNumber("Right Distance", 0);
     SmartDashboard.putNumber("Match Time", -1);
+    //endgameHeight = Robot.endgameChooser.getSelected();
   }
 
   /**
@@ -45,6 +48,11 @@ public class Dashboard {
   public void update() {
     SmartDashboard.putNumber("Left Distance", arduinoReader.getFrontLeftLaserVal());
     SmartDashboard.putNumber("Right Distance", arduinoReader.getFrontRightLaserVal());
-    SmartDashboard.putNumber("Match Time", driverStation.getMatchTime());
+    SmartDashboard.putNumber("Match Time", driverStation.getMatchTime());    
+    endgameHeight = Robot.endgameChooser.getSelected();
+  }
+
+  public String getEndgameHeight(){
+    return endgameHeight;
   }
 }

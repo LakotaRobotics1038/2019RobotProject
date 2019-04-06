@@ -36,7 +36,7 @@ public class Acquisition extends Subsystem {
      */
     public static Acquisition getInstance() {
         if (acquisition == null) {
-            System.out.println("Creating new Acquisition");
+            // System.out.println("Creating new Acquisition");
             acquisition = new Acquisition();
         }
         return acquisition;
@@ -79,6 +79,7 @@ public class Acquisition extends Subsystem {
      */
     public void acqCargo() {
         ballIntakeMotor.set(MAX_ACQ_SPEED);
+        System.out.println(ballIntakeMotor.getOutputCurrent());
     }
 
     /**
@@ -86,6 +87,7 @@ public class Acquisition extends Subsystem {
      */
     public void disposeCargo() {
         ballIntakeMotor.set(MIN_ACQ_SPEED);
+        System.out.println(ballIntakeMotor.getOutputCurrent());
     }
 
     /**
