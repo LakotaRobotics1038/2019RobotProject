@@ -11,12 +11,8 @@ import com.revrobotics.CANSparkMax.IdleMode;
 import com.revrobotics.CANSparkMaxLowLevel.MotorType;
 
 import edu.wpi.first.wpilibj.DoubleSolenoid;
-import edu.wpi.first.wpilibj.PIDController;
-import edu.wpi.first.wpilibj.PowerDistributionPanel;
 import edu.wpi.first.wpilibj.DoubleSolenoid.Value;
-import edu.wpi.first.wpilibj.command.PIDSubsystem;
 import edu.wpi.first.wpilibj.command.Subsystem;
-import frc.robot.robot.ArduinoReader;
 import frc.robot.robot.CANSpark1038;
 
 public class Acquisition extends Subsystem {
@@ -36,7 +32,7 @@ public class Acquisition extends Subsystem {
      */
     public static Acquisition getInstance() {
         if (acquisition == null) {
-            // System.out.println("Creating new Acquisition");
+            System.out.println("Creating new Acquisition");
             acquisition = new Acquisition();
         }
         return acquisition;
@@ -47,6 +43,8 @@ public class Acquisition extends Subsystem {
      */
     private Acquisition() {
         ballIntakeMotor.setInverted(false);
+        ballIntakeMotor.restoreFactoryDefaults();
+        ballIntakeMotor.setIdleMode(IdleMode.kBrake);
         hatchAcq.set(Value.kForward);
     }
 
