@@ -26,11 +26,13 @@ public class Endgame extends PIDSubsystem {
     private final static double UP_P = .2;
     private final static double UP_I = .000;
     private final static double UP_D = .000;
-    private final static double DOWN_P = .2;
+    private final static double DOWN_P = .15;
     private final static double DOWN_I = .000;
     private final static double DOWN_D = .000;
     int frontElevation;
     int rearElevation;
+    int levelHeight;
+    boolean override = false;
 
     private DoubleSolenoid frontCylinders = new DoubleSolenoid(0, 1);
     // private DoubleSolenoid rearCylinders = new DoubleSolenoid(2, 3);
@@ -89,7 +91,13 @@ public class Endgame extends PIDSubsystem {
     public void deployRear(double power) {
         // rearCylinders.set(DoubleSolenoid.Value.kReverse);
         // disable();
-        if(leadScrewEncoder.getPosition() > (rearUpCounts - 397)){
+        // if(Dashboard.getInstance().getEndgameHeight().equals("Lvl2")) {
+        //     levelHeight = 146;
+        // }
+        // else{
+        //     levelHeight = 397;
+        // }
+        if(leadScrewEncoder.getPosition() > (rearUpCounts - 146)){ //Change levelHeight to value if needed
             leadScrewMotor.set(power);
         }
         else{
@@ -103,9 +111,15 @@ public class Endgame extends PIDSubsystem {
 
     public void stopRear() {
         leadScrewMotor.set(0);
-        this.disable();
+        endgamePID.disable();
+        // this.disable();
         // deployedCounter+=1;
         // System.out.println("stopped: " + deployedCounter);
+    }
+
+    public void overrideRear(){
+        endgamePID.disable();
+        leadScrewMotor.set(1);
     }
 
     /**
@@ -115,7 +129,8 @@ public class Endgame extends PIDSubsystem {
     public void retractFront() {
         frontCylinders.set(DoubleSolenoid.Value.kForward);
         frontDeployed = false;
-        this.disable();
+        // this.disable();
+        endgamePID.disable();
     }
 
     /**
@@ -124,7 +139,8 @@ public class Endgame extends PIDSubsystem {
      */
     public void retractRear() {
         // rearCylinders.set(DoubleSolenoid.Value.kForward);
-        this.disable();
+        //this.disable();
+        endgamePID.disable();
         if(leadScrewEncoder.getPosition() < rearUpCounts - 2){
             leadScrewMotor.set(.5);
         }
@@ -220,8 +236,12 @@ public class Endgame extends PIDSubsystem {
     /**
      * @param rearUpCounts the rearUpCounts to set
      */
-    public void setRearUpCounts(double rearUpCounts) {
-        this.rearUpCounts = rearUpCounts;
+    public void setOverride() {
+        override = true;
+    }
+
+    public void setHeight(int height) {
+        levelHeight = height;
     }
 
     @Override
@@ -233,18 +253,22 @@ public class Endgame extends PIDSubsystem {
     protected double returnPIDInput() {
         frontElevation = arduinoReader.getFrontBottomLaserVal();
         rearElevation = arduinoReader.getRearBottomLaserVal();
-        if((frontElevation - rearElevation) < -2){
+        if((frontElevation - rearElevation) < -5){
             endgamePID.setPID(DOWN_P, DOWN_I, DOWN_D);
+            endgamePID.setOutputRange(-1, 0);
         }
-        else if ((frontElevation - rearElevation) >= -2){
+        else if ((frontElevation - rearElevation) >= -5){
+            endgamePID.setOutputRange(-1, 0);
             endgamePID.setPID(UP_P, UP_I, UP_D);
+            if(frontElevation > 20 && rearElevation > 20){
+                endgamePID.setOutputRange(-1, -1);
+            }
         }
         return frontElevation - rearElevation;
     }
 
     @Override
     protected void usePIDOutput(double output) {
-        System.out.println("power: " + output);
         this.deployRear(output);
     }
 

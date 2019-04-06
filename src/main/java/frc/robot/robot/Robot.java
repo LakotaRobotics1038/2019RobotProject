@@ -18,6 +18,8 @@ import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.command.CommandGroup;
 import edu.wpi.first.wpilibj.command.Scheduler;
+import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import frc.robot.auton.EndgameCylindersDeploy;
 import frc.robot.subsystems.Acquisition;
 import frc.robot.subsystems.Dashboard;
@@ -53,6 +55,9 @@ public class Robot extends TimedRobot {
 
   // Dashboard
   Dashboard dashboard = Dashboard.getInstance();
+  public static SendableChooser<String> endgameChooser = new SendableChooser<>();
+  public static final String kLvl2 = "Lvl2";
+  public static final String kLvl3 = "Lvl3";
 
   // Auton
   Scheduler schedule = Scheduler.getInstance();
@@ -84,7 +89,9 @@ public class Robot extends TimedRobot {
    */
   @Override
   public void robotInit() {
-
+    endgameChooser.addOption("Lvl 2", kLvl2);
+    endgameChooser.addOption("Lvl 3", kLvl3);
+    SmartDashboard.putData("Level", endgameChooser);
     c.setClosedLoopControl(true);
     ballacqMotor.restoreFactoryDefaults();
     // wristMotor.restoreFactoryDefaults();
@@ -96,10 +103,10 @@ public class Robot extends TimedRobot {
 
   @Override
   public void robotPeriodic() {
-    // dashboard.update();
+    dashboard.update();
     // arduinoReader.readArduino();
     // System.out.println(arduinoReader.getFrontBottomLaserVal() + "," + arduinoReader.getRearBottomLaserVal());
-    //System.out.println(scoring.returnArmPot());
+    // System.out.println(endgame.getScrewCounts());
   }
 
   public void teleopInit() {
@@ -119,8 +126,8 @@ public class Robot extends TimedRobot {
     arduinoReader.readArduino();
     // arduinoReader.getScoringAccelerometerVal();
     // System.out.println(endgame.getScrewCounts());
-    System.out.println("Front: " + arduinoReader.getFrontBottomLaserVal());
-    System.out.println("Rear: " + arduinoReader.getRearBottomLaserVal());
+    //System.out.println("Front: " + arduinoReader.getFrontBottomLaserVal());
+    //System.out.println("Rear: " + arduinoReader.getRearBottomLaserVal());
     driver();
     operator();
   }
@@ -157,25 +164,31 @@ public class Robot extends TimedRobot {
    * Runs driver operations according to button map
    */
   public void driver() {
-    multiplyer = .6;
     if (driverJoystick.getRightTrigger() > 0.5) {
       driveTrain.highGear();
-    } else {
+    } else{
       driveTrain.lowGear();
     }
-    if (driverJoystick.getRightButton()) {
+    if(driverJoystick.getRightButton()){
       multiplyer = 1;
-      driveTrain.highGear();
+    }else{
+      multiplyer = .6;
     }
+    // if (driverJoystick.getRightButton() && driverJoystick.getRightTrigger() > 0.5) {
+    //   multiplyer = 1;
+    //   driveTrain.highGear();
+    // }
 
     if (driverJoystick.getYButton()) {
       // endgame.retractFront();
       // endgame.retractRear();
       // isDeploying = false;
       //endgame.deployRear(-1);
+      endgame.overrideRear();
     }
     else if (driverJoystick.getBButton()) {
       endgame.retractRear();
+     // endgame.setRearMotor(-1);
       // driverJoystick.setLeftRumble(1); //Should be heavy rumble
     }
     else if (driverJoystick.getXButton()) {
@@ -234,8 +247,10 @@ public class Robot extends TimedRobot {
   public void operator() {
     if (operatorJoystick.getLeftButton()) {
       acquisition.acqCargo();
+      System.out.println("Acquiring Cargo");
     } else if (operatorJoystick.getLeftTrigger() > 0.5) {
       acquisition.disposeCargo();
+      System.out.println("Disposing Cargo");
     } else {
       acquisition.stop();
     }
@@ -256,15 +271,15 @@ public class Robot extends TimedRobot {
     }
     if (operatorJoystick.getAButton()) {
       System.out.println("pushing buttons");
-      scoring.setLevel(-33);
+      scoring.setLevel(-41);
     }
     if (operatorJoystick.getBButton()) {
       System.out.println("pushing buttons");
-      scoring.setLevel(13);
+      scoring.setLevel(7);
     }
     if (operatorJoystick.getYButton()) {
       System.out.println("pushing buttons");
-      scoring.setLevel(53);
+      scoring.setLevel(50);
     }
     
 
@@ -276,7 +291,7 @@ public class Robot extends TimedRobot {
 
     if (operatorJoystick.getXButton()) {
       System.out.println("pushing buttons");
-      scoring.setLevel(-10);
+      scoring.setLevel(-18);
     }
 
     if (operatorJoystick.getPOV() == 180) {
