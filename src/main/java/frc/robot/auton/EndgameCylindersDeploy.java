@@ -7,14 +7,14 @@ import frc.robot.subsystems.Endgame;
 
 public class EndgameCylindersDeploy extends Command {
 
+    //Variables
     private double frontElevation;
     private double rearElevation;
     private double targetElevation;
+
+    //Objects
     private Endgame endgame = Endgame.getInstance();
     private ArduinoReader arduinoReader = ArduinoReader.getInstance();
-    private Timer timerFront = new Timer();
-    private Timer timerRear = new Timer();
-    private Timer timer = new Timer();
 
     /**
      * Instantiates endgame cylinder deploy command
@@ -28,8 +28,6 @@ public class EndgameCylindersDeploy extends Command {
 
     @Override
     protected void initialize() {
-        timerRear.start();
-        System.out.println("Timer started");
         endgame.deployFront();
         endgame.deployRear(-1);
     }
@@ -38,7 +36,6 @@ public class EndgameCylindersDeploy extends Command {
     protected void execute() {
         frontElevation = arduinoReader.getFrontBottomLaserVal();
         rearElevation = arduinoReader.getRearBottomLaserVal();
-        System.out.println("Front elevation: " + frontElevation + ", Rear elevation: " + rearElevation);
         if(rearElevation - frontElevation >= 4) {
             endgame.stopRear();
         }
@@ -57,13 +54,6 @@ public class EndgameCylindersDeploy extends Command {
     protected void end() {
         endgame.retractRear();
         endgame.retractFront();
-        System.out.println("Ended at: " + timer.get());
-        timer.stop();
-        timer.reset();
-        timerFront.stop();
-        timerFront.reset();
-        timerRear.stop();
-        timerRear.reset();
     }
 
     @Override

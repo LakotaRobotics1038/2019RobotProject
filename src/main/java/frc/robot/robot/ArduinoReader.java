@@ -5,10 +5,17 @@ import edu.wpi.first.hal.util.UncleanStatusException;
 import edu.wpi.first.wpilibj.SerialPort;
 
 public class ArduinoReader {
-    private static SerialPort arduinoPort;
-    private static ArduinoReader arduinoReader;
+
+    //Variables
     private String arduinoOutput;
     public String arduinoDataMap[];
+    public boolean stringRead = false;
+    public BufferedReader bufferedReader;
+    private static String inputBuffer = "";
+    private String line;
+    private double number = 0;
+
+    //Sensors
     public int frontLaserSensorData = 0;
     public double lineFollowerData = 0;
     public int rearLaserSensorData = 0;
@@ -16,15 +23,10 @@ public class ArduinoReader {
     public int frontRightLaserSensorData = 0;
     public int scoringAccelerometerData = 0;
     public int acquisitionAccelerometerData = 0;
-    public boolean stringRead = false;
-    public BufferedReader bufferedReader;
-    private static String inputBuffer = "";
-    private String line;
-    private double number = 0;
 
-    private ArduinoReader() {
-
-    }
+    //Objects
+    private static SerialPort arduinoPort;
+    private static ArduinoReader arduinoReader;
 
     /**
      * Returns the arduino instance created when the robot starts
@@ -36,6 +38,14 @@ public class ArduinoReader {
             arduinoReader = new ArduinoReader();
         }
         return arduinoReader;
+    }
+
+    
+    /**
+     * Initializes the arduino reader (empty currently)
+     */
+    private ArduinoReader() {
+
     }
 
     /**
@@ -55,15 +65,12 @@ public class ArduinoReader {
             while (arduinoPort.getBytesReceived() != 0) {
                 arduinoOutput = arduinoPort.readString();
                 inputBuffer = inputBuffer + arduinoOutput;
-                // System.out.println(inputBuffer);
                 stringRead = true;
             }
             line = "";
             while (inputBuffer.indexOf("\r") != -1) {
                 int point = inputBuffer.indexOf("\r");
-                // System.out.println("line: " + line);
                 line = inputBuffer.substring(0, point);
-                // System.out.println(line);
                 if (inputBuffer.length() > point + 1) {
                     inputBuffer = inputBuffer.substring(point + 2, inputBuffer.length());
                 } else {
@@ -71,7 +78,6 @@ public class ArduinoReader {
                 }
             }
             if (line != "") {
-                // System.out.println(line);
                 arduinoDataMap = line.split(",");
                 frontLaserSensorData = Integer.parseInt(arduinoDataMap[0]);
                 rearLaserSensorData = Integer.parseInt(arduinoDataMap[1]);
@@ -112,7 +118,6 @@ public class ArduinoReader {
         long longNumber = Math.round(number);
         int intNumber = Math.toIntExact(longNumber);
         return intNumber;
-        //return rearLaserSensorData;
     }
 
     /**

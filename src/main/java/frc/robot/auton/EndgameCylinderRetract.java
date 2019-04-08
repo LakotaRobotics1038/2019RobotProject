@@ -5,12 +5,14 @@ import frc.robot.subsystems.Endgame;
 
 public class EndgameCylinderRetract extends TimedCommand {
 
-    private Endgame endgame = Endgame.getInstance();
+    //Variables
     private boolean isFront;
-
     public enum Value {
         front, rear
     };
+
+    //Objects
+    private Endgame endgame = Endgame.getInstance();
 
     /**
      * Instantiates endgame cylinder retract command
@@ -22,7 +24,6 @@ public class EndgameCylinderRetract extends TimedCommand {
     public EndgameCylinderRetract(double timeout, Value position) {
         super(timeout);
         requires(endgame);
-        // requires(drive);
         switch (position) {
         case front:
             isFront = true;

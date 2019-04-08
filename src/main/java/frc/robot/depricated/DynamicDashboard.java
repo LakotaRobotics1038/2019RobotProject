@@ -1,4 +1,4 @@
-package frc.robot.auton;
+package frc.robot.depricated;
 
 import edu.wpi.first.wpilibj.command.Scheduler;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;

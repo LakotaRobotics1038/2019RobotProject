@@ -1,5 +1,6 @@
 package frc.robot.subsystems;
 
+import edu.wpi.first.wpilibj.DoubleSolenoid;
 import edu.wpi.first.wpilibj.command.Subsystem;
 import edu.wpi.first.wpilibj.drive.DifferentialDrive;
 import frc.robot.robot.CANSpark1038;
@@ -7,28 +8,29 @@ import com.revrobotics.CANEncoder;
 import com.revrobotics.CANSparkMax.IdleMode;
 import com.revrobotics.CANSparkMaxLowLevel.MotorType;
 
-import edu.wpi.first.wpilibj.DoubleSolenoid;
 
 public class DriveTrain extends Subsystem {
+
+    //Variables
     public enum driveModes {
         tankDrive, singleArcadeDrive, dualArcadeDrive
     };
-
     public driveModes currentDriveMode = driveModes.dualArcadeDrive;
-
     public final double WHEEL_DIAMETER = 4;
-
     public DoubleSolenoid GearChangeSolenoid = new DoubleSolenoid(4, 5);
     public boolean isHighGear = false;
 
+    //Motors
     public static CANSpark1038 CANSparkRightFront = new CANSpark1038(53, MotorType.kBrushless);
     public static CANSpark1038 CANSparkRightBack = new CANSpark1038(52, MotorType.kBrushless);
     public static CANSpark1038 CANSparkLeftFront = new CANSpark1038(51, MotorType.kBrushless);
     public static CANSpark1038 CANSparkLeftBack = new CANSpark1038(50, MotorType.kBrushless);
 
+    //Sensors
     public CANEncoder CANSparkRightEncoder = CANSparkRightBack.getEncoder();
     public CANEncoder CANSparkLeftEncoder = CANSparkLeftBack.getEncoder();
 
+    //Objects
     private DifferentialDrive differentialDrive;
     private static DriveTrain driveTrain;
 
@@ -39,7 +41,7 @@ public class DriveTrain extends Subsystem {
      */
     public static DriveTrain getInstance() {
         if (driveTrain == null) {
-            // System.out.println("Creating a new DriveTrain");
+            System.out.println("Creating a new DriveTrain");
             driveTrain = new DriveTrain();
         }
         return driveTrain;
@@ -64,7 +66,6 @@ public class DriveTrain extends Subsystem {
         CANSparkRightFront.follow(CANSparkRightBack);
         CANSparkLeftFront.follow(CANSparkLeftBack);
         differentialDrive = new DifferentialDrive(CANSparkLeftBack, CANSparkRightBack);
-
     }
 
     /**
@@ -134,9 +135,6 @@ public class DriveTrain extends Subsystem {
             break;
         case dualArcadeDrive:
             currentDriveMode = driveModes.tankDrive;
-            break;
-        default:
-            // System.out.println("Help I have fallen and I can't get up!");
             break;
         }
     }

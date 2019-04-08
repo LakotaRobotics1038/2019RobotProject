@@ -25,6 +25,10 @@ public class XboxJoystick1038 extends Joystick {
 	private final int LEFT_TRIGGER = 2;
 	private final int RIGHT_TRIGGER = 3;
 
+	/**
+	 * Creates a new Xbox joystick object
+	 * @param port USB port the joystick should be in 
+	 */
 	public XboxJoystick1038(int port) {
 		super(port);
 	}
