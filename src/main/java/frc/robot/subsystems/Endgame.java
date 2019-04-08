@@ -3,7 +3,6 @@ package frc.robot.subsystems;
 import com.revrobotics.CANEncoder;
 import com.revrobotics.CANSparkMax;
 import com.revrobotics.CANSparkMaxLowLevel;
-
 import edu.wpi.first.wpilibj.DoubleSolenoid;
 import edu.wpi.first.wpilibj.PIDController;
 import edu.wpi.first.wpilibj.command.PIDSubsystem;
@@ -13,35 +12,40 @@ import frc.robot.robot.Encoder1038;
 
 public class Endgame extends PIDSubsystem {
 
+    //Variables
     private final int FRONT_ENCODER_CHANNEL_A = 4;
     private final int FRONT_ENCODER_CHANNEL_B = 5;
     private final int COUNTS_PER_REVOLUTION = 500;
     private final int WHEEL_DIAMETER = 4;
-
     private boolean frontDeployed = false;
     private boolean rearDeployed = false;
+    private int frontElevation;
+    private int rearElevation;
+    boolean override = false;
 
-    private PIDController endgamePID = getPIDController();
+    //PID
     private final static double UP_P = .2;
     private final static double UP_I = .000;
     private final static double UP_D = .000;
     private final static double DOWN_P = .15;
     private final static double DOWN_I = .000;
     private final static double DOWN_D = .000;
-    int frontElevation;
-    int rearElevation;
-    int levelHeight;
-    boolean override = false;
 
-    private DoubleSolenoid frontCylinders = new DoubleSolenoid(0, 1);
+    //Motors
     private static CANSpark1038 rearMotor = new CANSpark1038(57, CANSparkMaxLowLevel.MotorType.kBrushed);
     private CANSpark1038 leadScrewMotor = new CANSpark1038(60, CANSparkMaxLowLevel.MotorType.kBrushless);
-    private CANEncoder leadScrewEncoder = leadScrewMotor.getEncoder();
-    private Encoder1038 rearMotorEncoder = new Encoder1038(FRONT_ENCODER_CHANNEL_A, FRONT_ENCODER_CHANNEL_B, false,
-            COUNTS_PER_REVOLUTION, WHEEL_DIAMETER);
 
+    //Pneumatics
+    private DoubleSolenoid frontCylinders = new DoubleSolenoid(0, 1);
+
+    //Sensors
+    private CANEncoder leadScrewEncoder = leadScrewMotor.getEncoder();
+    private Encoder1038 rearMotorEncoder = new Encoder1038(FRONT_ENCODER_CHANNEL_A, FRONT_ENCODER_CHANNEL_B, false, COUNTS_PER_REVOLUTION, WHEEL_DIAMETER);
+
+    //Objects
     private static Endgame endgame;
-    private static ArduinoReader arduinoReader = ArduinoReader.getInstance();
+    private static ArduinoReader arduinoReader = ArduinoReader.getInstance();    
+    private PIDController endgamePID = getPIDController();
     private double rearUpCounts = leadScrewEncoder.getPosition();
 
     /**
@@ -96,16 +100,6 @@ public class Endgame extends PIDSubsystem {
         rearDeployed = true;
     }
 
-    public void stopRear() {
-        leadScrewMotor.set(0);
-        endgamePID.disable();
-    }
-
-    public void overrideRear(){
-        endgamePID.disable();
-        leadScrewMotor.set(1);
-    }
-
     /**
      * Retracts front cylinders by switching the solenoid state and sets
      * frontDeployed boolean to false
@@ -132,6 +126,22 @@ public class Endgame extends PIDSubsystem {
     }
 
     /**
+     * Stops rear lead screw from moving
+     */
+    public void stopRear() {
+        leadScrewMotor.set(0);
+        endgamePID.disable();
+    }
+
+    /**
+     * Overrides the rear lead screw and allows the driver to manually retract the lead screw
+     */
+    public void overrideRear(){
+        endgamePID.disable();
+        leadScrewMotor.set(1);
+    }
+
+    /**
      * Sets rear endgame motor to given motor power
      * 
      * @param power Motor power between -1 and 1
@@ -140,6 +150,9 @@ public class Endgame extends PIDSubsystem {
         rearMotor.set(-power);
     }
 
+    /**
+     * Deploys the front cylinders
+     */
     public void deployEndgame() {
         this.deployFront();
         enable();
@@ -217,10 +230,6 @@ public class Endgame extends PIDSubsystem {
      */
     public void setOverride() {
         override = true;
-    }
-
-    public void setHeight(int height) {
-        levelHeight = height;
     }
 
     @Override

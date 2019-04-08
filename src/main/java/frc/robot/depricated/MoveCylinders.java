@@ -1,4 +1,4 @@
-package frc.robot.auton;
+package frc.robot.depricated;
 
 import edu.wpi.first.wpilibj.command.Command;
 import frc.robot.subsystems.Endgame;
@@ -9,8 +9,8 @@ public class MoveCylinders extends Command {
         up, down
     };
 
-    private int frontElevation; // set to laser value
-    private int backElevation; // set to laser value
+    private int frontElevation;
+    private int backElevation; 
     private int setpoint;
     private int upSetpoint = 5;
     private int downSetpoint = 20;

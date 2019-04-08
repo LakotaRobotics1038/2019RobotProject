@@ -1,4 +1,4 @@
-package frc.robot.auton;
+package frc.robot.depricated;
 
 import edu.wpi.first.wpilibj.PIDController;
 import edu.wpi.first.wpilibj.command.PIDCommand;

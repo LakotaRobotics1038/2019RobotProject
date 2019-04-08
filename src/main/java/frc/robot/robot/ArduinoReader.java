@@ -5,10 +5,17 @@ import edu.wpi.first.hal.util.UncleanStatusException;
 import edu.wpi.first.wpilibj.SerialPort;
 
 public class ArduinoReader {
-    private static SerialPort arduinoPort;
-    private static ArduinoReader arduinoReader;
+
+    //Variables
     private String arduinoOutput;
     public String arduinoDataMap[];
+    public boolean stringRead = false;
+    public BufferedReader bufferedReader;
+    private static String inputBuffer = "";
+    private String line;
+    private double number = 0;
+
+    //Sensors
     public int frontLaserSensorData = 0;
     public double lineFollowerData = 0;
     public int rearLaserSensorData = 0;
@@ -16,15 +23,10 @@ public class ArduinoReader {
     public int frontRightLaserSensorData = 0;
     public int scoringAccelerometerData = 0;
     public int acquisitionAccelerometerData = 0;
-    public boolean stringRead = false;
-    public BufferedReader bufferedReader;
-    private static String inputBuffer = "";
-    private String line;
-    private double number = 0;
 
-    private ArduinoReader() {
-
-    }
+    //Objects
+    private static SerialPort arduinoPort;
+    private static ArduinoReader arduinoReader;
 
     /**
      * Returns the arduino instance created when the robot starts
@@ -36,6 +38,14 @@ public class ArduinoReader {
             arduinoReader = new ArduinoReader();
         }
         return arduinoReader;
+    }
+
+    
+    /**
+     * Initializes the arduino reader (empty currently)
+     */
+    private ArduinoReader() {
+
     }
 
     /**

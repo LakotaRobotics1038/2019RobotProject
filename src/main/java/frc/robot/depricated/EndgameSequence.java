@@ -1,9 +1,10 @@
-package frc.robot.auton;
+package frc.robot.depricated;
 
 import edu.wpi.first.wpilibj.command.CommandGroup;
-import frc.robot.auton.DriveStraightCommand;
+import frc.robot.depricated.DriveStraightCommand;
 import frc.robot.auton.EndgameCylinderRetract;
-import frc.robot.auton.TurnEndgameMotor;
+import frc.robot.auton.EndgameCylindersDeploy;
+import frc.robot.depricated.TurnEndgameMotor;
 
 public class EndgameSequence {
 

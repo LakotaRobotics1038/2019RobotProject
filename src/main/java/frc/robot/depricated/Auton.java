@@ -1,4 +1,4 @@
-package frc.robot.auton;
+package frc.robot.depricated;
 
 import java.io.File;
 import java.io.IOException;
@@ -59,7 +59,7 @@ public class Auton {
         mode = 1; // playback (autonomous)
         File autonCode = new File(autonList.getSelected());
         System.out.println("Current Code: " + autonCode.getAbsolutePath());
-        autonInstructions = frc.robot.auton.CSV.csv2table(autonFile);
+        autonInstructions = frc.robot.depricated.CSV.csv2table(autonFile);
         startTime = System.currentTimeMillis();
         index = 0;
 
@@ -125,7 +125,7 @@ public class Auton {
 
         if (0 != newLine.compareTo(oldLine)) {
             oldLine = newLine;
-            frc.robot.auton.CSV.writeLine2csv(newLineArr, autonFile);
+            frc.robot.depricated.CSV.writeLine2csv(newLineArr, autonFile);
 
         }
         printEncoders();
@@ -154,9 +154,9 @@ public class Auton {
     public void disabledInit() {
         if (mode == 2) { // only execute code if we were just in teleop
             String[] finalLine = { "" + (System.currentTimeMillis() - startTime), "" + 0, "" + 0 };
-            frc.robot.auton.CSV.writeLine2csv(finalLine, autonFile);
+            frc.robot.depricated.CSV.writeLine2csv(finalLine, autonFile);
             finalLine[0] = "" + Long.MAX_VALUE;
-            frc.robot.auton.CSV.writeLine2csv(finalLine, autonFile);
+            frc.robot.depricated.CSV.writeLine2csv(finalLine, autonFile);
         }
         init();
     }

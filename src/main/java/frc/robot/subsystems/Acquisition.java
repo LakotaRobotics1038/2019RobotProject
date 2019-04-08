@@ -16,13 +16,21 @@ import edu.wpi.first.wpilibj.command.Subsystem;
 import frc.robot.robot.CANSpark1038;
 
 public class Acquisition extends Subsystem {
+    
+    //Variables
     private final int HATCH_ACQ = 6;
     private final int HATCH_DROP = 7;
-    private final double MIN_ACQ_SPEED = -1.0;
-    private final double MAX_ACQ_SPEED = 1.0;
+    private final double DISPOSE_ACQ_SPEED = -1.0;
+    private final double ACQUIRE_ACQ_SPEED = 1.0;
+
+    //Motors
     private CANSpark1038 ballIntakeMotor = new CANSpark1038(59, MotorType.kBrushed);
     private CANSpark1038 vacuumGen = new CANSpark1038(58, MotorType.kBrushed);
+
+    //Pneumatics
     private DoubleSolenoid hatchAcq = new DoubleSolenoid(HATCH_ACQ, HATCH_DROP);
+
+    //Objects
     private static Acquisition acquisition;
 
     /**
@@ -73,18 +81,18 @@ public class Acquisition extends Subsystem {
     }
 
     /**
-     * Sets the ball intake motor to the set max speed
+     * Sets the ball intake motor to the set acquire speed
      */
     public void acqCargo() {
-        ballIntakeMotor.set(MAX_ACQ_SPEED);
+        ballIntakeMotor.set(ACQUIRE_ACQ_SPEED);
         System.out.println(ballIntakeMotor.getOutputCurrent());
     }
 
     /**
-     * Sets the ball intake motor to the set min speed
+     * Sets the ball intake motor to the set dispose speed
      */
     public void disposeCargo() {
-        ballIntakeMotor.set(MIN_ACQ_SPEED);
+        ballIntakeMotor.set(DISPOSE_ACQ_SPEED);
         System.out.println(ballIntakeMotor.getOutputCurrent());
     }
 

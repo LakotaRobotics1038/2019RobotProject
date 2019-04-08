@@ -24,6 +24,10 @@ public class Joystick1038 extends Joystick {
 	private final int RIGHT_STICK_HORIZONTAL = 2;
 	private final int RIGHT_STICK_VERTICAL = 3;
 
+	/**
+	 * Creates a new logitech joystick object
+	 * @param port USB port the joystick should be in
+	 */
 	public Joystick1038(int port) {
 		super(port);
 	}

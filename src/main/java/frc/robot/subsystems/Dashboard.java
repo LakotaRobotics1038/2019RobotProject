@@ -14,10 +14,13 @@ import frc.robot.robot.Robot;
 
 public class Dashboard {
 
+  //Variables
+  private String endgameHeight;
+
+  //Objects
   private static Dashboard dashboard;
   private ArduinoReader arduinoReader = ArduinoReader.getInstance();
   private DriverStation driverStation = DriverStation.getInstance();
-  private String endgameHeight;
 
   /**
    * Returns the dashboard instance created when the robot starts
@@ -51,6 +54,10 @@ public class Dashboard {
     endgameHeight = Robot.endgameChooser.getSelected();
   }
 
+  /**
+   * 
+   * @return The string for the endgame HAB level we want to end on
+   */
   public String getEndgameHeight(){
     return endgameHeight;
   }

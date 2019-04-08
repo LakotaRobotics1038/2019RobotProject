@@ -1,4 +1,4 @@
-package frc.robot.auton;
+package frc.robot.depricated;
 
 import edu.wpi.first.wpilibj.command.Command;
 import frc.robot.subsystems.Endgame;

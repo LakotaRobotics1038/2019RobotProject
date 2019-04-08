@@ -18,8 +18,15 @@ import frc.robot.robot.CANSpark1038;
 
 public class Scoring extends PIDSubsystem {
 
+    //Variables
     private static Scoring scoring;
     private final int SCORING_TOLERANCE = 2;
+    public static double MAX_SCORING_OUTPUT = 0.6;
+    public final static double MIN_SCORING_OUTPUT = -.5;
+    public boolean goingDown;
+    public boolean isEnabled = false;
+
+    //PID
     public final static double P_UP1 = .001;
     public final static double I_UP1 = .000;
     public final static double D_UP1 = .0001;
@@ -44,15 +51,19 @@ public class Scoring extends PIDSubsystem {
     public final static double P_DOWN2 = .004;
     public final static double I_DOWN2 = .000;
     public final static double D_DOWN2 = .000;
-    public static double MAX_SCORING_OUTPUT = 0.6;
-    public final static double MIN_SCORING_OUTPUT = -.5;
-    public boolean goingDown;
-    public boolean isEnabled = false;
+
+    //Motors
     private CANSpark1038 fourBarMotor = new CANSpark1038(56, MotorType.kBrushless);
-    private ArduinoReader arduinoReader = ArduinoReader.getInstance();
-    private AnalogInput armPot = new AnalogInput(0);
-    private PIDController scoringPID = getPIDController();
+
+    //Pneumatics
     private DoubleSolenoid armBrake = new DoubleSolenoid(2, 3);
+
+    //Sensors
+    private AnalogInput armPot = new AnalogInput(0);
+
+    //Objects
+    private PIDController scoringPID = getPIDController();
+    private ArduinoReader arduinoReader = ArduinoReader.getInstance();
 
     /**
      * Returns the scoring instance created when the robot starts
@@ -142,6 +153,9 @@ public class Scoring extends PIDSubsystem {
         armBrake.set(Value.kForward);
     }
 
+    /**
+     * Enables or disables the brake depending on what state it is in
+     */
     public void deployBrake() {
         if(armBrake.get() == Value.kForward) {
             armBrake.set(Value.kReverse);
@@ -149,6 +163,17 @@ public class Scoring extends PIDSubsystem {
         else{
             armBrake.set(Value.kForward);
         }
+    }
+
+    /**
+     * Returns the angle the four bar is at based on the volts recieved from the prox
+     * @return The angle of the four bar in degrees (relative to horizontal)
+     */
+    public double returnArmPot() {
+        double volts = armPot.getAverageVoltage();
+        System.out.println(volts);
+        double angle = ((volts/-2) * 53.11443747) + 70.77305649;
+        return angle;
     }
 
     @Override
@@ -159,13 +184,6 @@ public class Scoring extends PIDSubsystem {
     @Override
     protected double returnPIDInput() {
         double volts = armPot.getAverageVoltage();
-        double angle = ((volts/-2) * 53.11443747) + 70.77305649;
-        return angle;
-    }
-
-    public double returnArmPot() {
-        double volts = armPot.getAverageVoltage();
-        System.out.println(volts);
         double angle = ((volts/-2) * 53.11443747) + 70.77305649;
         return angle;
     }
@@ -184,6 +202,10 @@ public class Scoring extends PIDSubsystem {
         }
     }
 
+    /**
+     * Returns if the scoring PID system in on target
+     * @return True if on target, false otherwise
+     */
     public boolean atTarget(){
         return scoringPID.onTarget();
     }
