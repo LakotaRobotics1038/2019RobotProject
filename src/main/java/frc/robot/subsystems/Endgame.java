@@ -23,8 +23,8 @@ public class Endgame extends PIDSubsystem {
     private boolean rearDeployed = false;
 
     private PIDController endgamePID = getPIDController();
-    private final static double P = 1;
-    private final static double I = .0001;
+    private final static double P = .15;
+    private final static double I = .000;
     private final static double D = .000;
 
     private DoubleSolenoid frontCylinders = new DoubleSolenoid(0, 1);
