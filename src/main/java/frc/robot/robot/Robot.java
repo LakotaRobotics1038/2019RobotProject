@@ -17,7 +17,6 @@ import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.command.CommandGroup;
 import edu.wpi.first.wpilibj.command.Scheduler;
-import frc.robot.auton.EndgameCylindersDeploy;
 import frc.robot.subsystems.Acquisition;
 import frc.robot.subsystems.Dashboard;
 import frc.robot.subsystems.DriveTrain;
@@ -108,8 +107,8 @@ public class Robot extends TimedRobot {
     endgame.retractFront();
     // endgame.retractRear();
     arduinoReader.initialize();
-    group.addSequential(new EndgameCylindersDeploy(40));
-    schedule.add(group);
+    // group.addSequential(new EndgameCylindersDeploy(40));
+    // schedule.add(group);
   }
 
   public void teleopPeriodic() {
@@ -129,8 +128,8 @@ public class Robot extends TimedRobot {
     endgame.retractFront();
     endgame.retractRear();
     arduinoReader.initialize();
-    group.addSequential(new EndgameCylindersDeploy(40));
-    schedule.add(group);
+    // group.addSequential(new EndgameCylindersDeploy(40));
+    // schedule.add(group);
   }
 
   public void autonomousPeriodic() {
@@ -162,28 +161,27 @@ public class Robot extends TimedRobot {
       driveTrain.highGear();
     }
 
-    if (driverJoystick.getYButton()) {
-      // endgame.retractFront();
-      // endgame.retractRear();
-      // isDeploying = false;
-      //endgame.deployRear(-1);
+    if (driverJoystick.getXButton()) {
+      isDeploying = true;
+      endgame.deployFront(-1);
+      endgame.deployRear(-1);
     }
     else if (driverJoystick.getBButton()) {
       endgame.retractRear();
       // driverJoystick.setLeftRumble(1); //Should be heavy rumble
     }
-    else if (driverJoystick.getXButton()) {
-      isDeploying = true;
-      //endgame.deployEndgame();
-      endgame.deployRear(-1);
+    else if (driverJoystick.getYButton()) {
+      endgame.retractFront();
+      endgame.retractRear();
+    }
+    else if (driverJoystick.getAButton()) {
+      endgame.retractFront();
     }
     else{
       endgame.stopRear();
+      endgame.stopFront();
     }
-    if (driverJoystick.getAButton()) {
-      endgame.retractFront();
-      // driverJoystick.setLeftRumble(1); //Should be heavy rumble
-    }
+
     if (driverJoystick.getLeftButton()) {
       endgame.setRearMotor(0.4);
     } else if (driverJoystick.getLeftTrigger() > 0.5) {

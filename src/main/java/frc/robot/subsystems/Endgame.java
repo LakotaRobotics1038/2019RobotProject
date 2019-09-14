@@ -12,7 +12,7 @@ import frc.robot.robot.ArduinoReader;
 import frc.robot.robot.CANSpark1038;
 import frc.robot.robot.Encoder1038;
 
-public class Endgame extends PIDSubsystem {
+public class Endgame {
 
     private final int FRONT_ENCODER_CHANNEL_A = 4;
     private final int FRONT_ENCODER_CHANNEL_B = 5;
@@ -22,22 +22,25 @@ public class Endgame extends PIDSubsystem {
     private boolean frontDeployed = false;
     private boolean rearDeployed = false;
 
-    private PIDController endgamePID = getPIDController();
-    private final static double P = .15;
-    private final static double I = .000;
-    private final static double D = .000;
+    // private PIDController endgamePID = getPIDController();
+    // private final static double P = .15;
+    // private final static double I = .000;
+    // private final static double D = .000;
 
-    private DoubleSolenoid frontCylinders = new DoubleSolenoid(0, 1);
+    // private DoubleSolenoid frontCylinders = new DoubleSolenoid(0, 1);
     // private DoubleSolenoid rearCylinders = new DoubleSolenoid(2, 3);
     private static CANSpark1038 rearMotor = new CANSpark1038(57, CANSparkMaxLowLevel.MotorType.kBrushed);
-    private CANSpark1038 leadScrewMotor = new CANSpark1038(60, CANSparkMaxLowLevel.MotorType.kBrushless);
-    private CANEncoder leadScrewEncoder = leadScrewMotor.getEncoder();
+    private CANSpark1038 rearLeadScrewMotor = new CANSpark1038(60, CANSparkMaxLowLevel.MotorType.kBrushless);
+    private CANEncoder rearLeadScrewEncoder = rearLeadScrewMotor.getEncoder();
+    private CANSpark1038 frontLeadScrewMotor = new CANSpark1038(61, CANSparkMaxLowLevel.MotorType.kBrushless);
+    private CANEncoder frontLeadScrewEncoder = frontLeadScrewMotor.getEncoder();
     private Encoder1038 rearMotorEncoder = new Encoder1038(FRONT_ENCODER_CHANNEL_A, FRONT_ENCODER_CHANNEL_B, false,
             COUNTS_PER_REVOLUTION, WHEEL_DIAMETER);
 
     private static Endgame endgame;
     private static ArduinoReader arduinoReader = ArduinoReader.getInstance();
-    private double rearUpCounts = leadScrewEncoder.getPosition();
+    private double rearUpCounts = rearLeadScrewEncoder.getPosition();
+    private double frontUpCounts = frontLeadScrewEncoder.getPosition();
 
     /**
      * Returns the endgame instance created when the robot starts
@@ -56,13 +59,13 @@ public class Endgame extends PIDSubsystem {
      * Instantiates endgame object
      */
     private Endgame() {
-        super(P, I, D);
-        endgamePID.setPID(P, I, D);
-        endgamePID.setAbsoluteTolerance(0);
-        endgamePID.setContinuous(false);
-        endgamePID.setOutputRange(-1, 0);
-        endgamePID.setSetpoint(0);
-        deployFront();
+        // super(P, I, D);
+        // endgamePID.setPID(P, I, D);
+        // endgamePID.setAbsoluteTolerance(0);
+        // endgamePID.setContinuous(false);
+        // endgamePID.setOutputRange(-1, 0);
+        // endgamePID.setSetpoint(0);
+        retractFront();
         retractRear();
         rearMotor.restoreFactoryDefaults();
         rearMotor.setIdleMode(CANSparkMax.IdleMode.kBrake);
@@ -72,8 +75,14 @@ public class Endgame extends PIDSubsystem {
      * Deploys front cylinders by switching the solenoid state and sets
      * frontDeployed boolean to true
      */
-    public void deployFront() {
-        frontCylinders.set(DoubleSolenoid.Value.kReverse);
+    public void deployFront(double power) {
+        // frontCylinders.set(DoubleSolenoid.Value.kReverse);
+        if(frontLeadScrewEncoder.getPosition() > (rearUpCounts - 397)){
+            frontLeadScrewMotor.set(power);
+        }
+        else{
+            frontLeadScrewMotor.set(0);
+        }
         frontDeployed = true;
     }
 
@@ -83,13 +92,13 @@ public class Endgame extends PIDSubsystem {
      */
     public void deployRear(double power) {
         // rearCylinders.set(DoubleSolenoid.Value.kReverse);
-        disable();
-        if(leadScrewEncoder.getPosition() > (rearUpCounts - 397)){
-            leadScrewMotor.set(power);
+        // disable();
+        if(rearLeadScrewEncoder.getPosition() > (rearUpCounts - 397)){
+            rearLeadScrewMotor.set(power);
         }
         else{
-            leadScrewMotor.set(0);
-            disable();
+            rearLeadScrewMotor.set(0);
+            // disable();
         }
         //deployedCounter+=1;
         // System.out.println("deploying:" + deployedCounter);
@@ -97,10 +106,15 @@ public class Endgame extends PIDSubsystem {
     }
 
     public void stopRear() {
-        leadScrewMotor.set(0);
-        disable();
+        rearLeadScrewMotor.set(0);
+        // disable();
         // deployedCounter+=1;
         // System.out.println("stopped: " + deployedCounter);
+    }
+
+    public void stopFront() {
+        frontLeadScrewMotor.set(0);
+        // disable();
     }
 
     /**
@@ -108,9 +122,15 @@ public class Endgame extends PIDSubsystem {
      * frontDeployed boolean to false
      */
     public void retractFront() {
-        frontCylinders.set(DoubleSolenoid.Value.kForward);
+        // frontCylinders.set(DoubleSolenoid.Value.kForward);
+        if(frontLeadScrewEncoder.getPosition() < frontUpCounts - 2){
+            frontLeadScrewMotor.set(.5);
+        }
+        else{
+            frontLeadScrewMotor.set(0);
+        }
         frontDeployed = false;
-        disable();
+        // disable();
     }
 
     /**
@@ -119,12 +139,12 @@ public class Endgame extends PIDSubsystem {
      */
     public void retractRear() {
         // rearCylinders.set(DoubleSolenoid.Value.kForward);
-        disable();
-        if(leadScrewEncoder.getPosition() < rearUpCounts - 2){
-            leadScrewMotor.set(.5);
+        // disable();
+        if(rearLeadScrewEncoder.getPosition() < rearUpCounts - 2){
+            rearLeadScrewMotor.set(.5);
         }
         else{
-            leadScrewMotor.set(0);
+            rearLeadScrewMotor.set(0);
         }
         // retractCounter+=1;
         // System.out.println(retractCounter);
@@ -140,9 +160,9 @@ public class Endgame extends PIDSubsystem {
         rearMotor.set(-power);
     }
 
-    public void deployEndgame() {
-        this.deployFront();
-        enable();
+    public void deployEndgame(double power) {
+        this.deployFront(power);
+        // enable();
     }
 
     /**
@@ -191,7 +211,7 @@ public class Endgame extends PIDSubsystem {
     }
 
     public double getScrewCounts() {
-        return leadScrewEncoder.getPosition();
+        return rearLeadScrewEncoder.getPosition();
     }
 
     /**
@@ -199,38 +219,38 @@ public class Endgame extends PIDSubsystem {
      * 
      * @return Elevation of the front laser sensor to the ground in cm
      */
-    public int getFrontElevation() {
-        return arduinoReader.getFrontBottomLaserVal();
-    }
+    // public int getFrontElevation() {
+    //     return arduinoReader.getFrontBottomLaserVal();
+    // }
 
     /**
      * Elevation of the rear from the laser sensor to the ground
      * 
      * @return Elevation of the rear laser sensor to the ground in cm
      */
-    public int getRearElevation() {
-        return arduinoReader.getRearBottomLaserVal();
-    }
+    // public int getRearElevation() {
+    //     return arduinoReader.getRearBottomLaserVal();
+    // }
 
-    @Override
-    protected void initDefaultCommand() {
+    // @Override
+    // protected void initDefaultCommand() {
 
-    }
+    // }
 
-    @Override
-    protected double returnPIDInput() {
-        int frontElevation = arduinoReader.getFrontBottomLaserVal();
-        int rearElevation = arduinoReader.getRearBottomLaserVal();
-        return frontElevation - rearElevation;
-    }
+    // @Override
+    // protected double returnPIDInput() {
+    //     int frontElevation = arduinoReader.getFrontBottomLaserVal();
+    //     int rearElevation = arduinoReader.getRearBottomLaserVal();
+    //     return frontElevation - rearElevation;
+    // }
 
-    @Override
-    protected void usePIDOutput(double output) {
-        this.deployRear(output);
-    }
+    // @Override
+    // protected void usePIDOutput(double output) {
+    //     this.deployRear(output);
+    // }
 
-    public void disable() {
-        super.disable();
-    }
+    // public void disable() {
+    //     super.disable();
+    // }
 
 }
