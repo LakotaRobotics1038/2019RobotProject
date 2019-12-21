@@ -24,6 +24,7 @@ public class XboxJoystick1038 extends Joystick {
 	private final int RIGHT_STICK_VERTICAL = 5;
 	private final int LEFT_TRIGGER = 2;
 	private final int RIGHT_TRIGGER = 3;
+	private final int D_PAD_VERTICAL = 7;
 
 	public XboxJoystick1038(int port) {
 		super(port);
@@ -173,6 +174,14 @@ public class XboxJoystick1038 extends Joystick {
 	 */
 	public double getRightTrigger() {
 		return getRawAxis(RIGHT_TRIGGER);
+	}
+
+	public double getDPadUp() {
+		return getPOV(D_PAD_VERTICAL);
+	}
+
+	public double getDPadDown() {
+		return getPOV(D_PAD_VERTICAL);
 	}
 
 	/**

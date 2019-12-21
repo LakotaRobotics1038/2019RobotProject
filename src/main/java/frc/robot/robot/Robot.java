@@ -38,6 +38,8 @@ public class Robot extends TimedRobot {
   // Endgame
   private Endgame endgame = Endgame.getInstance();
   private boolean isDeploying = false;
+  private boolean AbuttonPushed = false;
+  private boolean leftButtonPushed = false;
 
   // Drive
   private DriveTrain driveTrain = DriveTrain.getInstance();
@@ -94,8 +96,10 @@ public class Robot extends TimedRobot {
   @Override
   public void robotPeriodic() {
     dashboard.update();
+    // System.out.println(scoring.returnArmPot());
     arduinoReader.readArduino();
     // System.out.println(scoring.returnArmPot());
+    System.out.println(arduinoReader.getRearBottomLaserVal());
   }
 
   public void teleopInit() {
@@ -168,6 +172,7 @@ public class Robot extends TimedRobot {
     }
     else if (driverJoystick.getBButton()) {
       endgame.retractRear();
+      endgame.rearRetractUnlimited();
       // driverJoystick.setLeftRumble(1); //Should be heavy rumble
     }
     else if (driverJoystick.getYButton()) {
@@ -176,19 +181,41 @@ public class Robot extends TimedRobot {
     }
     else if (driverJoystick.getAButton()) {
       endgame.retractFront();
+      endgame.frontRetractUnlimited();
+      AbuttonPushed = true;
     }
+    
+
+    // else if (driverJoystick.getDPadUp() == 1) {
+    //   endgame.frontRetractUnlimited();
+    // }
+    // else if(driverJoystick.getDPadDown() == -1) {
+    //   endgame.rearRetractUnlimited();
+    // }
     else{
       endgame.stopRear();
       endgame.stopFront();
     }
 
-    if (driverJoystick.getLeftButton()) {
+    if (driverJoystick.getLeftButton() && AbuttonPushed && !leftButtonPushed) {
+      if(endgame.getRearElevation() > 20) {
+        endgame.setRearMotor(.4);
+      } else {
+        endgame.setRearMotor(0);
+        leftButtonPushed = true;
+        //AbuttonPushed = false;
+      }
+    } else if (driverJoystick.getLeftButton() && !AbuttonPushed) {
       endgame.setRearMotor(0.4);
     } else if (driverJoystick.getLeftTrigger() > 0.5) {
       endgame.setRearMotor(-0.4);
+    } else if (!driverJoystick.getLeftButton() && AbuttonPushed && leftButtonPushed) {
+        AbuttonPushed = false;
     } else {
       endgame.setRearMotor(0.0);
     }
+    
+    //this is some sexy code
 
     // if (isDeploying) {
     //   schedule.run();
@@ -220,6 +247,9 @@ public class Robot extends TimedRobot {
    * Runs operator controls according to button map
    */
   public void operator() {
+
+    // scoring.turnOffMotor();
+
     if (operatorJoystick.getLeftButton()) {
       acquisition.acqCargo();
     } else if (operatorJoystick.getLeftTrigger() > 0.5) {
@@ -243,13 +273,13 @@ public class Robot extends TimedRobot {
       currentXButtonState = true;
     }
     if (operatorJoystick.getAButton()) {
-      scoring.setLevel(-37);
+      scoring.setLevel(-28);
     }
     if (operatorJoystick.getBButton()) {
-      scoring.setLevel(10);
+      scoring.setLevel(17);
     }
     if (operatorJoystick.getYButton()) {
-      scoring.setLevel(55);
+      scoring.setLevel(45);
     }
     
 
@@ -260,7 +290,7 @@ public class Robot extends TimedRobot {
     }
 
     if (operatorJoystick.getXButton()) {
-      scoring.setLevel(-15);
+      scoring.setLevel(-2);
     }
 
     if (operatorJoystick.getPOV() == 180) {

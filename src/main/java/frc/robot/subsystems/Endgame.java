@@ -65,8 +65,8 @@ public class Endgame {
         // endgamePID.setContinuous(false);
         // endgamePID.setOutputRange(-1, 0);
         // endgamePID.setSetpoint(0);
-        retractFront();
-        retractRear();
+        // retractFront();
+        // retractRear();
         rearMotor.restoreFactoryDefaults();
         rearMotor.setIdleMode(CANSparkMax.IdleMode.kBrake);
     }
@@ -103,6 +103,14 @@ public class Endgame {
         //deployedCounter+=1;
         // System.out.println("deploying:" + deployedCounter);
         rearDeployed = true;
+    }
+
+    public void frontRetractUnlimited() {
+        frontLeadScrewMotor.set(.5);
+    }
+
+    public void rearRetractUnlimited() {
+        rearLeadScrewMotor.set(.5);
     }
 
     public void stopRear() {
@@ -219,18 +227,18 @@ public class Endgame {
      * 
      * @return Elevation of the front laser sensor to the ground in cm
      */
-    // public int getFrontElevation() {
-    //     return arduinoReader.getFrontBottomLaserVal();
-    // }
+    //public int getFrontElevation() {
+      //  return arduinoReader.getFrontBottomLaserVal();
+   // }
 
     /**
      * Elevation of the rear from the laser sensor to the ground
      * 
      * @return Elevation of the rear laser sensor to the ground in cm
      */
-    // public int getRearElevation() {
-    //     return arduinoReader.getRearBottomLaserVal();
-    // }
+    public int getRearElevation() {
+        return arduinoReader.getRearBottomLaserVal();
+    }
 
     // @Override
     // protected void initDefaultCommand() {
